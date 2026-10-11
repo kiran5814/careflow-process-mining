@@ -1,0 +1,6 @@
+version: 2
+sources:
+  - name: careflow
+    schema: careflow          # BigQuery dataset
+    tables:
+      - name: raw_ehr_events
