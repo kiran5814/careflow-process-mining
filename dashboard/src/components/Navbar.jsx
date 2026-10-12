@@ -3,11 +3,12 @@ import {
   Activity, GitBranch, Database, RefreshCw, 
   Layers, ShieldCheck, Flame, Users, Sliders, FileText, 
   Brain, Presentation, PieChart, Radio, Grid3x3, Sun, Moon, 
-  Search, Bell, ChevronDown
+  Search, Bell, ChevronDown, Building2
 } from 'lucide-react';
 
 const TABS = [
   { id: 'map',        label: 'Process Map',       icon: Layers,      group: 'Analysis' },
+  { id: 'hospital',   label: 'Hospital Census & Ops', icon: Building2, group: 'Clinical' },
   { id: 'analytics',  label: 'Visual Analytics',  icon: PieChart,    group: 'Analysis' },
   { id: 'heatmap',    label: 'Volume Heatmap',    icon: Grid3x3,     group: 'Analysis' },
   { id: 'bottlenecks',label: 'Bottlenecks',       icon: Flame,       group: 'Analysis' },

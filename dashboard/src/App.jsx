@@ -16,6 +16,7 @@ import LiveActivityFeed from './components/LiveActivityFeed';
 import PatientHeatmap from './components/PatientHeatmap';
 import ComplianceChecker from './components/ComplianceChecker';
 import VisualAnalytics from './components/VisualAnalytics';
+import HospitalCommandCenter from './components/HospitalCommandCenter';
 import { CheckCircle, Award } from 'lucide-react';
 import { SUMMARY_STATS, SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
@@ -50,7 +51,7 @@ export default function App() {
   }).length;
 
   // Show KPI bar only on core analytics pages, not utility ones
-  const showKpi = ['map', 'bottlenecks', 'variants', 'analytics'].includes(activeTab);
+  const showKpi = ['map', 'hospital', 'bottlenecks', 'variants', 'analytics'].includes(activeTab);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -63,12 +64,12 @@ export default function App() {
       />
 
       <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.5rem', width: '100%', flex: 1 }}>
-        {/* Info Banner */}
+        {/* Hospital Facility Info Banner */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem',
           padding: '0.85rem 1.25rem',
-          background: 'rgba(17, 26, 48, 0.4)',
+          background: 'rgba(17, 26, 48, 0.5)',
           border: '1px solid var(--border-color)', borderRadius: '12px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -80,22 +81,23 @@ export default function App() {
               <Award size={18} />
             </span>
             <div>
-              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
-                Healthcare Data Analytics & Process Mining Workflow
+              <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc' }}>
+                Metropolitan Academic Medical Center — Clinical Process Mining & Hospital Intelligence
               </span>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                EHR Log Ingestion → Data Cleansing → DFG Discovery → Conformance → Live Monitoring → ROI Simulation
+                Emergency Care • Trauma Resuscitation • EHR Protocol Mining • Joint Commission & CMS Compliance
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <span>Facility Status: <strong style={{ color: '#34d399' }}>Surge Level 2 (Open)</strong></span>
             <span>Branch: <strong style={{ color: '#a5b4fc' }}>dev-Riddi</strong></span>
-            <span>Dataset: <strong style={{ color: '#38bdf8' }}>1,000 cases / 6,347 events</strong></span>
+            <span>EHR Cohort: <strong style={{ color: '#38bdf8' }}>1,000 cases / 6,347 events</strong></span>
           </div>
         </div>
 
         {/* Filter Bar - show on clinical/analysis pages */}
-        {['map', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
+        {['map', 'hospital', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
           <FilterBar
             filters={filters}
             setFilters={setFilters}
@@ -115,6 +117,8 @@ export default function App() {
             <BottleneckAnalytics />
           </>
         )}
+
+        {activeTab === 'hospital' && <HospitalCommandCenter />}
 
         {activeTab === 'analytics' && <VisualAnalytics />}
 

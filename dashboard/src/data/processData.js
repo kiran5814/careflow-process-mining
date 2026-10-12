@@ -1012,3 +1012,299 @@ export const EXTENDED_CASES = [
   }
 ];
 
+// Hospital Global Operations & Facility Capacity Status
+export const HOSPITAL_OPERATIONAL_STATS = {
+  facilityName: "Metropolitan Academic Medical Center",
+  serviceLine: "Emergency Medicine, Trauma & Critical Care Division",
+  overallBedCensus: {
+    totalBeds: 250,
+    occupiedBeds: 221,
+    occupancyRate: "88.4%",
+    status: "Surge Level 2 (Advisory)"
+  },
+  edCapacity: {
+    totalBays: 45,
+    occupiedBays: 38,
+    occupancyRate: "84.4%",
+    boardingPatients: 5,
+    avgBoardingTime: "4h 12m",
+    status: "Congested"
+  },
+  icuCapacity: {
+    totalBeds: 20,
+    occupiedBeds: 18,
+    occupancyRate: "90.0%",
+    status: "Critical Saturation"
+  },
+  ambulanceStatus: {
+    condition: "OPEN (No Diversion)",
+    bayCapacity: "6 / 8 Bays Active",
+    turnaroundTime: "18.4 min",
+    hourlyArrivalVelocity: "3.8 ambulances/hr"
+  },
+  evsCleaning: {
+    bedsCleaningInProgress: 6,
+    avgTurnaroundMin: 22,
+    staffOnShift: 8
+  },
+  clinicalQuality: {
+    lwbsRate: "0.8%", // Left Without Being Seen (Benchmark < 2.0%)
+    cmsSepsisAdherence: "98.2%", // SEP-1 Compliance
+    stemiDoorToBalloon: "68 min", // Benchmark < 90m
+    strokeDoorToNeedle: "38 min", // Benchmark < 45m
+    readmissionRate30d: "4.8%" // Benchmark < 6.5%
+  }
+};
+
+// Hospital Department & Inpatient Unit Wards
+export const HOSPITAL_WARDS = [
+  {
+    id: "ED-ZONE-A",
+    name: "ED Acute Bay — Zone A",
+    category: "Emergency Department",
+    type: "High Acuity & Chest Pain",
+    totalBeds: 22,
+    occupiedBeds: 20,
+    occupancyRate: 90.9,
+    boardingCount: 3,
+    status: "Warning",
+    staffRatio: "1 : 3.2 (Target 1:3.0)",
+    leadNurse: "Nurse J. Miller, RN BSN",
+    evsCleaning: 2,
+    pendingArrivals: 4
+  },
+  {
+    id: "ED-ZONE-B",
+    name: "ED Rapid Assessment — Zone B",
+    category: "Emergency Department",
+    type: "Urgent & Fast-Track (ESI 3-5)",
+    totalBeds: 23,
+    occupiedBeds: 18,
+    occupancyRate: 78.3,
+    boardingCount: 2,
+    status: "Normal",
+    staffRatio: "1 : 4.1 (Target 1:4.0)",
+    leadNurse: "Nurse D. Washington, RN",
+    evsCleaning: 1,
+    pendingArrivals: 3
+  },
+  {
+    id: "TRAUMA-RESUS",
+    name: "Trauma Resuscitation Suites",
+    category: "Emergency Department",
+    type: "Level 1 Trauma (ESI-1)",
+    totalBeds: 4,
+    occupiedBeds: 3,
+    occupancyRate: 75.0,
+    boardingCount: 0,
+    status: "Standby Alert",
+    staffRatio: "2 : 1.0 (Critical 1:1)",
+    leadNurse: "Clinical Coord. R. Chen, CCRN",
+    evsCleaning: 1,
+    pendingArrivals: 1
+  },
+  {
+    id: "MICU-3",
+    name: "Medical Intensive Care (MICU)",
+    category: "Critical Care",
+    type: "Inpatient ICU",
+    totalBeds: 20,
+    occupiedBeds: 18,
+    occupancyRate: 90.0,
+    boardingCount: 0,
+    status: "Critical Saturation",
+    staffRatio: "1 : 1.8 (Target 1:2.0)",
+    leadNurse: "Nurse Supv. K. Adams, MSN",
+    evsCleaning: 1,
+    pendingArrivals: 2
+  },
+  {
+    id: "CCU-CARDIAC",
+    name: "Cardiac Intensive Care (CCU)",
+    category: "Critical Care",
+    type: "Post-Cath & STEMI",
+    totalBeds: 14,
+    occupiedBeds: 12,
+    occupancyRate: 85.7,
+    boardingCount: 0,
+    status: "Normal",
+    staffRatio: "1 : 1.9 (Target 1:2.0)",
+    leadNurse: "Nurse M. Hernandez, RN",
+    evsCleaning: 0,
+    pendingArrivals: 1
+  },
+  {
+    id: "STEPDOWN-4",
+    name: "Telemetry & Step-Down Unit",
+    category: "Intermediate Care",
+    type: "Cardiovascular Telemetry",
+    totalBeds: 32,
+    occupiedBeds: 28,
+    occupancyRate: 87.5,
+    boardingCount: 0,
+    status: "High Census",
+    staffRatio: "1 : 3.8 (Target 1:3.5)",
+    leadNurse: "Nurse P. Bradley, BSN",
+    evsCleaning: 2,
+    pendingArrivals: 4
+  },
+  {
+    id: "MEDSURG-EAST",
+    name: "Med-Surg General Inpatient",
+    category: "General Inpatient",
+    type: "Post-Surgical & Medical",
+    totalBeds: 85,
+    occupiedBeds: 76,
+    occupancyRate: 89.4,
+    boardingCount: 0,
+    status: "High Census",
+    staffRatio: "1 : 4.8 (Target 1:4.5)",
+    leadNurse: "Nurse Director A. Scott, RN",
+    evsCleaning: 4,
+    pendingArrivals: 5
+  },
+  {
+    id: "PACS-RAD",
+    name: "Diagnostic Imaging & PACS Suite",
+    category: "Diagnostics",
+    type: "XR656 / CT Scanner / Lab",
+    totalBeds: 12,
+    occupiedBeds: 10,
+    occupancyRate: 83.3,
+    boardingCount: 0,
+    status: "Morning Congestion",
+    staffRatio: "1 : 2.5 (Technologists)",
+    leadNurse: "Lead Radiologic Tech S. Gupta",
+    evsCleaning: 0,
+    pendingArrivals: 6
+  }
+];
+
+// CMS & Joint Commission Hospital Quality Measures
+export const CMS_QUALITY_MEASURES = [
+  {
+    id: "CMS-SEP-1",
+    code: "SEP-1",
+    name: "Severe Sepsis 3-Hour Bundle Adherence",
+    benchmark: "≥ 95.0%",
+    actual: "98.2%",
+    status: "Optimal",
+    regulatoryBody: "CMS / The Joint Commission",
+    impact: "Protects capitated reimbursement & eliminates septic shock progression.",
+    components: ["Blood Cultures Prior to Antibiotics", "Serum Lactate Assay", "Broad-Spectrum IV Antibiotics < 3h", "Crystalloid Fluid 30mL/kg"]
+  },
+  {
+    id: "CMS-OP-18",
+    code: "OP-18",
+    name: "Median ED Stay for Non-Admitted (LOS)",
+    benchmark: "< 180 min (3h)",
+    actual: "165 min (Compliant) / 315 min (Loopback)",
+    status: "Warning",
+    regulatoryBody: "CMS Hospital Outpatient Quality",
+    impact: "Paperwork rework loops extend discharge stay by 48-75 min above target.",
+    components: ["Door-to-Triage < 15m", "Diagnostic Turnaround < 60m", "Discharge Nursing Handover < 15m"]
+  },
+  {
+    id: "CMS-ED-BOARD",
+    code: "ED-2b",
+    name: "Admit Decision to ED Departure (Boarding)",
+    benchmark: "< 240 min (4h)",
+    actual: "252 min (4h 12m)",
+    status: "Warning",
+    regulatoryBody: "The Joint Commission National Patient Safety",
+    impact: "Patients holding in ED bays block acute ambulances and increase diversion risk.",
+    components: ["Inpatient Bed Request Sent", "Bed Cleaning (EVS) Complete", "Patient Transport & Inpatient Handover"]
+  },
+  {
+    id: "CMS-CARD-1",
+    code: "OP-40",
+    name: "Door-to-ECG for Potential ACS / Chest Pain",
+    benchmark: "< 10 min",
+    actual: "7.2 min",
+    status: "Optimal",
+    regulatoryBody: "American College of Cardiology / AHA",
+    impact: "Immediate identification of STEMI myocardial infarction candidates.",
+    components: ["Immediate Triage ECG acquisition", "Attending MD reading and signature < 10m"]
+  },
+  {
+    id: "CMS-STROKE-1",
+    code: "STK-OP",
+    name: "Acute Ischemic Stroke Door-to-Needle (tPA)",
+    benchmark: "< 45 min",
+    actual: "38 min",
+    status: "Optimal",
+    regulatoryBody: "AHA / ASA Target Stroke Honor Roll",
+    impact: "Preserves neurological brain tissue through rapid thrombolysis.",
+    components: ["Non-contrast Head CT order < 20m", "Radiology read < 35m", "IV Alteplase / Tenecteplase < 45m"]
+  },
+  {
+    id: "CMS-HRRP",
+    code: "HRRP-30",
+    name: "30-Day Hospital Readmission Rate",
+    benchmark: "< 6.5%",
+    actual: "4.8%",
+    status: "Optimal",
+    regulatoryBody: "CMS Hospital Readmissions Reduction Program",
+    impact: "Zero penalty assessment; demonstrates robust post-discharge care coordination.",
+    components: ["Medication Reconciliation at Discharge", "PCP Follow-up Booked", "72h Post-Discharge Telehealth Check"]
+  }
+];
+
+// Clinical Decision Support: ESI Acuity Protocols (1 to 5)
+export const CLINICAL_ESI_PROTOCOLS = [
+  {
+    level: 1,
+    title: "ESI-1: Resuscitation / Immediate Life Threat",
+    responseTime: "IMMEDIATE (0 min)",
+    examples: "Cardiac Arrest, Severe Respiratory Distress, Anaphylaxis, Trauma Resus",
+    staffingMandate: "Dedicated 1:1 Nurse + Attending Physician at Bedside",
+    cohortPercent: "14.2% of cohort (142 cases)",
+    pathway: "Direct Trauma Bay Entry → Immediate Resuscitation → Inpatient ICU Admission (89.4%)"
+  },
+  {
+    level: 2,
+    title: "ESI-2: Emergent / High Acuity",
+    responseTime: "< 15 minutes",
+    examples: "Severe Sepsis, Acute Chest Pain / STEMI, Altered Mental Status, Suicidal Ideation",
+    staffingMandate: "1:2 Nurse Ratio, Continuous Cardiac / Pulse Oximetry Telemetry",
+    cohortPercent: "24.1% of cohort (241 cases)",
+    pathway: "Priority Triage → STAT Labs & ECG → Attending Physician Exam → Telemetry Bed / Observation"
+  },
+  {
+    level: 3,
+    title: "ESI-3: Urgent (Requires 2+ Diagnostic Resources)",
+    responseTime: "< 30 minutes",
+    examples: "Abdominal Pain, Complex Fractures, Moderate Dehydration, High Fever",
+    staffingMandate: "1:3 to 1:4 Nurse Ratio, Standard Monitoring",
+    cohortPercent: "33.8% of cohort (338 cases)",
+    pathway: "Standard Triage → X-Ray + Blood Labs → MD Consult → Medical Treatment → Safe Discharge"
+  },
+  {
+    level: 4,
+    title: "ESI-4: Less Urgent (1 Diagnostic Resource)",
+    responseTime: "< 60 minutes",
+    examples: "Simple Laceration needing sutures, Minor Ankle Sprain, Mild Dysuria",
+    staffingMandate: "Fast-Track Zone Staffing, Nurse Practitioner / PA Pod",
+    cohortPercent: "20.4% of cohort (204 cases)",
+    pathway: "Rapid Check-in → Focused X-Ray or Urinalysis → Fast-Track Provider → Outpatient Discharge"
+  },
+  {
+    level: 5,
+    title: "ESI-5: Non-Urgent (0 Diagnostic Resources)",
+    responseTime: "< 120 minutes",
+    examples: "Prescription Refill, Minor Rash, Chronic Pain with no acute change",
+    staffingMandate: "Triage Clinical Nurse or Triage Navigator",
+    cohortPercent: "7.5% of cohort (75 cases)",
+    pathway: "Nurse Assessment → Script Refill / Minor Dressing → Immediate Discharge"
+  }
+];
+
+// Active Hospital Emergency Dispatch & Rapid Response Activity Log
+export const ACTIVE_EMERGENCY_INCIDENTS = [
+  { id: "INC-8812", time: "17:42", code: "CODE STEMI", location: "ED Acute Bay 3", patientId: "CASE000994", status: "Cath Lab Activated", leadMD: "Dr. Sharma", elapsedMin: "12m" },
+  { id: "INC-8811", time: "16:15", code: "TRAUMA DELTA", location: "Trauma Suite 1", patientId: "CASE000189", status: "CT Trauma Scan Complete", leadMD: "Dr. Reddy", elapsedMin: "45m" },
+  { id: "INC-8810", time: "14:28", code: "CODE SEPSIS", location: "ED Zone A Bay 8", patientId: "CASE000521", status: "Blood Cultures + Ceftriaxone Infused", leadMD: "Dr. Khan", elapsedMin: "1h 10m" },
+  { id: "INC-8809", time: "11:05", code: "RAPID RESPONSE", location: "Med-Surg East 312", patientId: "CASE000612", status: "Stabilized - Telemetry Transfer", leadMD: "Dr. Iyer", elapsedMin: "Resolved" }
+];
+
+

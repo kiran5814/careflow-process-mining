@@ -425,76 +425,139 @@ export default function ProcessMap() {
         </svg>
       </div>
 
-      {/* Node Inspector Drawer */}
+      {/* Hospital Clinical Node Inspector Drawer */}
       {selectedNode && (
         <div style={{
           marginTop: '1rem',
-          padding: '1rem 1.25rem',
+          padding: '1.25rem 1.5rem',
           borderRadius: '12px',
-          background: 'rgba(10, 16, 30, 0.8)',
-          border: '1px solid var(--border-color)',
+          background: 'rgba(10, 16, 30, 0.9)',
+          border: `1px solid ${selectedNode.id === 'xray' ? '#f59e0b' : selectedNode.id === 'triage' ? '#06b6d4' : 'var(--border-color)'}`,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem'
+          flexDirection: 'column',
+          gap: '1rem',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{
-              padding: '10px',
-              borderRadius: '10px',
-              background: selectedNode.id === 'xray' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(6, 182, 212, 0.2)',
-              color: selectedNode.id === 'xray' ? '#f59e0b' : '#06b6d4'
-            }}>
-              <Info size={20} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
-                  Stage Inspector: {selectedNode.label}
-                </h4>
-                {selectedNode.alert && (
-                  <span className="badge badge-amber">{selectedNode.alert}</span>
-                )}
-                {selectedNode.reworkCount && (
-                  <span className="badge badge-purple">Rework Target ({selectedNode.reworkCount} cases)</span>
-                )}
-              </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                Activity throughput: <strong>{selectedNode.totalExecutions}</strong> executions • Mean Duration: <strong>{selectedNode.avgDuration}</strong>
-                {selectedNode.waitTime && <> • Mean Wait Time: <strong>{selectedNode.waitTime}</strong></>}
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            {selectedNode.id === 'xray' && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{
-                background: 'rgba(245, 158, 11, 0.12)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                fontSize: '0.78rem',
-                color: '#fbbf24'
+                padding: '10px',
+                borderRadius: '10px',
+                background: selectedNode.id === 'xray' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(6, 182, 212, 0.2)',
+                color: selectedNode.id === 'xray' ? '#f59e0b' : '#06b6d4'
               }}>
-                <strong>Recommendation:</strong> Digitize radiology requisition forms at Triage to eliminate the 40% bounce rate.
+                <Info size={22} />
               </div>
-            )}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                    Clinical Stage Inspector: {selectedNode.label}
+                  </h4>
+                  {selectedNode.alert && (
+                    <span className="badge badge-rose">{selectedNode.alert}</span>
+                  )}
+                  {selectedNode.reworkCount && (
+                    <span className="badge badge-amber">Paperwork Rework Loop ({selectedNode.reworkCount} cases)</span>
+                  )}
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                  Total Ingested Events: <strong style={{ color: '#fff' }}>{selectedNode.totalExecutions.toLocaleString()} executions</strong> • Mean Clinical Duration: <strong style={{ color: '#38bdf8' }}>{selectedNode.avgDuration}</strong>
+                  {selectedNode.waitTime && <> • Mean Queue Wait: <strong style={{ color: selectedNode.id === 'xray' ? '#f43f5e' : '#fbbf24' }}>{selectedNode.waitTime}</strong></>}
+                </p>
+              </div>
+            </div>
+
             <button
               onClick={() => setSelectedNode(null)}
               style={{
-                background: 'transparent',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-muted)',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                fontSize: '0.75rem',
+                padding: '5px 12px',
+                borderRadius: '7px',
+                fontSize: '0.74rem',
                 cursor: 'pointer'
               }}
             >
-              Close
+              Close Inspector
             </button>
           </div>
+
+          {/* Hospital Operational Metadata Strip */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '8px',
+            background: 'rgba(7, 11, 20, 0.6)',
+            padding: '10px 12px',
+            borderRadius: '9px',
+            fontSize: '0.74rem'
+          }}>
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>Clinical Staffing:</span>
+              <div style={{ color: '#e2e8f0', fontWeight: 600 }}>
+                {selectedNode.id === 'xray' && '1 Lead Radiologic Technologist (Staff Deficit in AM)'}
+                {selectedNode.id === 'triage' && '2 Clinical Triage RNs (ESI Protocol Assessment)'}
+                {selectedNode.id === 'consult' && '5 Attending Emergency Physicians on Rotation'}
+                {selectedNode.id === 'reg' && 'Patient Intake Specialists & Bedside Registrar'}
+                {selectedNode.id === 'lab' && 'Medical Laboratory Technicians (Automated Stat Chemistry)'}
+                {selectedNode.id === 'treatment' && 'Bedside Acute Care RNs & Clinical Techs'}
+                {selectedNode.id === 'discharge' && 'Discharge Navigation Nurse & Case Manager'}
+                {selectedNode.id === 'admit' && 'Hospital Bed Access & Inpatient Transport Team'}
+                {selectedNode.id === 'start' && 'EMS Paramedic Handover & Ambulance Bay Staff'}
+              </div>
+            </div>
+
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>Hospital Resource / Equipment:</span>
+              <div style={{ color: '#e2e8f0', fontWeight: 600 }}>
+                {selectedNode.id === 'xray' && 'GE Discovery XR656 Digital Radiography Suite'}
+                {selectedNode.id === 'triage' && 'Welch Allyn Connex Spot Vital Monitors (ESI 1-5)'}
+                {selectedNode.id === 'consult' && 'Epic CPOE Clinical Workstation & Dictation Mic'}
+                {selectedNode.id === 'reg' && 'RFID Patient Wristband & EHR Intake Portal'}
+                {selectedNode.id === 'lab' && 'Roche Cobas 6000 Automated Analyzer'}
+                {selectedNode.id === 'treatment' && 'Alaris Smart IV Pumps & Crash Cart Access'}
+                {selectedNode.id === 'discharge' && 'Pharmacy Outpatient Dispenser & AVS Print'}
+                {selectedNode.id === 'admit' && 'Tele-Tracking Hospital Bed Management System'}
+                {selectedNode.id === 'start' && 'Ambulance Influx Bay & Walk-in Entrance'}
+              </div>
+            </div>
+
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>SLA Quality Benchmark:</span>
+              <div style={{ color: selectedNode.id === 'xray' ? '#f59e0b' : '#34d399', fontWeight: 700 }}>
+                {selectedNode.id === 'xray' && 'Target < 20 min (Breached at 42m mean)'}
+                {selectedNode.id === 'triage' && 'Target < 15 min Door-to-Triage (Optimal: 9m)'}
+                {selectedNode.id === 'consult' && 'Door-to-Doctor < 30 min (Actual: 41m)'}
+                {selectedNode.id === 'reg' && 'Registration < 5 min (Optimal: 3m)'}
+                {selectedNode.id === 'lab' && 'Stat Lab Turnaround < 30 min (Optimal: 18m)'}
+                {selectedNode.id === 'treatment' && 'Immediate Order Execution (Optimal)'}
+                {selectedNode.id === 'discharge' && 'Discharge Handover < 15 min (Optimal: 10m)'}
+                {selectedNode.id === 'admit' && 'ED Boarding < 4 hours (Warning: 4h 12m)'}
+                {selectedNode.id === 'start' && 'Immediate EMS Triage Handover < 10m'}
+              </div>
+            </div>
+          </div>
+
+          {/* Root Cause Clinical Action */}
+          {selectedNode.id === 'xray' && (
+            <div style={{
+              background: 'rgba(245, 158, 11, 0.1)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              padding: '8px 12px',
+              borderRadius: '8px',
+              fontSize: '0.76rem',
+              color: '#fbbf24',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <AlertTriangle size={16} />
+              <span>
+                <strong>Clinical Remediation:</strong> 398 patient visits exhibit X-Ray → Triage loopback due to missing paper requisitions. Enforce digital CPOE electronic order entry checklist during initial nursing triage.
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>
