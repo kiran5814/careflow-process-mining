@@ -12,16 +12,19 @@ import ExecutiveReport from './components/ExecutiveReport';
 import RootCauseAnalysis from './components/RootCauseAnalysis';
 import PresentationDeck from './components/PresentationDeck';
 import CaseDetailModal from './components/CaseDetailModal';
+import LiveActivityFeed from './components/LiveActivityFeed';
+import PatientHeatmap from './components/PatientHeatmap';
+import ComplianceChecker from './components/ComplianceChecker';
 import VisualAnalytics from './components/VisualAnalytics';
-import { Sparkles, Database, CheckCircle, Info, Award, FileText } from 'lucide-react';
+import { CheckCircle, Award } from 'lucide-react';
 import { SUMMARY_STATS, SAMPLE_CASES } from './data/processData';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('map'); 
+  const [activeTab, setActiveTab] = useState('map');
   const [selectedCase, setSelectedCase] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [darkMode, setDarkMode] = useState(true);
 
-  // Global Cohort Filters
   const [filters, setFilters] = useState({
     severity: 'ALL',
     ageGroup: 'ALL',
@@ -31,16 +34,13 @@ export default function App() {
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3200);
+    setTimeout(() => setToastMessage(null), 3200);
   };
 
   const handleRefresh = () => {
     showToast('Synchronized with CareFlow EHR Mock Logs (1,000 cases)');
   };
 
-  // Compute filtered count
   const filteredSampleCount = SAMPLE_CASES.filter((c) => {
     if (filters.severity !== 'ALL' && c.severity !== filters.severity) return false;
     if (filters.ageGroup !== 'ALL' && c.ageGroup !== filters.ageGroup) return false;
@@ -48,40 +48,33 @@ export default function App() {
     return true;
   }).length;
 
+  // Show KPI bar only on core analytics pages, not utility ones
+  const showKpi = ['map', 'bottlenecks', 'variants', 'analytics'].includes(activeTab);
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Top Navbar */}
-      <Navbar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         onRefresh={handleRefresh}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
       />
 
-      {/* Main Container */}
-      <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.75rem', width: '100%', flex: 1 }}>
-        {/* Banner with internship & branch metadata */}
-        <div className="fade-slide-up" style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.25rem',
+      <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.5rem', width: '100%', flex: 1 }}>
+        {/* Info Banner */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem',
           padding: '0.85rem 1.25rem',
-          background: 'linear-gradient(135deg, rgba(6,182,212,0.06) 0%, rgba(17, 26, 48, 0.45) 60%, rgba(99,102,241,0.06) 100%)',
-          border: '1px solid rgba(6,182,212,0.18)',
-          borderRadius: '12px',
-          boxShadow: '0 0 20px rgba(6,182,212,0.06)'
+          background: 'rgba(17, 26, 48, 0.4)',
+          border: '1px solid var(--border-color)', borderRadius: '12px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{
-              display: 'inline-flex',
-              padding: '8px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.25))',
-              color: '#06b6d4',
-              boxShadow: '0 0 14px rgba(6,182,212,0.25)',
-              animation: 'floatUp 3s ease-in-out infinite'
+              display: 'inline-flex', padding: '6px', borderRadius: '8px',
+              background: 'linear-gradient(135deg, rgba(6,182,212,0.2), rgba(99,102,241,0.25))',
+              color: '#06b6d4'
             }}>
               <Award size={18} />
             </span>
@@ -90,29 +83,31 @@ export default function App() {
                 Healthcare Data Analytics & Process Mining Workflow
               </span>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                EHR Log Ingestion → Automated Data Cleansing → DFG Process Discovery → Conformance & Operational ROI
+                EHR Log Ingestion → Data Cleansing → DFG Discovery → Conformance → Live Monitoring → ROI Simulation
               </div>
             </div>
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             <span>Branch: <strong style={{ color: '#a5b4fc' }}>dev-Riddi</strong></span>
             <span>Dataset: <strong style={{ color: '#38bdf8' }}>1,000 cases / 6,347 events</strong></span>
           </div>
         </div>
 
-        {/* Global Cohort Filter Bar */}
-        <FilterBar 
-          filters={filters} 
-          setFilters={setFilters} 
-          totalFilteredCases={filteredSampleCount} 
-          totalCases={SAMPLE_CASES.length} 
-        />
+        {/* Filter Bar - show on clinical/analysis pages */}
+        {['map', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
+          <FilterBar
+            filters={filters}
+            setFilters={setFilters}
+            totalFilteredCases={filteredSampleCount}
+            totalCases={SAMPLE_CASES.length}
+          />
+        )}
 
-        {/* Global KPI Summary */}
-        <KpiMetrics />
+        {/* KPI Summary - shown on main analysis views */}
+        {showKpi && <KpiMetrics />}
 
-        {/* Content based on Active Tab */}
+        {/* ======================== TAB CONTENT ======================== */}
+
         {activeTab === 'map' && (
           <>
             <ProcessMap />
@@ -120,9 +115,9 @@ export default function App() {
           </>
         )}
 
-        {activeTab === 'analytics' && (
-          <VisualAnalytics />
-        )}
+        {activeTab === 'analytics' && <VisualAnalytics />}
+
+        {activeTab === 'heatmap' && <PatientHeatmap />}
 
         {activeTab === 'bottlenecks' && (
           <>
@@ -131,75 +126,62 @@ export default function App() {
           </>
         )}
 
-        {activeTab === 'variants' && (
-          <VariantExplorer />
-        )}
+        {activeTab === 'variants' && <VariantExplorer />}
 
         {activeTab === 'cases' && (
-          <CaseExplorer 
-            onSelectCase={(c) => setSelectedCase(c)} 
-            cohortFilters={filters} 
+          <CaseExplorer
+            onSelectCase={(c) => setSelectedCase(c)}
+            cohortFilters={filters}
           />
         )}
 
-        {activeTab === 'simulation' && (
-          <WhatIfSimulation />
-        )}
+        {activeTab === 'live' && <LiveActivityFeed />}
 
-        {activeTab === 'rca' && (
-          <RootCauseAnalysis />
-        )}
+        {activeTab === 'compliance' && <ComplianceChecker />}
+
+        {activeTab === 'simulation' && <WhatIfSimulation />}
+
+        {activeTab === 'rca' && <RootCauseAnalysis />}
 
         {activeTab === 'data' && (
-          <DataPipelineQuality 
-            onReloadData={() => showToast('Data cleansing pipeline re-executed successfully!')} 
+          <DataPipelineQuality
+            onReloadData={() => showToast('Data cleansing pipeline re-executed successfully!')}
           />
         )}
 
-        {activeTab === 'report' && (
-          <ExecutiveReport />
-        )}
+        {activeTab === 'report' && <ExecutiveReport />}
 
-        {activeTab === 'deck' && (
-          <PresentationDeck />
-        )}
+        {activeTab === 'deck' && <PresentationDeck />}
       </main>
 
       {/* Footer */}
       <footer style={{
         borderTop: '1px solid var(--border-color)',
-        padding: '1.25rem 1.75rem',
+        padding: '1rem 1.75rem',
         textAlign: 'center',
-        fontSize: '0.78rem',
+        fontSize: '0.76rem',
         color: 'var(--text-muted)',
         background: 'rgba(7, 11, 20, 0.95)'
       }}>
-        CareFlow Healthcare Process Mining Intelligence • Data Analytics Internship Deliverable • Branch <code>dev-Riddi</code> • Emergency Room Operational Optimization
+        CareFlow v2.0 • Healthcare Process Mining Intelligence • Branch <code>dev-Riddi</code> • Emergency Room Operational Optimization • Data Analytics Internship Deliverable
       </footer>
 
-      {/* Case Timeline Detail Modal Drawer */}
-      <CaseDetailModal 
-        patientCase={selectedCase} 
-        onClose={() => setSelectedCase(null)} 
+      {/* Case Detail Modal */}
+      <CaseDetailModal
+        patientCase={selectedCase}
+        onClose={() => setSelectedCase(null)}
       />
 
-      {/* Toast notification */}
+      {/* Toast */}
       {toastMessage && (
         <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
+          position: 'fixed', bottom: '24px', right: '24px',
           background: 'rgba(13, 20, 36, 0.95)',
-          border: '1px solid #06b6d4',
-          borderRadius: '10px',
-          padding: '10px 16px',
-          color: '#fff',
-          fontSize: '0.82rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
-          zIndex: 200
+          border: '1px solid #06b6d4', borderRadius: '10px',
+          padding: '10px 16px', color: '#fff', fontSize: '0.82rem',
+          display: 'flex', alignItems: 'center', gap: '8px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.5)', zIndex: 200,
+          animation: 'slideInFeed 0.3s ease'
         }}>
           <CheckCircle size={16} color="#06b6d4" />
           <span>{toastMessage}</span>

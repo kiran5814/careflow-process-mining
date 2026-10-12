@@ -188,9 +188,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes dashFlow {
-  to {
-    stroke-dashoffset: -40;
-  }
+  to { stroke-dashoffset: -40; }
 }
 
 .animated-flow-line {
@@ -202,6 +200,85 @@ h1, h2, h3, h4, h5, h6 {
   stroke-dasharray: 8 6;
   animation: dashFlow 1.2s linear infinite;
 }
+
+/* Spin animation for loading indicators */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Feed slide-in */
+@keyframes slideInFeed {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Card fade/slide up */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-slide-up {
+  animation: fadeSlideUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Shimmer gradient text */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #06b6d4, #a5b4fc, #06b6d4);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Bar grow animation for sparklines */
+@keyframes barGrow {
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to   { transform: scaleY(1); transform-origin: bottom; }
+}
+
+/* Glow pulse for logo */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(6,182,212,0.4); }
+  50%       { box-shadow: 0 0 32px rgba(6,182,212,0.7), 0 0 50px rgba(99,102,241,0.3); }
+}
+
+.glow-pulse {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+/* Progress bar components */
+.progress-track {
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Metric icon hover */
+.metric-icon {
+  transition: transform 0.2s ease;
+}
+.metric-icon:hover {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Scrollbar for feed panels */
+.feed-scroll::-webkit-scrollbar { width: 4px; }
+.feed-scroll::-webkit-scrollbar-thumb { background: #253350; border-radius: 999px; }
+
 
 /* ---- New Animations ---- */
 
