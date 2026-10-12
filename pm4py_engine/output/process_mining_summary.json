@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "analysis_timestamp": "2026-10-10T16:02:03.712291+00:00",
+    "engine": "CareFlow-PM4Py-CustomEngine-v1.0",
+    "source_log": "simulator\\output\\ehr_event_log.csv"
+  },
+  "overview": {
+    "total_cases": 1000,
+    "total_events": 6347,
+    "unique_activities": 8,
+    "distinct_variants": 29,
+    "mean_duration_minutes": 133.8,
+    "median_duration_minutes": 123.8,
+    "p90_duration_minutes": 198.1,
+    "loopback_rework_rate_percent": 24.2,
+    "triage_bypass_rate_percent": 4.8
+  },
+  "conformance_metrics": {
+    "fitness": 95.2,
+    "precision": 91.2,
+    "generalization": 88.5,
+    "simplicity": 96.0
+  },
+  "top_variants": [
+    {
+      "path": "Registration -> Triage -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 211,
+      "percentage": 21.1
+    },
+    {
+      "path": "Registration -> Triage -> X-Ray -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 164,
+      "percentage": 16.4
+    },
+    {
+      "path": "Registration -> Triage -> X-Ray -> Triage -> X-Ray -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 118,
+      "percentage": 11.8
+    },
+    {
+      "path": "Registration -> Triage -> Lab Test -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 100,
+      "percentage": 10.0
+    },
+    {
+      "path": "Registration -> Triage -> X-Ray -> Lab Test -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 98,
+      "percentage": 9.8
+    },
+    {
+      "path": "Registration -> Triage -> X-Ray -> Triage -> X-Ray -> Lab Test -> Doctor Consultation -> Treatment -> Discharge",
+      "case_count": 65,
+      "percentage": 6.5
+    }
+  ],
+  "dfg_transitions": [
+    {
+      "from": "Doctor Consultation",
+      "to": "Treatment",
+      "count": 1000,
+      "frequency_percent": 100.0,
+      "avg_duration_minutes": 20.5
+    },
+    {
+      "from": "Registration",
+      "to": "Triage",
+      "count": 923,
+      "frequency_percent": 92.3,
+      "avg_duration_minutes": 18.5
+    },
+    {
+      "from": "Treatment",
+      "to": "Discharge",
+      "count": 824,
+      "frequency_percent": 82.4,
+      "avg_duration_minutes": 20.2
+    },
+    {
+      "from": "Triage",
+      "to": "X-Ray",
+      "count": 802,
+      "frequency_percent": 80.2,
+      "avg_duration_minutes": 35.7
+    },
+    {
+      "from": "X-Ray",
+      "to": "Doctor Consultation",
+      "count": 377,
+      "frequency_percent": 37.7,
+      "avg_duration_minutes": 30.3
+    },
+    {
+      "from": "Lab Test",
+      "to": "Doctor Consultation",
+      "count": 348,
+      "frequency_percent": 34.8,
+      "avg_duration_minutes": 30.2
+    },
+    {
+      "from": "Triage",
+      "to": "Doctor Consultation",
+      "count": 265,
+      "frequency_percent": 26.5,
+      "avg_duration_minutes": 31.4
+    },
+    {
+      "from": "X-Ray",
+      "to": "Triage",
+      "count": 242,
+      "frequency_percent": 24.2,
+      "avg_duration_minutes": 17.8
+    },
+    {
+      "from": "X-Ray",
+      "to": "Lab Test",
+      "count": 216,
+      "frequency_percent": 21.6,
+      "avg_duration_minutes": 32.8
+    },
+    {
+      "from": "Treatment",
+      "to": "Admission",
+      "count": 176,
+      "frequency_percent": 17.6,
+      "avg_duration_minutes": 20.4
+    },
+    {
+      "from": "Triage",
+      "to": "Lab Test",
+      "count": 127,
+      "frequency_percent": 12.7,
+      "avg_duration_minutes": 30.9
+    },
+    {
+      "from": "Registration",
+      "to": "X-Ray",
+      "count": 33,
+      "frequency_percent": 3.3,
+      "avg_duration_minutes": 38.9
+    }
+  ]
+}
