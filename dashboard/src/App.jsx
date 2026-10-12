@@ -17,7 +17,7 @@ import PatientHeatmap from './components/PatientHeatmap';
 import ComplianceChecker from './components/ComplianceChecker';
 import VisualAnalytics from './components/VisualAnalytics';
 import { CheckCircle, Award } from 'lucide-react';
-import { SUMMARY_STATS, SAMPLE_CASES } from './data/processData';
+import { SUMMARY_STATS, SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('map');
@@ -38,10 +38,11 @@ export default function App() {
   };
 
   const handleRefresh = () => {
-    showToast('Synchronized with CareFlow EHR Mock Logs (1,000 cases)');
+    showToast('Synchronized with CareFlow EHR Telemetry Engine (1,000 cases / 6,347 events)');
   };
 
-  const filteredSampleCount = SAMPLE_CASES.filter((c) => {
+  const caseList = EXTENDED_CASES || SAMPLE_CASES;
+  const filteredSampleCount = caseList.filter((c) => {
     if (filters.severity !== 'ALL' && c.severity !== filters.severity) return false;
     if (filters.ageGroup !== 'ALL' && c.ageGroup !== filters.ageGroup) return false;
     if (filters.gender !== 'ALL' && c.gender !== filters.gender) return false;
@@ -99,7 +100,7 @@ export default function App() {
             filters={filters}
             setFilters={setFilters}
             totalFilteredCases={filteredSampleCount}
-            totalCases={SAMPLE_CASES.length}
+            totalCases={caseList.length}
           />
         )}
 

@@ -1,11 +1,58 @@
 import React, { useState } from 'react';
-import { Flame, Clock, Stethoscope, AlertTriangle, TrendingUp, BarChart2, Filter, Users, ArrowUpRight } from 'lucide-react';
+import { 
+  Flame, Clock, Stethoscope, AlertTriangle, TrendingUp, BarChart2, 
+  Filter, Users, ArrowUpRight, Zap, CheckCircle2, ShieldAlert, Sparkles 
+} from 'lucide-react';
+import { 
+  ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, 
+  CartesianGrid, Tooltip, Legend, ReferenceLine, BarChart 
+} from 'recharts';
 import { HOURLY_METRICS, DOCTORS_DATA } from '../data/processData';
+
+// Custom Tooltip for Hourly Congestion
+function CustomHourlyTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div style={{
+        background: 'rgba(11, 18, 33, 0.95)',
+        border: `1px solid ${data.rush ? '#f43f5e' : '#06b6d4'}`,
+        borderRadius: '10px',
+        padding: '10px 14px',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.6)',
+        color: '#fff',
+        fontSize: '0.75rem',
+        minWidth: '190px'
+      }}>
+        <div style={{ fontWeight: 800, color: data.rush ? '#fb7185' : '#38bdf8', marginBottom: '6px' }}>
+          Hour: {data.hour} {data.rush && '⚠️ PEAK SURGE'}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0' }}>
+          <span style={{ color: 'var(--text-secondary)' }}>Patient Arrivals:</span>
+          <strong style={{ color: '#fff' }}>{data.arrivals} patients/hr</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0' }}>
+          <span style={{ color: 'var(--text-secondary)' }}>X-Ray Queue Delay:</span>
+          <strong style={{ color: data.rush ? '#fb7185' : '#fbbf24' }}>{data.xrayWait} min</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0' }}>
+          <span style={{ color: 'var(--text-secondary)' }}>Triage Wait:</span>
+          <strong style={{ color: '#34d399' }}>{data.triageWait} min</strong>
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', marginTop: '4px', fontSize: '0.69rem', color: data.rush ? '#fca5a5' : 'var(--text-muted)' }}>
+          {data.rush ? 'Single-technician capacity deficit' : 'Off-peak normal operation'}
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
 
 export default function BottleneckAnalytics() {
   const [selectedHour, setSelectedHour] = useState(HOURLY_METRICS[9]);
   const [chartMode, setChartMode] = useState('combined'); // 'combined', 'arrivals', 'wait'
   const [docSort, setDocSort] = useState('cases'); // 'cases', 'speed', 'satisfaction'
+  const [staffingMode, setStaffingMode] = useState('current'); // 'current', 'optimized'
 
   const maxCases = Math.max(...DOCTORS_DATA.map(d => d.casesHandled));
 
@@ -16,213 +63,183 @@ export default function BottleneckAnalytics() {
     return 0;
   });
 
+  // Recharts data for hourly metrics with optional staffing simulation
+  const hourlyData = HOURLY_METRICS.map(h => {
+    const isMorning = parseInt(h.hour.split(':')[0]) >= 8 && parseInt(h.hour.split(':')[0]) <= 11;
+    return {
+      ...h,
+      // If optimized staffing is toggled, reduce wait from 54-65m down to 21-26m
+      displayWait: staffingMode === 'optimized' && isMorning ? Math.round(h.xrayWait * 0.42) : h.xrayWait,
+      slaThreshold: 30
+    };
+  });
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.5rem', marginBottom: '1.75rem' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: '1.5rem', marginBottom: '1.75rem' }}>
       
-      {/* Chart 1: Hourly Arrival vs Radiology Wait Spike */}
+      {/* Chart 1: Hourly Arrival vs Radiology Wait Spike (Recharts Engine) */}
       <div className="glass-panel fade-slide-up" style={{ padding: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.15rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#fff' }}>
-                Hourly Rush & Radiology Wait Spike
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff' }}>
+                Hourly Surge & Radiology Congestion Curve
               </h3>
-              <span className="badge badge-rose">Peak 8 - 11 AM</span>
+              <span className="badge badge-rose">Peak 08:00 - 11:00 AM</span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Arrival volume vs X-Ray wait time. Note the critical morning queue accumulation.
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Dual-axis Recharts telemetry comparing arrival volume vs X-Ray diagnostic queue delay.
             </p>
           </div>
 
-          {/* Chart mode toggle */}
-          <div style={{ display: 'flex', gap: '4px', background: 'rgba(10, 16, 30, 0.6)', padding: '3px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          {/* Controls: Shift Simulation & View */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setChartMode('combined')}
+              onClick={() => setStaffingMode(staffingMode === 'current' ? 'optimized' : 'current')}
               style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
-                background: chartMode === 'combined' ? 'rgba(6, 182, 212, 0.25)' : 'transparent',
-                color: chartMode === 'combined' ? '#22d3ee' : 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                border: staffingMode === 'optimized' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                background: staffingMode === 'optimized' ? 'rgba(16,185,129,0.2)' : 'rgba(10,16,30,0.6)',
+                color: staffingMode === 'optimized' ? '#34d399' : 'var(--text-secondary)',
                 fontSize: '0.72rem',
-                fontWeight: 600,
+                fontWeight: 700,
                 cursor: 'pointer'
               }}
             >
-              Dual View
+              <Sparkles size={12} />
+              {staffingMode === 'optimized' ? 'Simulated Staggered Shift (Active)' : 'Simulate Shift Rebalance'}
             </button>
-            <button
-              onClick={() => setChartMode('arrivals')}
-              style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
-                background: chartMode === 'arrivals' ? 'rgba(56, 189, 248, 0.25)' : 'transparent',
-                color: chartMode === 'arrivals' ? '#38bdf8' : 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              Arrivals
-            </button>
-            <button
-              onClick={() => setChartMode('wait')}
-              style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
-                background: chartMode === 'wait' ? 'rgba(244, 63, 94, 0.25)' : 'transparent',
-                color: chartMode === 'wait' ? '#fb7185' : 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              Wait Times
-            </button>
-          </div>
-        </div>
 
-        {/* Visual Bar Chart */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          gap: '5px',
-          height: '190px',
-          padding: '10px 0 25px 0',
-          position: 'relative',
-          borderBottom: '1px solid var(--border-color)'
-        }}>
-          {HOURLY_METRICS.map((item) => {
-            const isRush = item.rush;
-            const isSelected = selectedHour?.hour === item.hour;
-            const arrivalsHeight = (item.arrivals / 102) * 100;
-            const waitHeight = (item.xrayWait / 65) * 100;
-
-            const primaryHeight = chartMode === 'wait' ? waitHeight : arrivalsHeight;
-
-            return (
-              <div
-                key={item.hour}
-                onClick={() => setSelectedHour(item)}
+            <div style={{ display: 'flex', gap: '2px', background: 'rgba(10, 16, 30, 0.6)', padding: '2px', borderRadius: '7px', border: '1px solid var(--border-color)' }}>
+              <button
+                onClick={() => setChartMode('combined')}
                 style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  height: '100%',
-                  justifyContent: 'flex-end',
-                  cursor: 'pointer',
-                  position: 'relative'
+                  padding: '3px 8px', borderRadius: '5px', border: 'none',
+                  background: chartMode === 'combined' ? 'rgba(6, 182, 212, 0.25)' : 'transparent',
+                  color: chartMode === 'combined' ? '#22d3ee' : 'var(--text-secondary)',
+                  fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
                 }}
-                title={`${item.hour}: ${item.arrivals} arrivals, ${item.xrayWait}m X-ray wait`}
               >
-                {/* Secondary wait indicator marker in combined mode */}
-                {chartMode === 'combined' && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: `${Math.min(waitHeight, 95)}%`,
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: isRush ? '#f43f5e' : '#f59e0b',
-                    boxShadow: isRush ? '0 0 6px #f43f5e' : 'none',
-                    zIndex: 2,
-                    transition: 'bottom 0.4s ease'
-                  }} />
-                )}
-
-                {/* Primary volume bar */}
-                <div style={{
-                  width: '100%',
-                  height: `${primaryHeight}%`,
-                  borderRadius: '4px 4px 1px 1px',
-                  background: isRush 
-                    ? 'linear-gradient(180deg, #f43f5e 0%, rgba(244, 63, 94, 0.4) 100%)' 
-                    : isSelected 
-                      ? '#38bdf8' 
-                      : chartMode === 'wait'
-                        ? 'linear-gradient(180deg, #f59e0b 0%, rgba(245, 158, 11, 0.25) 100%)'
-                        : 'linear-gradient(180deg, #0ea5e9 0%, rgba(14, 165, 233, 0.25) 100%)',
-                  transition: 'height 0.3s ease, background 0.2s ease',
-                  border: isSelected ? '1px solid #fff' : 'none',
-                  animation: `barGrow 0.6s ${item.hour.split(':')[0] * 0.025}s cubic-bezier(0.4,0,0.2,1) both`
-                }} />
-
-                {/* Hour label for selected key hours */}
-                {['00:00', '06:00', '09:00', '12:00', '18:00', '22:00'].includes(item.hour) && (
-                  <span style={{
-                    position: 'absolute',
-                    bottom: '-20px',
-                    fontSize: '0.65rem',
-                    color: isRush ? '#fb7185' : 'var(--text-muted)',
-                    fontWeight: isRush ? 700 : 400
-                  }}>
-                    {item.hour.split(':')[0]}h
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Selected Hour Details */}
-        {selectedHour && (
-          <div style={{
-            marginTop: '1rem',
-            padding: '0.75rem 1rem',
-            borderRadius: '10px',
-            background: 'rgba(10, 16, 30, 0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            fontSize: '0.8rem',
-            flexWrap: 'wrap',
-            gap: '0.5rem'
-          }}>
-            <div>
-              <span style={{ color: 'var(--text-secondary)' }}>Selected Slot: </span>
-              <strong style={{ color: '#fff' }}>{selectedHour.hour}</strong>
-              {selectedHour.rush && <span className="badge badge-rose" style={{ marginLeft: '6px', fontSize: '0.65rem' }}>Morning Rush Surge</span>}
-            </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <span>Arrivals: <strong style={{ color: '#38bdf8' }}>{selectedHour.arrivals} pts</strong></span>
-              <span>X-Ray Wait: <strong style={{ color: selectedHour.rush ? '#f43f5e' : '#fbbf24' }}>{selectedHour.xrayWait} min</strong></span>
-              <span>Triage Wait: <strong style={{ color: '#34d399' }}>{selectedHour.triageWait} min</strong></span>
+                Dual
+              </button>
+              <button
+                onClick={() => setChartMode('arrivals')}
+                style={{
+                  padding: '3px 8px', borderRadius: '5px', border: 'none',
+                  background: chartMode === 'arrivals' ? 'rgba(56, 189, 248, 0.25)' : 'transparent',
+                  color: chartMode === 'arrivals' ? '#38bdf8' : 'var(--text-secondary)',
+                  fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
+                }}
+              >
+                Arrivals
+              </button>
+              <button
+                onClick={() => setChartMode('wait')}
+                style={{
+                  padding: '3px 8px', borderRadius: '5px', border: 'none',
+                  background: chartMode === 'wait' ? 'rgba(244, 63, 94, 0.25)' : 'transparent',
+                  color: chartMode === 'wait' ? '#fb7185' : 'var(--text-secondary)',
+                  fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
+                }}
+              >
+                Wait
+              </button>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Recharts ComposedChart */}
+        <div style={{ width: '100%', height: '260px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={hourlyData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.1)" vertical={false} />
+              <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
+              
+              <YAxis yAxisId="left" stroke="#38bdf8" fontSize={10} tickLine={false} axisLine={false} domain={[0, 120]} />
+              <YAxis yAxisId="right" orientation="right" stroke="#fb7185" fontSize={10} tickLine={false} axisLine={false} unit="m" domain={[0, 80]} />
+              
+              <Tooltip content={<CustomHourlyTooltip />} />
+              <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '6px' }} />
+              
+              <ReferenceLine yAxisId="right" y={30} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '30m SLA', fill: '#f59e0b', fontSize: 10 }} />
+
+              {(chartMode === 'combined' || chartMode === 'arrivals') && (
+                <Bar yAxisId="left" dataKey="arrivals" name="Patient Arrivals/Hr" fill="#0284c7" radius={[3, 3, 0, 0]} opacity={0.85} />
+              )}
+
+              {(chartMode === 'combined' || chartMode === 'wait') && (
+                <Line 
+                  yAxisId="right" 
+                  type="monotone" 
+                  dataKey="displayWait" 
+                  name={staffingMode === 'optimized' ? 'Optimized X-Ray Wait (min)' : 'Actual X-Ray Queue Wait (min)'} 
+                  stroke={staffingMode === 'optimized' ? '#10b981' : '#f43f5e'} 
+                  strokeWidth={3} 
+                  dot={{ r: 3, fill: staffingMode === 'optimized' ? '#10b981' : '#f43f5e' }}
+                  activeDot={{ r: 6 }} 
+                />
+              )}
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Context Strip */}
+        <div style={{
+          marginTop: '1rem',
+          padding: '0.75rem 1rem',
+          borderRadius: '10px',
+          background: staffingMode === 'optimized' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(10, 16, 30, 0.6)',
+          border: `1px solid ${staffingMode === 'optimized' ? 'rgba(16, 185, 129, 0.25)' : 'var(--border-color)'}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '0.78rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem'
+        }}>
+          <div>
+            <span style={{ color: 'var(--text-secondary)' }}>Status: </span>
+            {staffingMode === 'optimized' ? (
+              <strong style={{ color: '#34d399' }}>Shift Staggered: 2 Technicians on duty 08-11 AM (Queue dropped by 58%)</strong>
+            ) : (
+              <strong style={{ color: '#fb7185' }}>Single-Technician Bottleneck: 54m peak wait (+237% delay)</strong>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <span>Peak Hour: <strong style={{ color: '#38bdf8' }}>09:00 AM (102 arrivals)</strong></span>
+            <span>Excess Waiting: <strong style={{ color: '#f59e0b' }}>+48 min</strong></span>
+          </div>
+        </div>
       </div>
 
-      {/* Resource & Clinician Performance */}
+      {/* Chart 2: Resource & Clinician Performance */}
       <div className="glass-panel fade-slide-up" style={{ padding: '1.5rem', animationDelay: '0.1s' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.15rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#fff' }}>
-                Attending Physicians Distribution
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff' }}>
+                Attending Physicians Distribution & Speed
               </h3>
               <span className="badge badge-cyan">5 ER Clinicians</span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Workload balance and consult durations across ER doctor shifts.
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Caseload balance, consult duration, and admission parity across physician shifts.
             </p>
           </div>
 
           {/* Doctor sort toggle */}
-          <div style={{ display: 'flex', gap: '4px', background: 'rgba(10, 16, 30, 0.6)', padding: '3px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', gap: '3px', background: 'rgba(10, 16, 30, 0.6)', padding: '2px', borderRadius: '7px', border: '1px solid var(--border-color)' }}>
             <button
               onClick={() => setDocSort('cases')}
               style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
+                padding: '4px 8px', borderRadius: '5px', border: 'none',
                 background: docSort === 'cases' ? 'rgba(6, 182, 212, 0.25)' : 'transparent',
                 color: docSort === 'cases' ? '#22d3ee' : 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                cursor: 'pointer'
+                fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
               }}
             >
               Cases
@@ -230,14 +247,10 @@ export default function BottleneckAnalytics() {
             <button
               onClick={() => setDocSort('speed')}
               style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
+                padding: '4px 8px', borderRadius: '5px', border: 'none',
                 background: docSort === 'speed' ? 'rgba(129, 140, 248, 0.25)' : 'transparent',
                 color: docSort === 'speed' ? '#a5b4fc' : 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                cursor: 'pointer'
+                fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
               }}
             >
               Speed
@@ -245,17 +258,13 @@ export default function BottleneckAnalytics() {
             <button
               onClick={() => setDocSort('satisfaction')}
               style={{
-                padding: '4px 8px',
-                borderRadius: '5px',
-                border: 'none',
+                padding: '4px 8px', borderRadius: '5px', border: 'none',
                 background: docSort === 'satisfaction' ? 'rgba(52, 211, 153, 0.25)' : 'transparent',
                 color: docSort === 'satisfaction' ? '#34d399' : 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                cursor: 'pointer'
+                fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer'
               }}
             >
-              Rating
+              CSAT Rating
             </button>
           </div>
         </div>
@@ -286,14 +295,12 @@ export default function BottleneckAnalytics() {
                   {doc.name.split(' ')[1][0]}
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <h5 style={{ fontWeight: 600, color: '#fff', margin: 0 }}>{doc.name}</h5>
+                  <h5 style={{ fontWeight: 700, color: '#fff', margin: 0 }}>{doc.name}</h5>
                   <div style={{ marginTop: '4px' }}>
                     <div className="progress-track" style={{ width: '100%', maxWidth: '120px' }}>
                       <div className="progress-fill" style={{
                         width: `${(doc.casesHandled / maxCases) * 100}%`,
-                        background: doc.casesHandled === maxCases
-                          ? 'linear-gradient(90deg, #f43f5e, #f59e0b)'
-                          : 'linear-gradient(90deg, #3b82f6, #06b6d4)'
+                        background: 'linear-gradient(90deg, #3b82f6, #06b6d4)'
                       }} />
                     </div>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
@@ -306,15 +313,15 @@ export default function BottleneckAnalytics() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', textAlign: 'right', flexShrink: 0 }}>
                 <div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Avg Consult</div>
-                  <div style={{ fontWeight: 600, color: '#38bdf8' }}>{doc.avgConsultTime}</div>
+                  <div className="font-mono" style={{ fontWeight: 700, color: '#38bdf8' }}>{doc.avgConsultTime}</div>
                 </div>
                 <div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Admit Rate</div>
-                  <div style={{ fontWeight: 600, color: '#fbbf24' }}>{doc.admitRate}</div>
+                  <div className="font-mono" style={{ fontWeight: 700, color: '#fbbf24' }}>{doc.admitRate}</div>
                 </div>
                 <div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Satisfaction</div>
-                  <div style={{ fontWeight: 600, color: '#34d399' }}>{doc.satisfaction}</div>
+                  <div className="font-mono" style={{ fontWeight: 700, color: '#34d399' }}>{doc.satisfaction}</div>
                 </div>
               </div>
             </div>
