@@ -1,27 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Scan, ClipboardList, Activity, Stethoscope, HeartPulse, 
   FlaskConical, CheckCircle, Building2, UserPlus, Info, 
-  AlertTriangle, Clock, ArrowRight, Eye, RefreshCcw 
+  AlertTriangle, Clock, ArrowRight, Eye, RefreshCcw, Play, Pause, RotateCcw, FastForward 
 } from 'lucide-react';
 import { PROCESS_NODES, PROCESS_EDGES } from '../data/processData';
-
-const ICON_MAP = {
-  UserPlus: UserPlus,
-  ClipboardList: ClipboardList,
-  Activity: Activity,
-  Scan: Scan,
-  FlaskConical: FlaskConical,
-  Stethoscope: Stethoscope,
-  HeartPulse: HeartPulse,
-  CheckCircle: CheckCircle,
-  Building2: Building2,
-};
 
 export default function ProcessMap() {
   const [selectedNode, setSelectedNode] = useState(PROCESS_NODES.find(n => n.id === 'xray'));
   const [metricMode, setMetricMode] = useState('frequency'); // 'frequency' or 'time'
   const [showLoopbackOnly, setShowLoopbackOnly] = useState(false);
+
+  // Live Token Simulation State
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simSpeed, setSimSpeed] = useState(1);
+  const [simTick, setSimTick] = useState(0);
+
+  useEffect(() => {
+    let animId;
+    if (isSimulating) {
+      const interval = setInterval(() => {
+        setSimTick((prev) => (prev + 1) % 100);
+      }, 50 / simSpeed);
+      return () => clearInterval(interval);
+    }
+  }, [isSimulating, simSpeed]);
+
+  // Interpolated Token Coordinates
+  const getSimTokenPos = (t, startX, startY, endX, endY) => {
+    const frac = ((t) % 100) / 100;
+    return {
+      x: startX + (endX - startX) * frac,
+      y: startY + (endY - startY) * frac
+    };
+  };
+
+  // Loopback Arc Token Position (parametric curve)
+  const getLoopbackTokenPos = (t) => {
+    const frac = ((t) % 100) / 100;
+    // Curve between (575, 80) up to control point (485, 10) down to (395, 145)
+    const p0 = { x: 575, y: 80 };
+    const p1 = { x: 485, y: -5 };
+    const p2 = { x: 395, y: 145 };
+    const x = Math.pow(1 - frac, 2) * p0.x + 2 * (1 - frac) * frac * p1.x + Math.pow(frac, 2) * p2.x;
+    const y = Math.pow(1 - frac, 2) * p0.y + 2 * (1 - frac) * frac * p1.y + Math.pow(frac, 2) * p2.y;
+    return { x, y };
+  };
+
+  const tok1 = getSimTokenPos(simTick, 60, 180, 190, 180);
+  const tok2 = getSimTokenPos((simTick + 25) % 100, 190, 180, 350, 180);
+  const tok3 = getSimTokenPos((simTick + 50) % 100, 350, 180, 530, 100);
+  const tokLoop = getLoopbackTokenPos((simTick + 60) % 100);
+  const tok4 = getSimTokenPos((simTick + 30) % 100, 530, 100, 710, 180);
+  const tok5 = getSimTokenPos((simTick + 70) % 100, 710, 180, 880, 180);
+  const tok6 = getSimTokenPos((simTick + 85) % 100, 880, 180, 1050, 120);
 
   return (
     <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.75rem' }}>
@@ -37,7 +69,7 @@ export default function ProcessMap() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>
-              Directly-Follows Graph (DFG) Process Map
+              Directly-Follows Graph (DFG) Process Map & Token Simulator
             </h3>
             <span className="badge badge-cyan">Interactive Discovery</span>
           </div>
@@ -46,8 +78,63 @@ export default function ProcessMap() {
           </p>
         </div>
 
-        {/* View mode toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* View Mode & Simulation Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          {/* Simulation Toggle */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            background: 'rgba(10, 16, 30, 0.85)',
+            border: isSimulating ? '1px solid #10b981' : '1px solid var(--border-color)',
+            borderRadius: '10px',
+            padding: '4px 8px'
+          }}>
+            <button
+              onClick={() => setIsSimulating(!isSimulating)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '5px 10px',
+                borderRadius: '6px',
+                border: 'none',
+                background: isSimulating ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+                color: isSimulating ? '#f87171' : '#34d399',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              {isSimulating ? <Pause size={13} /> : <Play size={13} />}
+              <span>{isSimulating ? 'Pause Replay' : 'Play Simulation'}</span>
+            </button>
+
+            {isSimulating && (
+              <div style={{ display: 'flex', gap: '3px' }}>
+                {[1, 2, 4].map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSimSpeed(s)}
+                    style={{
+                      padding: '3px 6px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      background: simSpeed === s ? '#06b6d4' : 'transparent',
+                      color: simSpeed === s ? '#fff' : 'var(--text-muted)',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {s}x
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Metric Toggle */}
           <div style={{
             display: 'flex',
             background: 'rgba(10, 16, 30, 0.7)',
@@ -83,7 +170,7 @@ export default function ProcessMap() {
                 cursor: 'pointer'
               }}
             >
-              Transition Duration
+              Duration
             </button>
           </div>
 
@@ -104,12 +191,12 @@ export default function ProcessMap() {
             }}
           >
             <AlertTriangle size={14} color={showLoopbackOnly ? '#fbbf24' : '#f59e0b'} />
-            <span>Highlight Bottleneck Loop</span>
+            <span>Bottleneck Loop</span>
           </button>
         </div>
       </div>
 
-      {/* SVG Canvas */}
+      {/* SVG Canvas with Token Replay */}
       <div style={{
         position: 'relative',
         background: 'radial-gradient(ellipse at center, rgba(17, 26, 48, 0.5) 0%, rgba(7, 11, 20, 0.95) 100%)',
@@ -146,6 +233,10 @@ export default function ProcessMap() {
             {/* Glowing filter */}
             <filter id="glow-amber" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
@@ -188,7 +279,7 @@ export default function ProcessMap() {
           <path d="M 970 195 C 1000 210, 1015 225, 1050 235" fill="none" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow-amber)" />
 
           {/* ============================================================== */}
-          {/* THE BIG HIGHLIGHTED BOTTLENECK LOOP: X-RAY BACK TO TRIAGE       */}
+          {/* THE HIGHLIGHTED BOTTLENECK LOOP: X-RAY BACK TO TRIAGE           */}
           {/* ============================================================== */}
           <path 
             d="M 575 80 C 575 15, 395 15, 395 145" 
@@ -200,7 +291,7 @@ export default function ProcessMap() {
             className="warning-flow-line" 
           />
           
-          {/* Animated Warning Badge on Loopback */}
+          {/* Warning Badge on Loopback */}
           <g transform="translate(485, 20)">
             <rect x="-85" y="-12" width="170" height="24" rx="12" fill="#1e1808" stroke="#f59e0b" strokeWidth="1.5" />
             <circle cx="-68" cy="0" r="4" fill="#f59e0b" />
@@ -225,6 +316,30 @@ export default function ProcessMap() {
               <text x="490" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">Wait: 18m</text>
               <text x="840" y="172" fill="#94a3b8" fontSize="10" textAnchor="middle">Wait: 8m</text>
             </>
+          )}
+
+          {/* ============================================================== */}
+          {/* SIMULATED IN-FLIGHT PATIENT TOKENS (WHEN ACTIVE)                */}
+          {/* ============================================================== */}
+          {isSimulating && (
+            <g>
+              {/* Token 1: Arrival to Reg */}
+              <circle cx={tok1.x} cy={tok1.y} r="6" fill="#38bdf8" filter="url(#glow-cyan)" />
+              {/* Token 2: Reg to Triage */}
+              <circle cx={tok2.x} cy={tok2.y} r="6" fill="#38bdf8" filter="url(#glow-cyan)" />
+              {/* Token 3: Triage to X-Ray */}
+              <circle cx={tok3.x} cy={tok3.y} r="6" fill="#38bdf8" filter="url(#glow-cyan)" />
+              {/* Token Loop: X-Ray back to Triage (Loopback) */}
+              <circle cx={tokLoop.x} cy={tokLoop.y} r="7" fill="#f59e0b" filter="url(#glow-amber)">
+                <animate attributeName="r" values="6;9;6" dur="0.8s" repeatCount="indefinite" />
+              </circle>
+              {/* Token 4: X-Ray to Consult */}
+              <circle cx={tok4.x} cy={tok4.y} r="6" fill="#38bdf8" filter="url(#glow-cyan)" />
+              {/* Token 5: Consult to Treatment */}
+              <circle cx={tok5.x} cy={tok5.y} r="6" fill="#38bdf8" filter="url(#glow-cyan)" />
+              {/* Token 6: Treatment to Discharge */}
+              <circle cx={tok6.x} cy={tok6.y} r="6" fill="#10b981" filter="url(#glow-cyan)" />
+            </g>
           )}
 
           {/* ============================================================== */}

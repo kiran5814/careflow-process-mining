@@ -388,3 +388,122 @@ export const SAMPLE_CASES = [
     ]
   }
 ];
+
+export const ACUITY_DISTRIBUTION = [
+  { label: "Critical (ESI-1)", count: 142, percentage: 14.2, avgStay: "4h 40m", admitRate: "89.4%", color: "#f43f5e", secondaryColor: "rgba(244,63,94,0.2)", costIndex: "$1,450" },
+  { label: "High Acuity (ESI-2)", count: 241, percentage: 24.1, avgStay: "3h 50m", admitRate: "28.6%", color: "#f59e0b", secondaryColor: "rgba(245,158,11,0.2)", costIndex: "$890" },
+  { label: "Moderate (ESI-3)", count: 338, percentage: 33.8, avgStay: "2h 45m", admitRate: "6.2%", color: "#06b6d4", secondaryColor: "rgba(6,182,212,0.2)", costIndex: "$420" },
+  { label: "Low / Fast-Track (ESI-4/5)", count: 279, percentage: 27.9, avgStay: "1h 55m", admitRate: "1.4%", color: "#10b981", secondaryColor: "rgba(16,185,129,0.2)", costIndex: "$280" }
+];
+
+export const DISPOSITION_DISTRIBUTION = [
+  { label: "Discharged Home", count: 728, percentage: 72.8, color: "#10b981", benchmark: "70-75%", note: "Standard ER discharge" },
+  { label: "Inpatient Admission", count: 146, percentage: 14.6, color: "#6366f1", benchmark: "12-16%", note: "Admitted to ICU/Med-Surg" },
+  { label: "Clinical Observation", count: 75, percentage: 7.5, color: "#06b6d4", benchmark: "5-8%", note: "Observed for 6-12h" },
+  { label: "Transferred / AMA", count: 51, percentage: 5.1, color: "#f59e0b", benchmark: "< 6%", note: "Specialty tertiary center" }
+];
+
+export const DELAY_ATTRIBUTION = [
+  { label: "Radiology (X-Ray) Queue", percentage: 42.4, avgWaitMin: 42, color: "#f43f5e", reason: "Peak rush congestion & form loop" },
+  { label: "Doctor Consult Queue", percentage: 24.2, avgWaitMin: 24, color: "#38bdf8", reason: "Bed assignment & clinical handover" },
+  { label: "Lab Diagnostic Turnaround", percentage: 16.2, avgWaitMin: 16, color: "#a855f7", reason: "Centrifuge & blood assay" },
+  { label: "Triage Assessment Wait", percentage: 9.1, avgWaitMin: 9, color: "#fbbf24", reason: "Ambulance bay surges" },
+  { label: "Registration & Ingestion", percentage: 8.1, avgWaitMin: 8, color: "#64748b", reason: "Insurance & ID verification" }
+];
+
+export const REWORK_REASONS = [
+  { label: "Missing Requisition Signature/Form", percentage: 62.3, count: 248, color: "#f43f5e" },
+  { label: "Contrast Clearance & Allergy Check", percentage: 21.1, count: 84, color: "#f59e0b" },
+  { label: "Order Ambiguity / Physician Re-check", percentage: 16.6, count: 66, color: "#06b6d4" }
+];
+
+export const WEEKLY_HEATMAP = [
+  { day: "Mon", shifts: [{ time: "Night (00-06)", score: 28, wait: "14m" }, { time: "Morning (06-12)", score: 98, wait: "62m", rush: true }, { time: "Afternoon (12-18)", score: 64, wait: "24m" }, { time: "Evening (18-24)", score: 72, wait: "31m" }] },
+  { day: "Tue", shifts: [{ time: "Night (00-06)", score: 22, wait: "12m" }, { time: "Morning (06-12)", score: 92, wait: "58m", rush: true }, { time: "Afternoon (12-18)", score: 58, wait: "22m" }, { time: "Evening (18-24)", score: 68, wait: "28m" }] },
+  { day: "Wed", shifts: [{ time: "Night (00-06)", score: 25, wait: "13m" }, { time: "Morning (06-12)", score: 86, wait: "52m", rush: true }, { time: "Afternoon (12-18)", score: 55, wait: "21m" }, { time: "Evening (18-24)", score: 65, wait: "26m" }] },
+  { day: "Thu", shifts: [{ time: "Night (00-06)", score: 20, wait: "11m" }, { time: "Morning (06-12)", score: 89, wait: "54m", rush: true }, { time: "Afternoon (12-18)", score: 60, wait: "23m" }, { time: "Evening (18-24)", score: 70, wait: "29m" }] },
+  { day: "Fri", shifts: [{ time: "Night (00-06)", score: 32, wait: "16m" }, { time: "Morning (06-12)", score: 95, wait: "60m", rush: true }, { time: "Afternoon (12-18)", score: 75, wait: "28m" }, { time: "Evening (18-24)", score: 88, wait: "38m", rush: true }] },
+  { day: "Sat", shifts: [{ time: "Night (00-06)", score: 45, wait: "20m" }, { time: "Morning (06-12)", score: 78, wait: "44m" }, { time: "Afternoon (12-18)", score: 70, wait: "26m" }, { time: "Evening (18-24)", score: 85, wait: "36m", rush: true }] },
+  { day: "Sun", shifts: [{ time: "Night (00-06)", score: 38, wait: "18m" }, { time: "Morning (06-12)", score: 72, wait: "39m" }, { time: "Afternoon (12-18)", score: 68, wait: "25m" }, { time: "Evening (18-24)", score: 79, wait: "33m" }] }
+];
+
+export const ADVANCED_KPIS = [
+  {
+    id: "door_to_doc",
+    category: "flow",
+    title: "Door-to-Doctor (D2D)",
+    value: "41 min",
+    subtext: "Target: < 30 min",
+    status: "warning",
+    badge: "28.4% SLA Breaches",
+    trend: "+8m vs baseline",
+    trendPositive: false,
+    detail: "Median duration from ED arrival registration to first licensed provider examination.",
+    sparkline: [32, 36, 48, 56, 52, 44, 41, 38, 43, 41]
+  },
+  {
+    id: "bed_utilization",
+    category: "flow",
+    title: "ED Bed Occupancy Index",
+    value: "84.6%",
+    subtext: "Capacity: 38 Acute Beds",
+    status: "warning",
+    badge: "Peak 97% at 10 AM",
+    trend: "High Congestion",
+    trendPositive: false,
+    detail: "Active acute bed occupancy proportion, signaling emergency department boarding pressure.",
+    sparkline: [62, 68, 85, 96, 97, 88, 82, 80, 84, 85]
+  },
+  {
+    id: "economic_waste",
+    category: "financial",
+    title: "Annual Rework Waste",
+    value: "$142,400",
+    subtext: "$358 per loopback patient",
+    status: "danger",
+    badge: "398 Reworked Cases",
+    trend: "Eliminable via CPOE",
+    trendPositive: false,
+    detail: "Excess direct operational costs from repetitive nursing triage and delayed discharge bed time.",
+    sparkline: [120, 125, 134, 138, 142, 140, 142, 141, 143, 142]
+  },
+  {
+    id: "avg_cost_case",
+    category: "financial",
+    title: "Avg Cost per Patient Case",
+    value: "$612",
+    subtext: "Compliant: $480 | Rework: $890",
+    status: "info",
+    badge: "+85% Cost Spike",
+    trend: "High Variance",
+    trendPositive: false,
+    detail: "Mean total operational encounter cost across diagnostic testing, physician hours, and facility overhead.",
+    sparkline: [580, 595, 620, 640, 615, 608, 610, 615, 614, 612]
+  },
+  {
+    id: "sepsis_conformance",
+    category: "quality",
+    title: "Clinical Bundle Adherence",
+    value: "98.2%",
+    subtext: "National benchmark: 95.0%",
+    status: "success",
+    badge: "Top Decile Safety",
+    trend: "+3.2% vs benchmark",
+    trendPositive: true,
+    detail: "Compliance with mandated acute care resuscitation protocols within initial 60 minutes.",
+    sparkline: [95, 96, 97, 98, 97, 98, 99, 98, 98, 98]
+  },
+  {
+    id: "staffing_efficiency",
+    category: "quality",
+    title: "Physician Consult Parity",
+    value: "95.2%",
+    subtext: "24–29m range across 5 MDs",
+    status: "success",
+    badge: "Equitable Load",
+    trend: "Balanced Caseloads",
+    trendPositive: true,
+    detail: "Distribution coefficient across 5 emergency department attending physicians.",
+    sparkline: [92, 93, 94, 95, 95, 96, 95, 94, 95, 95]
+  }
+];

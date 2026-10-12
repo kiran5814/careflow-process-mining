@@ -1,23 +1,27 @@
 import React from 'react';
 import { 
   Activity, GitBranch, Database, Sparkles, RefreshCw, 
-  Layers, ShieldCheck, Flame, Users, Sliders, FileText, CheckCircle 
+  Layers, ShieldCheck, Flame, Users, Sliders, FileText, 
+  CheckCircle, Brain, Presentation, PieChart 
 } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, onRefresh }) {
   const tabs = [
     { id: 'map', label: 'Process Map (DFG)', icon: Layers },
+    { id: 'analytics', label: 'Charts & Visual Analytics', icon: PieChart },
     { id: 'bottlenecks', label: 'Bottleneck Radar', icon: Flame },
     { id: 'variants', label: 'Clinical Variants', icon: Activity },
     { id: 'cases', label: 'Case Explorer', icon: Users },
     { id: 'simulation', label: 'What-If Optimizer', icon: Sliders },
+    { id: 'rca', label: 'Root Cause (ML)', icon: Brain },
     { id: 'data', label: 'Data Cleaning & Quality', icon: Database },
     { id: 'report', label: 'Executive Report & Docs', icon: FileText },
+    { id: 'deck', label: 'Presentation Deck (PPT)', icon: Presentation },
   ];
 
   return (
     <header style={{
-      background: 'rgba(10, 16, 30, 0.88)',
+      background: 'rgba(10, 16, 30, 0.90)',
       backdropFilter: 'blur(16px)',
       borderBottom: '1px solid var(--border-color)',
       position: 'sticky',
@@ -37,7 +41,7 @@ export default function Navbar({ activeTab, setActiveTab, onRefresh }) {
         {/* Brand & System Status */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{
+            <div className="glow-pulse" style={{
               width: '40px',
               height: '40px',
               borderRadius: '12px',
@@ -54,7 +58,7 @@ export default function Navbar({ activeTab, setActiveTab, onRefresh }) {
                 <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff' }}>
                   CareFlow
                 </h1>
-                <span className="badge badge-cyan" style={{ fontSize: '0.65rem', padding: '1px 6px' }}>v1.0-alpha</span>
+                <span className="badge badge-cyan" style={{ fontSize: '0.65rem', padding: '1px 6px' }}>v1.2-enterprise</span>
               </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 EHR Process Mining & Operational Intelligence
@@ -109,7 +113,7 @@ export default function Navbar({ activeTab, setActiveTab, onRefresh }) {
         <nav style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.3rem',
+          gap: '0.25rem',
           background: 'rgba(17, 26, 48, 0.85)',
           padding: '4px',
           borderRadius: '12px',
@@ -124,14 +128,16 @@ export default function Navbar({ activeTab, setActiveTab, onRefresh }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
+                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.transform = 'scale(1.04)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '7px 12px',
+                  padding: '7px 11px',
                   borderRadius: '8px',
                   border: 'none',
-                  fontSize: '0.8rem',
+                  fontSize: '0.78rem',
                   fontWeight: isActive ? 600 : 500,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',

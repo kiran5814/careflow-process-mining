@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: careflow_raw
+    description: "Raw hospital electronic health records (EHR) event streams"
+    tables:
+      - name: raw_ehr_events
+        description: "Raw events containing Case_ID, Activity_Name, Timestamp, Resource, and patient demographics."
+        columns:
+          - name: Case_ID
+            description: "Primary key for patient hospital visit encounter"
+            tests:
+              - not_null
+          - name: Activity_Name
+            description: "Clinical process event step"
+            tests:
+              - not_null
+          - name: Timestamp
+            description: "Event start timestamp"
+            tests:
+              - not_null
+
+models:
+  - name: stg_ehr_events
+    description: "Standardized staging event view with lag window calculations for process mining"
+    columns:
+      - name: case_id
+        tests:
+          - not_null
+      - name: event_timestamp
+        tests:
+          - not_null
+
+  - name: fct_patient_journeys
+    description: "Patient journey dimensional mart containing LOS duration and clinical anomaly flags"
+    columns:
+      - name: case_id
+        tests:
+          - unique
+          - not_null
+      - name: has_radiology_loopback_rework
+        description: "Boolean indicating patient was redirected back to triage after radiology"
+      - name: is_triage_bypassed_anomaly
+        description: "Boolean indicating patient did not receive clinical triage assessment"
+
+  - name: mart_bottlenecks
+    description: "Aggregated transition bottlenecks segmented by peak morning rush hours"

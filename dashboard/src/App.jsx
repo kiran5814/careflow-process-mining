@@ -9,7 +9,10 @@ import CaseExplorer from './components/CaseExplorer';
 import WhatIfSimulation from './components/WhatIfSimulation';
 import DataPipelineQuality from './components/DataPipelineQuality';
 import ExecutiveReport from './components/ExecutiveReport';
+import RootCauseAnalysis from './components/RootCauseAnalysis';
+import PresentationDeck from './components/PresentationDeck';
 import CaseDetailModal from './components/CaseDetailModal';
+import VisualAnalytics from './components/VisualAnalytics';
 import { Sparkles, Database, CheckCircle, Info, Award, FileText } from 'lucide-react';
 import { SUMMARY_STATS, SAMPLE_CASES } from './data/processData';
 
@@ -57,7 +60,7 @@ export default function App() {
       {/* Main Container */}
       <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.75rem', width: '100%', flex: 1 }}>
         {/* Banner with internship & branch metadata */}
-        <div style={{
+        <div className="fade-slide-up" style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -65,17 +68,20 @@ export default function App() {
           gap: '1rem',
           marginBottom: '1.25rem',
           padding: '0.85rem 1.25rem',
-          background: 'rgba(17, 26, 48, 0.4)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '12px'
+          background: 'linear-gradient(135deg, rgba(6,182,212,0.06) 0%, rgba(17, 26, 48, 0.45) 60%, rgba(99,102,241,0.06) 100%)',
+          border: '1px solid rgba(6,182,212,0.18)',
+          borderRadius: '12px',
+          boxShadow: '0 0 20px rgba(6,182,212,0.06)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{
               display: 'inline-flex',
-              padding: '6px',
-              borderRadius: '8px',
+              padding: '8px',
+              borderRadius: '10px',
               background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.25))',
-              color: '#06b6d4'
+              color: '#06b6d4',
+              boxShadow: '0 0 14px rgba(6,182,212,0.25)',
+              animation: 'floatUp 3s ease-in-out infinite'
             }}>
               <Award size={18} />
             </span>
@@ -114,6 +120,10 @@ export default function App() {
           </>
         )}
 
+        {activeTab === 'analytics' && (
+          <VisualAnalytics />
+        )}
+
         {activeTab === 'bottlenecks' && (
           <>
             <BottleneckAnalytics />
@@ -136,6 +146,10 @@ export default function App() {
           <WhatIfSimulation />
         )}
 
+        {activeTab === 'rca' && (
+          <RootCauseAnalysis />
+        )}
+
         {activeTab === 'data' && (
           <DataPipelineQuality 
             onReloadData={() => showToast('Data cleansing pipeline re-executed successfully!')} 
@@ -144,6 +158,10 @@ export default function App() {
 
         {activeTab === 'report' && (
           <ExecutiveReport />
+        )}
+
+        {activeTab === 'deck' && (
+          <PresentationDeck />
         )}
       </main>
 
