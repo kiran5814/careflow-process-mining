@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Search, Filter, AlertTriangle, ShieldAlert, ArrowRight, UserCheck, 
-  Eye, Download, CheckSquare, Square, ArrowUpDown, ArrowUp, ArrowDown, 
-  Copy, Check, FileSpreadsheet, RotateCcw, Clock, DollarSign, Activity,
-  ChevronLeft, ChevronRight, Sparkles, Layers
+  Search, Eye, Download, CheckSquare, Square, 
+  ArrowUpDown, ArrowUp, ArrowDown, Copy, Check, 
+  ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { EXTENDED_CASES } from '../data/processData';
 
@@ -68,14 +67,20 @@ export default function CaseExplorer({ onSelectCase, cohortFilters }) {
       if (sortField === 'leadTime') {
         // Parse "2h 04m" to minutes
         const toMin = (str) => {
+          if (!str || typeof str !== 'string') return 0;
           const parts = str.match(/(\d+)h\s*(\d+)m/);
-          return parts ? parseInt(parts[1]) * 60 + parseInt(parts[2]) : 0;
+          if (parts) return parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10);
+          const minsOnly = str.match(/(\d+)m/);
+          return minsOnly ? parseInt(minsOnly[1], 10) : 0;
         };
         valA = toMin(valA);
         valB = toMin(valB);
       } else if (sortField === 'cost') {
-        valA = parseInt(valA.replace(/[^0-9]/g, '')) || 0;
-        valB = parseInt(valB.replace(/[^0-9]/g, '')) || 0;
+        valA = parseInt(String(valA ?? '').replace(/[^0-9]/g, ''), 10) || 0;
+        valB = parseInt(String(valB ?? '').replace(/[^0-9]/g, ''), 10) || 0;
+      } else {
+        valA = valA ?? '';
+        valB = valB ?? '';
       }
 
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
@@ -616,24 +621,33 @@ export default function CaseExplorer({ onSelectCase, cohortFilters }) {
             <ChevronLeft size={14} />
           </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              style={{
-                padding: '3px 8px',
-                borderRadius: '6px',
-                border: 'none',
-                background: currentPage === page ? '#06b6d4' : 'rgba(255,255,255,0.06)',
-                color: currentPage === page ? '#070b14' : '#fff',
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              {page}
-            </button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2)
+            .map((page, idx, arr) => {
+              const prev = arr[idx - 1];
+              return (
+                <React.Fragment key={page}>
+                  {prev && page - prev > 1 && (
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem', padding: '0 2px' }}>…</span>
+                  )}
+                  <button
+                    onClick={() => setCurrentPage(page)}
+                    style={{
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: currentPage === page ? '#06b6d4' : 'rgba(255,255,255,0.06)',
+                      color: currentPage === page ? '#070b14' : '#fff',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {page}
+                  </button>
+                </React.Fragment>
+              );
+            })}
 
           <button
             disabled={currentPage === totalPages}

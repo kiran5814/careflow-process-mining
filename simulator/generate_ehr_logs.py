@@ -146,10 +146,12 @@ def generate_case(case_number):
 # --------------------------------- Main ---------------------------------- #
 
 def main():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    default_out = os.path.join(script_dir, "output", "ehr_event_log.csv")
     parser = argparse.ArgumentParser(description="Generate mock EHR event logs")
     parser.add_argument("--cases", type=int, default=5000, help="number of patient visits")
     parser.add_argument("--seed", type=int, default=42, help="random seed (repeatable data)")
-    parser.add_argument("--out", default=os.path.join("output", "ehr_event_log.csv"),
+    parser.add_argument("--out", default=default_out,
                         help="output CSV path")
     args = parser.parse_args()
 

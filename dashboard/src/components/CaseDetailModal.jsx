@@ -107,7 +107,7 @@ export default function CaseDetailModal({ patientCase, onClose }) {
         {/* Timeline sequence */}
         <div style={{ padding: '1.5rem' }}>
           <h4 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Event Execution Flow ({patientCase.timeline.length} Steps)
+            Event Execution Flow ({(patientCase.timeline?.length || 0)} Steps)
           </h4>
 
           <div style={{ position: 'relative', paddingLeft: '1.75rem' }}>
@@ -121,9 +121,10 @@ export default function CaseDetailModal({ patientCase, onClose }) {
               background: 'rgba(148, 163, 184, 0.2)'
             }} />
 
-            {patientCase.timeline.map((step, idx) => {
+            {(patientCase.timeline || []).map((step, idx) => {
               const isLoop = step.isLoopback;
               const isAnomaly = step.isAnomaly;
+              const isDelayed = typeof step.wait === 'string' && (step.wait.includes('Rush') || step.wait.includes('Delay'));
 
               return (
                 <div key={idx} style={{ position: 'relative', marginBottom: '1.5rem' }}>
@@ -169,8 +170,8 @@ export default function CaseDetailModal({ patientCase, onClose }) {
 
                     <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                       <span>Resource: <strong style={{ color: '#cbd5e1' }}>{step.resource}</strong></span>
-                      <span>Waiting: <strong style={{ color: step.wait.includes('Rush') || step.wait.includes('Delay') ? '#fbbf24' : '#cbd5e1' }}>{step.wait}</strong></span>
-                      <span>Duration: <strong style={{ color: '#cbd5e1' }}>{step.duration}</strong></span>
+                      <span>Waiting: <strong style={{ color: isDelayed ? '#fbbf24' : '#cbd5e1' }}>{step.wait || '0m'}</strong></span>
+                      <span>Duration: <strong style={{ color: '#cbd5e1' }}>{step.duration || '0m'}</strong></span>
                     </div>
                   </div>
                 </div>
