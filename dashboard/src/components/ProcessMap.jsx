@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Scan, ClipboardList, Activity, Stethoscope, HeartPulse, 
-  FlaskConical, CheckCircle, Building2, UserPlus, Info, 
-  AlertTriangle, Clock, ArrowRight, Eye, RefreshCcw, Play, Pause, RotateCcw, FastForward 
-} from 'lucide-react';
-import { PROCESS_NODES, PROCESS_EDGES } from '../data/processData';
+import { Info, AlertTriangle, Play, Pause } from 'lucide-react';
+import { PROCESS_NODES } from '../data/processData';
 
 export default function ProcessMap() {
   const [selectedNode, setSelectedNode] = useState(PROCESS_NODES.find(n => n.id === 'xray'));
@@ -17,7 +13,6 @@ export default function ProcessMap() {
   const [simTick, setSimTick] = useState(0);
 
   useEffect(() => {
-    let animId;
     if (isSimulating) {
       const interval = setInterval(() => {
         setSimTick((prev) => (prev + 1) % 100);

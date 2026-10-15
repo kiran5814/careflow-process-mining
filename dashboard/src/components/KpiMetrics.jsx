@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Users, Clock, AlertTriangle, Flame, ShieldAlert, TrendingUp, 
-  DollarSign, Activity, Stethoscope, ChevronRight, CheckCircle2, 
-  Layers, ArrowUpRight, ArrowDownRight, Info, Zap, X, Download,
-  HeartPulse, ShieldCheck, HelpCircle, BarChart3, Sliders
+  Users, Clock, AlertTriangle, Flame, ShieldAlert, 
+  DollarSign, Stethoscope, CheckCircle2, 
+  ArrowUpRight, ArrowDownRight, Info, Zap, X, Download,
+  ShieldCheck, BarChart3
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { SUMMARY_STATS, ADVANCED_KPIS, THIRTY_DAY_TRENDS } from '../data/processData';
@@ -101,13 +101,35 @@ export default function KpiMetrics() {
   const sparkRush  = [18, 42, 65, 60, 38, 25, 22, 30, 18, 20];
 
   const handleExportMetric = (kpi) => {
+    const isCost = kpi?.id === 'fin_waste' || kpi?.title?.includes('Cost') || kpi?.unit === '$';
+    const isRework = kpi?.id === 'rework_loop' || kpi?.title?.includes('Rework') || kpi?.title?.includes('Loopback');
+    const isStay = kpi?.id === 'median_dwell' || kpi?.title?.includes('Stay') || kpi?.title?.includes('Lead');
+
+    const metricTitle = kpi?.title || 'Metric';
+    const benchmark = kpi?.benchmark || 'Compliant';
+
+    const rows = THIRTY_DAY_TRENDS.map((t) => {
+      let val = t.volume;
+      let unit = 'Patients';
+      if (isCost) {
+        val = t.costDollars;
+        unit = 'USD ($)';
+      } else if (isRework) {
+        val = `${t.reworkRate}%`;
+        unit = 'Percentage';
+      } else if (isStay) {
+        val = `${t.avgCycleHours} hrs`;
+        unit = 'Hours';
+      }
+      return `${t.date},${val},"${metricTitle}",${unit},"${benchmark}"`;
+    }).join("\n");
+
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "Day,Metric_Value,Unit,SLA_Benchmark,Status\n" +
-      THIRTY_DAY_TRENDS.map((t, idx) => `${t.date},${t.volume},Daily Intake,40 cases,Normal`).join("\n");
+      "Day,Metric_Value,Metric_Name,Unit,SLA_Benchmark\n" + rows;
     const encoded = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encoded);
-    link.setAttribute("download", `CareFlow_KPI_${kpi.id || 'metric'}_30Day_Audit.csv`);
+    link.setAttribute("download", `CareFlow_KPI_${kpi?.id || 'metric'}_30Day_Audit.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

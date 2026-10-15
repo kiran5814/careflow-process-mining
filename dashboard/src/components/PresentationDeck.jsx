@@ -3,7 +3,7 @@ import {
   Presentation, ChevronLeft, ChevronRight, CheckCircle2, 
   Award, TrendingUp, AlertTriangle, ShieldCheck, Flame, BookOpen 
 } from 'lucide-react';
-import { SUMMARY_STATS, MODEL_EVALUATION } from '../data/processData';
+import { SUMMARY_STATS } from '../data/processData';
 
 export default function PresentationDeck() {
   const [currentSlide, setCurrentSlide] = useState(0);
