@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Activity, AlertTriangle, CheckCircle2, Clock, UserPlus,
   Stethoscope, FlaskConical, Scan, HeartPulse, LogOut,
-  Zap, RefreshCw, Filter, Pause, Play
+  Zap, RefreshCw, Filter, Pause, Play, ClipboardList as ClipboardCheck
 } from 'lucide-react';
 
 const ACTIVITY_TEMPLATES = [
@@ -17,9 +17,6 @@ const ACTIVITY_TEMPLATES = [
   { type: 'loopback',    icon: AlertTriangle, color: '#f59e0b',  label: 'Re-triage Required',      bg: 'rgba(245,158,11,0.12)', badge: 'REWORK',   badgeClass: 'badge-amber'   },
   { type: 'admission',   icon: HeartPulse,    color: '#c084fc',  label: 'Inpatient Admission',     bg: 'rgba(192,132,252,0.1)', badge: 'Admit',    badgeClass: 'badge-purple'  },
 ];
-
-// Lazy import fix: ClipboardCheck is not in lucide-react, use ClipboardList
-import { ClipboardList as ClipboardCheck } from 'lucide-react';
 
 const DOCTORS = ['Dr. Patel', 'Dr. Nguyen', 'Dr. Martinez', 'Dr. Kim', 'Dr. Singh', 'Dr. Adams'];
 const SEVERITIES = ['Critical', 'Moderate', 'Minor', 'Stable'];

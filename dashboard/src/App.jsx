@@ -17,6 +17,9 @@ import PatientHeatmap from './components/PatientHeatmap';
 import ComplianceChecker from './components/ComplianceChecker';
 import VisualAnalytics from './components/VisualAnalytics';
 import HospitalCommandCenter from './components/HospitalCommandCenter';
+import ClinicalSlaCenter from './components/ClinicalSlaCenter';
+import CohortBenchmark from './components/CohortBenchmark';
+import ResourceHandoverNetwork from './components/ResourceHandoverNetwork';
 import { CheckCircle, Award } from 'lucide-react';
 import { SUMMARY_STATS, SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
@@ -119,6 +122,12 @@ export default function App() {
         )}
 
         {activeTab === 'hospital' && <HospitalCommandCenter />}
+
+        {activeTab === 'sla' && <ClinicalSlaCenter />}
+
+        {activeTab === 'cohort' && <CohortBenchmark />}
+
+        {activeTab === 'handover' && <ResourceHandoverNetwork />}
 
         {activeTab === 'analytics' && <VisualAnalytics />}
 

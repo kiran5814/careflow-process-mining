@@ -48,8 +48,15 @@ function getColor(val) {
   return { bg: 'rgba(239,68,68,0.5)', text: '#ff6b6b' };
 }
 
-function getTrend(day) {
-  const vals = Object.values(heatData[day]);
+function getTrend(day, mode = 'volume') {
+  const vals = HOURS.map((h, i) => {
+    const base = heatData[day][h];
+    if (mode === 'wait') {
+      if (i >= 8 && i <= 11) return Math.round(base * 0.9 + 10);
+      return Math.round(base * 0.5 + 5);
+    }
+    return base;
+  });
   const avg = (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
   const peak = Math.max(...vals);
   const peakHour = HOURS[vals.indexOf(peak)];
@@ -184,7 +191,8 @@ export default function PatientHeatmap() {
 
       {/* Selected Day breakdown */}
       {selectedDay && (() => {
-        const { avg, peak, peakHour } = getTrend(selectedDay);
+        const { avg, peak, peakHour } = getTrend(selectedDay, mode);
+        const isWait = mode === 'wait';
         return (
           <div className="glass-panel" style={{
             marginTop: '1rem', padding: '1rem 1.25rem',
@@ -196,12 +204,12 @@ export default function PatientHeatmap() {
                 <strong style={{ color: '#a5b4fc' }}>{selectedDay}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Avg Hourly Volume: </span>
-                <strong style={{ color: '#22d3ee' }}>{avg}</strong>
+                <span style={{ color: 'var(--text-muted)' }}>{isWait ? 'Avg Hourly Wait: ' : 'Avg Hourly Volume: '}</span>
+                <strong style={{ color: '#22d3ee' }}>{avg} {isWait ? 'min' : ''}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Peak Volume: </span>
-                <strong style={{ color: '#f43f5e' }}>{peak} patients</strong>
+                <span style={{ color: 'var(--text-muted)' }}>{isWait ? 'Peak Wait Time: ' : 'Peak Volume: '}</span>
+                <strong style={{ color: '#f43f5e' }}>{peak} {isWait ? 'min wait' : 'patients'}</strong>
               </div>
               <div>
                 <span style={{ color: 'var(--text-muted)' }}>Peak Hour: </span>
@@ -209,7 +217,7 @@ export default function PatientHeatmap() {
               </div>
               <div>
                 <span style={{ color: 'var(--text-muted)' }}>Staffing Recommendation: </span>
-                <strong style={{ color: '#10b981' }}>+{Math.ceil(peak / 15)} extra staff at {peakHour}</strong>
+                <strong style={{ color: '#10b981' }}>+{Math.ceil(peak / (isWait ? 20 : 15))} extra staff at {peakHour}</strong>
               </div>
             </div>
           </div>

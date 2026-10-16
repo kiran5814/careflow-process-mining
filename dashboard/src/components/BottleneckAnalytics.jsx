@@ -49,7 +49,6 @@ function CustomHourlyTooltip({ active, payload, label }) {
 }
 
 export default function BottleneckAnalytics() {
-  const [selectedHour, setSelectedHour] = useState(HOURLY_METRICS[9]);
   const [chartMode, setChartMode] = useState('combined'); // 'combined', 'arrivals', 'wait'
   const [docSort, setDocSort] = useState('cases'); // 'cases', 'speed', 'satisfaction'
   const [staffingMode, setStaffingMode] = useState('current'); // 'current', 'optimized'
@@ -292,7 +291,7 @@ export default function BottleneckAnalytics() {
                   color: '#a5b4fc', display: 'flex', alignItems: 'center',
                   justifyContent: 'center', fontWeight: 700, fontSize: '0.75rem', flexShrink: 0
                 }}>
-                  {doc.name.split(' ')[1][0]}
+                  {doc.name.split(' ')[1]?.[0] || doc.name[0] || 'D'}
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <h5 style={{ fontWeight: 700, color: '#fff', margin: 0 }}>{doc.name}</h5>

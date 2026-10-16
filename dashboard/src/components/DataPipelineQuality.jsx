@@ -23,6 +23,7 @@ export default function DataPipelineQuality({ onReloadData }) {
 
   const handleSimulatedUpload = () => {
     setUploadSuccess(true);
+    if (onReloadData) onReloadData();
     setTimeout(() => setUploadSuccess(false), 3000);
   };
 

@@ -1,25 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
-  BarChart2, TrendingUp, Clock, AlertTriangle, 
-  Users, ShieldCheck, Stethoscope, DollarSign, Calendar, Filter, 
-  Download, ArrowUpRight, ArrowDownRight, Layers, HelpCircle, CheckCircle2, 
-  Flame, PieChart as PieIcon, Activity, Sparkles, Sliders, ChevronDown
+  BarChart2, Download
 } from 'lucide-react';
 import { 
-  ResponsiveContainer, AreaChart, Area, BarChart, Bar, LineChart, Line, 
+  ResponsiveContainer, Area, BarChart, Bar, Line, 
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, 
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, 
-  ReferenceLine, ComposedChart
+  ComposedChart
 } from 'recharts';
 import { 
-  ACUITY_DISTRIBUTION, DISPOSITION_DISTRIBUTION, DELAY_ATTRIBUTION, 
-  REWORK_REASONS, DOCTORS_DATA, HOURLY_METRICS, SUMMARY_STATS,
+  ACUITY_DISTRIBUTION, DISPOSITION_DISTRIBUTION,
   THIRTY_DAY_TRENDS, STEP_TIME_BREAKDOWN, PATIENT_FLOW_FUNNEL,
   DOCTOR_RADAR_DATA, FINANCIAL_IMPACT_BREAKDOWN
 } from '../data/processData';
 
 // Custom Recharts Dark Tooltip for Volume Trends
-function CustomVolumeTooltip({ active, payload, label }) {
+function CustomVolumeTooltip({ active, payload }) {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -63,7 +59,7 @@ function CustomVolumeTooltip({ active, payload, label }) {
 }
 
 // Custom Tooltip for Wait Times
-function CustomStepTooltip({ active, payload, label }) {
+function CustomStepTooltip({ active, payload }) {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -110,15 +106,21 @@ export default function VisualAnalytics() {
   const [selectedDoctor, setSelectedDoctor] = useState('All');
   const [pieMode, setPieMode] = useState('acuity'); // 'acuity', 'disposition'
 
+  const filteredTrends = useMemo(() => {
+    if (timeFilter === '24h') return THIRTY_DAY_TRENDS.slice(-2);
+    if (timeFilter === '7d') return THIRTY_DAY_TRENDS.slice(-7);
+    return THIRTY_DAY_TRENDS;
+  }, [timeFilter]);
+
   // Export CSV handler
   const handleExportData = () => {
     let csvHeader = "Date,Volume,AvgCycleHours,ReworkRate,OperatingCost\n";
-    let rows = THIRTY_DAY_TRENDS.map(t => `${t.date},${t.volume},${t.avgCycleHours},${t.reworkRate}%,$${t.costDollars}`).join("\n");
+    let rows = filteredTrends.map(t => `${t.date},${t.volume},${t.avgCycleHours},${t.reworkRate}%,$${t.costDollars}`).join("\n");
     const blob = new Blob([csvHeader + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `CareFlow_Visual_Analytics_${activeView}_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `CareFlow_Visual_Analytics_${activeView}_${timeFilter}_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -307,7 +309,7 @@ export default function VisualAnalytics() {
           {/* Recharts Area / Line Chart */}
           <div style={{ width: '100%', height: '320px', minHeight: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={THIRTY_DAY_TRENDS} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+              <ComposedChart data={filteredTrends} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />

@@ -81,6 +81,10 @@ def run_process_mining(csv_path, output_dir):
             dfg_durations[trans].append(delta_min)
 
     # 2. Performance Metrics
+    if total_cases == 0 or not case_durations:
+        print("[PM4Py Engine] Warning: No cases found in the input log.")
+        return {}
+
     case_durations.sort()
     median_duration = case_durations[len(case_durations) // 2]
     p90_duration = case_durations[int(len(case_durations) * 0.90)]
@@ -153,8 +157,17 @@ def run_process_mining(csv_path, output_dir):
     return results
 
 if __name__ == "__main__":
-    csv_file = os.path.join("simulator", "output", "ehr_event_log.csv")
-    out_folder = os.path.join("pm4py_engine", "output")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    csv_file = os.path.join(repo_root, "simulator", "output", "ehr_event_log.csv")
+    out_folder = os.path.join(script_dir, "output")
+
+    if not os.path.exists(csv_file):
+        # Fallback to CWD-relative path if launched from repo root
+        cwd_csv = os.path.join("simulator", "output", "ehr_event_log.csv")
+        if os.path.exists(cwd_csv):
+            csv_file = cwd_csv
+
     if os.path.exists(csv_file):
         run_process_mining(csv_file, out_folder)
     else:

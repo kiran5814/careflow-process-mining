@@ -139,6 +139,30 @@ export default function ComplianceChecker() {
     return true;
   });
 
+  const handleExportReport = () => {
+    const headers = ["Rule ID", "Rule Name", "Violation Type", "Severity", "Incident Count", "Prevalence Pct", "Category", "Status", "Clinical Impact", "Recommendation"];
+    const rows = VIOLATIONS.map(v => [
+      v.id,
+      `"${v.rule}"`,
+      `"${v.type}"`,
+      v.severity,
+      v.count,
+      `${v.pct}%`,
+      v.category,
+      v.status,
+      `"${v.impact}"`,
+      `"${v.recommendation.replace(/"/g, '""')}"`
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encoded = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encoded);
+    link.setAttribute("download", `CareFlow_Compliance_Violations_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div style={{ marginBottom: '1.75rem' }}>
       {/* Summary Cards */}
@@ -175,12 +199,15 @@ export default function ComplianceChecker() {
               </p>
             </div>
           </div>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '7px 14px', borderRadius: '8px', border: '1px solid var(--border-color)',
-            background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)',
-            fontSize: '0.78rem', cursor: 'pointer'
-          }}>
+          <button 
+            onClick={handleExportReport}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '7px 14px', borderRadius: '8px', border: '1px solid var(--border-color)',
+              background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)',
+              fontSize: '0.78rem', cursor: 'pointer'
+            }}
+          >
             <Download size={13} /> Export Report
           </button>
         </div>

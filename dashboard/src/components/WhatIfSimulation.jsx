@@ -18,6 +18,7 @@ const BASELINE = {
 function AnimatedNumber({ target, duration = 1200, decimals = 0, prefix = '', suffix = '' }) {
   const [current, setCurrent] = useState(0);
   useEffect(() => {
+    let animId;
     const start = 0;
     const startTime = performance.now();
     const animate = (now) => {
@@ -25,10 +26,13 @@ function AnimatedNumber({ target, duration = 1200, decimals = 0, prefix = '', su
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setCurrent(start + (target - start) * eased);
-      if (progress < 1) requestAnimationFrame(animate);
+      if (progress < 1) {
+        animId = requestAnimationFrame(animate);
+      }
     };
-    requestAnimationFrame(animate);
-  }, [target]);
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [target, duration]);
   return <>{prefix}{current.toFixed(decimals)}{suffix}</>;
 }
 
