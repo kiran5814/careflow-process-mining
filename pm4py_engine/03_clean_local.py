@@ -5,20 +5,43 @@ Output: ../data/event_log.csv   (columns: case_id, activity_name, timestamp, doc
 """
 import pandas as pd
 
-df = pd.read_csv("../data/raw_ehr_events.csv")
-df = df.dropna(subset=["event_time"])
-key = df["event_name"].str.strip().str.lower()
-mapping = {
+IN_PATH = "../data/raw_ehr_events.csv"
+OUT_PATH = "../data/event_log.csv"
+
+MAPPING = {
     "registration": "Registration", "triage": "Triage",
     "x-ray": "X-Ray", "xray": "X-Ray",
     "doctor consultation": "Doctor Consultation", "dr consult": "Doctor Consultation",
     "lab test": "Lab Test", "treatment": "Treatment", "discharge": "Discharge",
 }
-df["activity_name"] = key.map(mapping)
+ACTIVITIES = sorted(set(MAPPING.values()))
+
+# 1. Read only needed columns, with compact dtypes
+df = pd.read_csv(
+    IN_PATH,
+    usecols=["patient_id", "event_name", "event_time", "doctor", "age_group"],
+    dtype={"patient_id": "string", "event_name": "string",
+           "doctor": "category", "age_group": "category"},
+)
+
+# 2. Drop rows with no time, then map activities (vectorized)
+df = df.dropna(subset=["event_time"])
+df["activity_name"] = (
+    df["event_name"].str.strip().str.lower().map(MAPPING)
+)
 df = df.dropna(subset=["activity_name"])
-df = df.rename(columns={"patient_id": "case_id", "event_time": "timestamp"})
-df["timestamp"] = pd.to_datetime(df["timestamp"])
-df = df[["case_id", "activity_name", "timestamp", "doctor", "age_group"]].drop_duplicates()
-df = df.sort_values(["case_id", "timestamp"])
-df.to_csv("../data/event_log.csv", index=False)
-print(f"Clean event log: {len(df)} events, {df.case_id.nunique()} cases -> ../data/event_log.csv")
+
+# 3. Parse timestamps once; invalid values become NaT and are dropped
+df["timestamp"] = pd.to_datetime(df["event_time"], errors="coerce")
+df = df.dropna(subset=["timestamp"])
+
+# 4. Rename, select, dedupe, sort
+df = (
+    df.rename(columns={"patient_id": "case_id"})
+      [["case_id", "activity_name", "timestamp", "doctor", "age_group"]]
+      .drop_duplicates()
+      .sort_values(["case_id", "timestamp"], kind="stable")
+)
+
+df.to_csv(OUT_PATH, index=False)
+print(f"Clean event log: {len(df)} events, {df.case_id.nunique()} cases -> {OUT_PATH}")
