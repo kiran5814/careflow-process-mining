@@ -1307,4 +1307,403 @@ export const ACTIVE_EMERGENCY_INCIDENTS = [
   { id: "INC-8809", time: "11:05", code: "RAPID RESPONSE", location: "Med-Surg East 312", patientId: "CASE000612", status: "Stabilized - Telemetry Transfer", leadMD: "Dr. Iyer", elapsedMin: "Resolved" }
 ];
 
+// ============================================================================
+// CLINICAL SLA & RAPID-RESPONSE ESCALATION ENGINE DATA
+// ============================================================================
+export const CLINICAL_SLA_SUMMARY = {
+  overallComplianceRate: 94.2,
+  totalEncountersTracked: 1000,
+  activeInQueue: 32,
+  criticalBreaches: 2,
+  imminentBreachCount: 4,
+  onTrackCount: 26,
+  cmsPenaltyAvoidance: "$285,000 / yr",
+  slaMeasures: [
+    {
+      id: "CMS-OP-20",
+      name: "Door-to-Doctor Consultation",
+      target: "< 30 min",
+      benchmarkMinutes: 30,
+      currentAvg: "22.4 min",
+      compliancePct: 93.8,
+      status: "Compliant",
+      description: "Time from patient physical arrival to initial attending physician face-to-face evaluation."
+    },
+    {
+      id: "CMS-OP-40",
+      name: "Door-to-ECG (Chest Pain / ACS)",
+      target: "< 10 min",
+      benchmarkMinutes: 10,
+      currentAvg: "7.2 min",
+      compliancePct: 98.4,
+      status: "Optimal",
+      description: "Immediate 12-lead diagnostic electrocardiogram for suspected Acute Coronary Syndrome."
+    },
+    {
+      id: "STAT-RAD",
+      name: "STAT Radiology Order-to-Report",
+      target: "< 45 min",
+      benchmarkMinutes: 45,
+      currentAvg: "54.0 min (Surge) / 16.0 min (Norm)",
+      compliancePct: 86.2,
+      status: "At-Risk",
+      description: "Elapsed duration from initial CPOE diagnostic imaging order to final radiologist verified reading."
+    },
+    {
+      id: "CMS-ED-2b",
+      name: "Admit Decision to ED Ward Departure",
+      target: "< 240 min",
+      benchmarkMinutes: 240,
+      currentAvg: "252 min (4h 12m)",
+      compliancePct: 78.5,
+      status: "Breached",
+      description: "Total inpatient acute bay boarding duration awaiting inpatient bed turnover."
+    },
+    {
+      id: "CMS-SEP-1",
+      name: "Severe Sepsis 3-Hour Bundle",
+      target: "< 180 min",
+      benchmarkMinutes: 180,
+      currentAvg: "112 min",
+      compliancePct: 98.2,
+      status: "Optimal",
+      description: "Blood cultures prior to antibiotics, broad-spectrum IV antimicrobials, and fluid resuscitation."
+    },
+    {
+      id: "CMS-STK-OP",
+      name: "Acute Stroke Door-to-Needle tPA",
+      target: "< 45 min",
+      benchmarkMinutes: 45,
+      currentAvg: "38 min",
+      compliancePct: 96.0,
+      status: "Compliant",
+      description: "Thrombolytic therapy infusion initiation from emergency department arrival."
+    }
+  ]
+};
+
+export const LIVE_SLA_PATIENTS = [
+  {
+    id: "CASE000998",
+    patientName: "Robert Vance",
+    age: 64,
+    gender: "Male",
+    esi: "ESI-2 (Emergent)",
+    slaType: "CMS-ED-2b (Boarding)",
+    targetMinutes: 240,
+    elapsedMinutes: 254,
+    remainingMinutes: -14,
+    status: "Critical Breach",
+    location: "ED Bay 04 (Acute)",
+    assignedMD: "Dr. Sharma",
+    admitWard: "MICU East (Bed 12)",
+    remediationAction: "Elevate EVS Bed Cleaning Priority to Level 1",
+    actionType: "EVS"
+  },
+  {
+    id: "CASE000997",
+    patientName: "Evelyn Reed",
+    age: 48,
+    gender: "Female",
+    esi: "ESI-3 (Urgent)",
+    slaType: "STAT-RAD (Radiology)",
+    targetMinutes: 45,
+    elapsedMinutes: 47,
+    remainingMinutes: -2,
+    status: "Critical Breach",
+    location: "Radiology Bay 1 Queue",
+    assignedMD: "Dr. Khan",
+    admitWard: "Observation",
+    remediationAction: "Reroute Scan to Secondary Mobile Unit 2",
+    actionType: "RAD"
+  },
+  {
+    id: "CASE000996",
+    patientName: "Thomas Bradley",
+    age: 72,
+    gender: "Male",
+    esi: "ESI-2 (Emergent)",
+    slaType: "CMS-OP-20 (Doctor)",
+    targetMinutes: 30,
+    elapsedMinutes: 24,
+    remainingMinutes: 6,
+    status: "Imminent (< 10m)",
+    location: "Triage Waiting Pod B",
+    assignedMD: "Dr. Patel (Unassigned)",
+    admitWard: "TBD",
+    remediationAction: "Fast-Track Doctor Consult Pager Dispatch",
+    actionType: "MD"
+  },
+  {
+    id: "CASE000995",
+    patientName: "Maria Santos",
+    age: 58,
+    gender: "Female",
+    esi: "ESI-2 (Emergent)",
+    slaType: "CMS-ED-2b (Boarding)",
+    targetMinutes: 240,
+    elapsedMinutes: 232,
+    remainingMinutes: 8,
+    status: "Imminent (< 10m)",
+    location: "ED Bay 09 (Acute)",
+    assignedMD: "Dr. Reddy",
+    admitWard: "Step-Down 204",
+    remediationAction: "Expedite Inpatient Charge Nurse Handoff",
+    actionType: "NURSE"
+  },
+  {
+    id: "CASE000994",
+    patientName: "Anthony Cole",
+    age: 55,
+    gender: "Male",
+    esi: "ESI-1 (Resuscitation)",
+    slaType: "CMS-OP-40 (ECG)",
+    targetMinutes: 10,
+    elapsedMinutes: 4,
+    remainingMinutes: 6,
+    status: "On Track",
+    location: "Trauma Resus 2",
+    assignedMD: "Dr. Sharma",
+    admitWard: "CCU Cath Lab",
+    remediationAction: "Lead Tech At Bedside with GE MAC 5500",
+    actionType: "OPTIMAL"
+  },
+  {
+    id: "CASE000993",
+    patientName: "Clara Hughes",
+    age: 39,
+    gender: "Female",
+    esi: "ESI-3 (Urgent)",
+    slaType: "STAT-RAD (Radiology)",
+    targetMinutes: 45,
+    elapsedMinutes: 28,
+    remainingMinutes: 17,
+    status: "At Risk",
+    location: "Radiology Waiting Hall",
+    assignedMD: "Dr. Iyer",
+    admitWard: "Observation",
+    remediationAction: "Verify CPOE Requisition Digital Signature",
+    actionType: "RAD"
+  }
+];
+
+export const HOURLY_SLA_TREND = [
+  { hour: "00:00", breaches: 1, volume: 18, compliance: 94.4 },
+  { hour: "02:00", breaches: 0, volume: 12, compliance: 100.0 },
+  { hour: "04:00", breaches: 0, volume: 10, compliance: 100.0 },
+  { hour: "06:00", breaches: 1, volume: 22, compliance: 95.5 },
+  { hour: "08:00", breaches: 5, volume: 68, compliance: 92.6 },
+  { hour: "09:00", breaches: 9, volume: 102, compliance: 91.2 },
+  { hour: "10:00", breaches: 8, volume: 94, compliance: 91.5 },
+  { hour: "11:00", breaches: 6, volume: 82, compliance: 92.7 },
+  { hour: "12:00", breaches: 4, volume: 60, compliance: 93.3 },
+  { hour: "14:00", breaches: 2, volume: 48, compliance: 95.8 },
+  { hour: "16:00", breaches: 3, volume: 54, compliance: 94.4 },
+  { hour: "18:00", breaches: 4, volume: 62, compliance: 93.5 },
+  { hour: "20:00", breaches: 3, volume: 50, compliance: 94.0 },
+  { hour: "22:00", breaches: 2, volume: 34, compliance: 94.1 },
+];
+
+// ============================================================================
+// COHORT A/B COMPARATIVE BENCHMARKING DATA
+// ============================================================================
+export const COHORT_BENCHMARKS = [
+  {
+    id: "surge-vs-nominal",
+    title: "Morning Peak Rush vs. Nominal Hours",
+    cohortAName: "Morning Rush (08:00 - 11:00 AM)",
+    cohortBName: "Nominal Hours (13:00 - 19:00)",
+    hypothesis: "Morning staffing mismatch causes statistically significant escalation in radiology wait times and overall lead time.",
+    stats: {
+      volumeA: 420,
+      volumeB: 380,
+      medianDurationA: "5h 14m",
+      medianDurationB: "2h 48m",
+      durationDelta: "+2h 26m (+86.9%)",
+      p90DurationA: "7h 02m",
+      p90DurationB: "3h 52m",
+      loopbackRateA: "52.4%",
+      loopbackRateB: "24.1%",
+      loopbackDelta: "+28.3%",
+      conformanceA: "88.2%",
+      conformanceB: "97.4%",
+      conformanceDelta: "-9.2%",
+      costPerCaseA: "$1,240",
+      costPerCaseB: "$780",
+      costDelta: "+$460 / pt (+59.0%)",
+      csatScoreA: "74.2 / 100",
+      csatScoreB: "92.6 / 100",
+      csatDelta: "-18.4 pts",
+      pValue: "< 0.0001 (Welch t-test)",
+      isSignificant: true
+    },
+    stageBreakdown: [
+      { stage: "Arrival → Triage", timeA: 18, timeB: 8, delta: "+10m" },
+      { stage: "Triage → Radiology Queue", timeA: 54, timeB: 16, delta: "+38m" },
+      { stage: "Radiology Scan Execution", timeA: 19, timeB: 18, delta: "+1m" },
+      { stage: "Paperwork Loopback Re-Triage", timeA: 48, timeB: 12, delta: "+36m" },
+      { stage: "Doctor Consultation", timeA: 29, timeB: 24, delta: "+5m" },
+      { stage: "Treatment to Disposition", timeA: 146, timeB: 90, delta: "+56m" }
+    ],
+    remediation: "Shift 1 full-time Radiologic Tech from 14:00 lull to the 08:00-11:00 morning rush to compress the +38m queue delay at zero payroll cost."
+  },
+  {
+    id: "loopback-vs-firstpass",
+    title: "Radiology Paperwork Loop vs. First-Pass Flow",
+    cohortAName: "Paperwork Loopback Cases (Reworked)",
+    cohortBName: "Digital First-Pass Compliant Cases",
+    hypothesis: "Missing paper form requisitions generate duplicate triage cycles and double overall stay duration.",
+    stats: {
+      volumeA: 398,
+      volumeB: 602,
+      medianDurationA: "5h 28m",
+      medianDurationB: "2h 35m",
+      durationDelta: "+2h 53m (+111.6%)",
+      p90DurationA: "7h 45m",
+      p90DurationB: "3h 40m",
+      loopbackRateA: "100.0%",
+      loopbackRateB: "0.0%",
+      loopbackDelta: "+100.0%",
+      conformanceA: "79.4%",
+      conformanceB: "99.2%",
+      conformanceDelta: "-19.8%",
+      costPerCaseA: "$1,380",
+      costPerCaseB: "$710",
+      costDelta: "+$670 / pt (+94.4%)",
+      csatScoreA: "68.0 / 100",
+      csatScoreB: "95.5 / 100",
+      csatDelta: "-27.5 pts",
+      pValue: "< 0.0001 (Mann-Whitney U)",
+      isSignificant: true
+    },
+    stageBreakdown: [
+      { stage: "Arrival → Triage", timeA: 12, timeB: 10, delta: "+2m" },
+      { stage: "Triage → Radiology Queue", timeA: 42, timeB: 22, delta: "+20m" },
+      { stage: "Radiology Scan Execution", timeA: 18, timeB: 18, delta: "0m" },
+      { stage: "Paperwork Loopback Re-Triage", timeA: 85, timeB: 0, delta: "+85m" },
+      { stage: "Doctor Consultation", timeA: 28, timeB: 24, delta: "+4m" },
+      { stage: "Treatment to Disposition", timeA: 143, timeB: 81, delta: "+62m" }
+    ],
+    remediation: "Deploy CPOE electronic order entry with mandatory clinical criteria hard-stops at intake triage (CAPA-2026-001, saving $142,400/yr)."
+  },
+  {
+    id: "acuity-high-vs-low",
+    title: "High Acuity (ESI 1-2) vs. Low Acuity (ESI 4-5)",
+    cohortAName: "Emergent Acuity (ESI 1-2, n=360)",
+    cohortBName: "Ambulatory Low (ESI 4-5, n=279)",
+    hypothesis: "Emergent cases bypass registration directly to treatment but suffer inpatient boarding delays.",
+    stats: {
+      volumeA: 360,
+      volumeB: 279,
+      medianDurationA: "4h 45m",
+      medianDurationB: "1h 42m",
+      durationDelta: "+3h 03m (+179.4%)",
+      p90DurationA: "6h 50m",
+      p90DurationB: "2h 30m",
+      loopbackRateA: "34.2%",
+      loopbackRateB: "8.5%",
+      loopbackDelta: "+25.7%",
+      conformanceA: "91.5%",
+      conformanceB: "98.8%",
+      conformanceDelta: "-7.3%",
+      costPerCaseA: "$2,150",
+      costPerCaseB: "$420",
+      costDelta: "+$1,730 / pt",
+      csatScoreA: "88.0 / 100",
+      csatScoreB: "91.2 / 100",
+      csatDelta: "-3.2 pts",
+      pValue: "< 0.0001 (Welch t-test)",
+      isSignificant: true
+    },
+    stageBreakdown: [
+      { stage: "Arrival → Triage", timeA: 2, timeB: 14, delta: "-12m (Fast)" },
+      { stage: "Triage → Radiology Queue", timeA: 22, timeB: 18, delta: "+4m" },
+      { stage: "Radiology Scan Execution", timeA: 24, timeB: 12, delta: "+12m" },
+      { stage: "Doctor Consultation", timeA: 36, timeB: 16, delta: "+20m" },
+      { stage: "Treatment to Disposition", timeA: 201, timeB: 42, delta: "+159m (Boarding)" }
+    ],
+    remediation: "Equip inpatient wards with predictive EVS bed telemetry to pre-stage clean beds before emergent ED consultations conclude."
+  }
+];
+
+// ============================================================================
+// RESOURCE HANDOVER & SOCIAL NETWORK MINING DATA
+// ============================================================================
+export const RESOURCE_HANDOVERS = [
+  {
+    fromRole: "Triage Emergency Nurse",
+    toRole: "Attending Emergency MD",
+    fromDept: "ED Triage Intake",
+    toDept: "Acute Physician Pod",
+    volume: 948,
+    avgLatencyMin: 22.4,
+    surgeLatencyMin: 44.0,
+    frictionLevel: "Medium",
+    handoffChannel: "EHR Worklist Notification",
+    frictionRootCause: "MD pending physical paper chart delivery during surge hours",
+    remediationProtocol: "Direct secure VoIP / mobile EHR push notification"
+  },
+  {
+    fromRole: "Attending Emergency MD",
+    toRole: "Radiologic Technologist",
+    fromDept: "Acute Physician Pod",
+    toDept: "Radiology Bay 1",
+    volume: 832,
+    avgLatencyMin: 38.6,
+    surgeLatencyMin: 54.0,
+    frictionLevel: "Critical",
+    handoffChannel: "Physical Paper Requisition Slip",
+    frictionRootCause: "Paper form rejection due to missing indication signatures (39.8% loopback)",
+    remediationProtocol: "Mandatory CPOE electronic order hard-stop validation"
+  },
+  {
+    fromRole: "Radiologic Technologist",
+    toRole: "Diagnostic Radiologist",
+    fromDept: "Radiology Bay 1",
+    toDept: "PACS Reading Suite",
+    volume: 832,
+    avgLatencyMin: 14.2,
+    surgeLatencyMin: 22.0,
+    frictionLevel: "Low",
+    handoffChannel: "DICOM PACS Auto-Routing",
+    frictionRootCause: "Standard batch image processing",
+    remediationProtocol: "AI-assisted STAT stroke/trauma triage flag prioritization"
+  },
+  {
+    fromRole: "Attending Emergency MD",
+    toRole: "Inpatient Ward Charge Nurse",
+    fromDept: "Emergency Medicine",
+    toDept: "Inpatient Wards (MICU/Med-Surg)",
+    volume: 146,
+    avgLatencyMin: 72.0,
+    surgeLatencyMin: 145.0,
+    frictionLevel: "High",
+    handoffChannel: "Telephone Verbal Handoff (SBAR)",
+    frictionRootCause: "Inpatient bed unavailability & nurse-to-nurse call tag",
+    remediationProtocol: "Standardized EHR SBAR electronic handoff checklist"
+  },
+  {
+    fromRole: "Inpatient Ward Nurse",
+    toRole: "Environmental Services (EVS)",
+    fromDept: "Inpatient Wards",
+    toDept: "Facilities & Sanitation",
+    volume: 146,
+    avgLatencyMin: 48.0,
+    surgeLatencyMin: 85.0,
+    frictionLevel: "Critical",
+    handoffChannel: "Manual Housekeeping Logbook",
+    frictionRootCause: "EVS not notified until 35 min after physical patient discharge",
+    remediationProtocol: "Automated IoT bed release trigger upon EHR discharge order"
+  }
+];
+
+export const HANDOVER_DEPARTMENTS = [
+  { id: "triage", name: "Triage Intake Nursing", staffCount: 8, handoversOut: 980, handoversIn: 398, avgDelay: "14m", color: "#06b6d4" },
+  { id: "physician", name: "Emergency Physicians (MD)", staffCount: 5, handoversOut: 978, handoversIn: 948, avgDelay: "24m", color: "#6366f1" },
+  { id: "radiology", name: "Diagnostic Radiology & Techs", staffCount: 3, handoversOut: 832, handoversIn: 832, avgDelay: "38m", color: "#f59e0b" },
+  { id: "inpatient", name: "Inpatient Bed Placement", staffCount: 12, handoversOut: 146, handoversIn: 146, avgDelay: "72m", color: "#10b981" },
+  { id: "evs", name: "Environmental Services (EVS)", staffCount: 16, handoversOut: 146, handoversIn: 146, avgDelay: "48m", color: "#f43f5e" }
+];
+
+
 

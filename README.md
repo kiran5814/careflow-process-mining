@@ -75,6 +75,21 @@ Emergency departments and acute inpatient units face compounding operational bot
 * **Hospital Quality Governance CAPA Register**: Formal Corrective and Preventive Action tracker matching ISO 9001 and Joint Commission standards with interactive status updating and dynamic CSV export.
 * **Predictive ML Diagnostics**: XGBoost model performance metrics (0.942 ROC-AUC, 92.4% accuracy), confusion matrix (1,000 cases), Gini feature importance ranking, and clinical association rules.
 
+### 9. Clinical SLA & Rapid-Response Escalation Engine (`ClinicalSlaCenter.jsx`)
+* **Live In-Flight Patient Countdown Queue**: Tracks real-time countdown timers to regulatory SLA breach across Door-to-Doctor (<30m), Door-to-ECG (<10m), STAT Radiology (<45m), and ED Boarding (<240m).
+* **Automated Rapid Clinical Escalation Actions**: One-click paging workflows (*Trigger Consult Pager*, *Expedite STAT Radiology*, *Elevate EVS Bed Cleaning Priority to Level 1*) with toast alerts.
+* **24-Hour SLA Breach & Volume Dual-Axis Trend**: Correlates hourly intake surge patterns with regulatory SLA breach clusters and calculates $285,000/yr in CMS penalty avoidance.
+
+### 10. Cohort A/B Comparative Process Mining (`CohortBenchmark.jsx`)
+* **Side-by-Side Dimensional Benchmarking**: Evaluates clinical pathway divergences across *Morning Surge vs. Nominal Hours*, *Paperwork Loopback vs. First-Pass Flow*, and *High Acuity vs. Low Acuity*.
+* **Stage-by-Stage Latency Waterfall**: Compares exact dwell and transit times across all 6 clinical stages to isolate operational time expansion.
+* **Hypothesis Significance & Statistical Diagnostics**: Automated Welch's two-sample t-test ($p < 0.0001$) and one-click comparative benchmark CSV export.
+
+### 11. Inter-Departmental Resource Handover & Social Network Mining (`ResourceHandoverNetwork.jsx`)
+* **Care Team Handover-of-Work Matrix**: Maps communication channels and transfer latencies across Triage Nurses, Attending Physicians, Radiologists, Inpatient Ward Charge Nurses, and EVS Housekeeping.
+* **Friction Level Scoring & Delay Sinks**: Pinpoints communication voids (e.g., telephone call tag, paper requisition transit) and specifies direct EHR automated push protocols.
+* **Normal vs. Surge Latency Breakdown**: Quantifies how morning emergency influxes double handoff latencies between emergency medicine and inpatient bed placement.
+
 ---
 
 ## 🛠️ Technology Stack
@@ -125,10 +140,14 @@ careflow-process-mining/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── HospitalCommandCenter.jsx  # Ward bed census, CMS measures & ESI protocols
+│   │   │   ├── ClinicalSlaCenter.jsx      # Live SLA breach countdowns & rapid-response escalation
+│   │   │   ├── CohortBenchmark.jsx        # Side-by-side A/B comparative process mining
+│   │   │   ├── ResourceHandoverNetwork.jsx# Care team handover-of-work matrix & friction analysis
 │   │   │   ├── VisualAnalytics.jsx       # Recharts area, bar, funnel & radar charts
 │   │   │   ├── KpiMetrics.jsx            # 14 enterprise KPIs + deep-dive audit modal
 │   │   │   ├── ProcessMap.jsx            # Interactive DFG with live token simulator
 │   │   │   ├── BottleneckAnalytics.jsx   # Hourly congestion & shift rebalance simulator
+│   │   │   ├── RootCauseAnalysis.jsx     # Ishikawa fishbone, SHAP XAI waterfall & CAPA tracker
 │   │   │   ├── CaseExplorer.jsx          # Sortable & paginated clinical trace table
 │   │   │   ├── ComplianceChecker.jsx     # Clinical protocol violation auditor
 │   │   │   ├── PatientHeatmap.jsx        # 7x24 patient volume density heatmap
