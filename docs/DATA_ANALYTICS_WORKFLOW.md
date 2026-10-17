@@ -1,46 +1,59 @@
 # CareFlow — Data Analytics & Process Mining Engineering Workflow
-## Industry-Standard Technical Documentation
+## Enterprise Hospital Intelligence Architecture Documentation
 
-### 1. Architectural Architecture Overview
+### 1. Multi-Layer System Architecture
 ```
-[EHR Log Simulator]
+[EHR Telemetry Engine (Python & HL7/FHIR)]
         │
-        ▼ (Raw Event Stream)
-[Data Cleaning & Validation ETL]
-   - Timestamp Parsing (ISO-8601)
-   - Null & Anomaly Checks (100% Monotonic)
-   - Case ID Trace Stitching
+        ▼ (Raw Chronological Event Stream: 1,000 cases / 6,347 events)
+[Data Transformation & Modeling Layer (dbt ELT)]
+   ├── stg_ehr_events.sql           (Timestamp standardization, rush flags, lag windows)
+   ├── fct_patient_journeys.sql     (Case LOS duration, loopback flags, triage skip audit)
+   ├── mart_bottlenecks.sql         (Departmental transition wait minutes by rush slot)
+   ├── mart_sla_compliance.sql      (Door-to-Doctor, Door-to-ECG, ED boarding breach flags)
+   └── mart_resource_handovers.sql  (Inter-role communication latency & friction scoring)
         │
-        ▼ (Validated PM4Py Log: ehr_event_log.csv)
-[Process Mining Analytics Engine]
-   - Directly-Follows Graph (DFG)
-   - Variant Extraction & Frequency Pareto
-   - Bottleneck Queue Duration Modeling
+        ▼ (Validated Event Logs & Data Marts)
+[Process Mining & Discovery Engine (PM4Py)]
+   ├── Directly-Follows Graph (DFG) discovery
+   ├── Trace variant extraction & frequency Pareto analysis
+   ├── IEEE Conformance Evaluation (Fitness 94.9%, Precision 91.2%, Simplicity 96.0%)
+   └── Live token-replay animation mechanics
         │
-        ▼ (Interactive Visual Analytics)
-[Executive React + Vite Web Dashboard]
-   - Interactive Process Map & Bottleneck Radar
-   - Cohort Demographic & Acuity Filter Bar
-   - Trace Inspector & Case Timeline Drawer
-   - What-If Optimization & ROI Sandbox
-   - Data Ingestion & Quality Studio
-   - Executive Deliverables & Report Center
+        ▼ (Explainable AI & Forensic Diagnostics)
+[Predictive Machine Learning & Forensic Analytics]
+   ├── XGBoost Gradient Boosted Classifier (0.942 ROC-AUC, 92.4% accuracy)
+   ├── SHAP Explainable AI Waterfall (Marginal minutes attribution from E[Y]=110m)
+   ├── Ishikawa (Fishbone) 6-dimension clinical root cause breakdown
+   └── 5-Whys Six Sigma forensic inquiry trees
+        │
+        ▼ (Enterprise Hospital Command Center)
+[Executive React 19 + Vite Dashboard UI]
+   ├── Process Map & Interactive Token Simulator
+   ├── Hospital Operations Command Center (250-bed census, CMS measures)
+   ├── Clinical SLA & Rapid-Response Escalation Console
+   ├── Cohort A/B Comparative Process Mining Engine
+   ├── Inter-Departmental Resource Handover Matrix
+   ├── Root Cause Analysis & CAPA Remediation Tracker
+   ├── Visual Analytics & Multiaxial Physician Evaluation
+   └── What-If ROI Optimization Sandbox ($142.4K CPOE Payback)
 ```
 
 ### 2. Dataset Schema Definition
 | Column Name | Type | PM4Py Role | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `Case_ID` | String | Case Identifier | No | Unique patient emergency room encounter |
-| `Activity_Name` | Categorical | Event Concept | No | Clinical stage (Registration, Triage, X-Ray, etc.) |
-| `Timestamp` | Datetime (UTC) | Temporal Order | No | Exact start timestamp of the activity |
-| `Resource` | Categorical | Org Asset | No | Staff member or attending physician |
-| `Gender` | Categorical | Case Attribute | No | Patient gender (Male, Female) |
-| `Age_Group` | Categorical | Case Attribute | No | Demographic bucket (0-17, 18-40, 41-60, 61+) |
-| `Severity` | Categorical | Case Attribute | No | Emergency severity acuity (Low, Medium, High) |
+| `Case_ID` | String | Case Identifier | No | Unique patient emergency room encounter (`CASE000001` - `CASE001000`) |
+| `Activity_Name` | Categorical | Event Concept | No | Clinical stage (Registration, Triage, X-Ray, Lab Test, Consult, etc.) |
+| `Timestamp` | Datetime (UTC) | Temporal Order | No | Exact monotonic timestamp (`YYYY-MM-DD HH:MM:SS`) |
+| `Resource` | Categorical | Org Asset | No | Assigned clinical provider, nurse, or technologist |
+| `Gender` | Categorical | Demographic | No | Patient gender (`Male`, `Female`) |
+| `Age_Group` | Categorical | Demographic | No | Stratified demographic cohort (`0-17`, `18-40`, `41-60`, `61+`) |
+| `Severity` | Categorical | Clinical Acuity | No | Emergency triage severity tier (`Low`, `Medium`, `High`, `Resuscitation`) |
 
 ### 3. IEEE Process Mining Model Evaluation Matrix
-- **Fitness ($F$)**: $94.9\%$
-- **Precision ($P$)**: $91.2\%$
-- **Generalization ($G$)**: $88.5\%$
-- **Simplicity ($S$)**: $96.0\%$
-- **Overall Model Quality**: $92.7\%$
+- **Fitness ($F$)**: $94.9\%$ (Trace replayability without token deficit)
+- **Precision ($P$)**: $91.2\%$ (Avoidance of underfitting and unobserved paths)
+- **Generalization ($G$)**: $88.5\%$ (Generalizability to future emergency arrivals)
+- **Simplicity ($S$)**: $96.0\%$ (Occam's razor structural compactness)
+- **Overall Quality Index**: $92.7\%$
+

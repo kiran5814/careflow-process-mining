@@ -45,3 +45,15 @@ models:
 
   - name: mart_bottlenecks
     description: "Aggregated transition bottlenecks segmented by peak morning rush hours"
+
+  - name: mart_sla_compliance
+    description: "Clinical SLA compliance monitoring calculating Door-to-Doctor, Door-to-Radiology, and ED boarding breaches"
+    columns:
+      - name: case_id
+        tests:
+          - unique
+          - not_null
+
+  - name: mart_resource_handovers
+    description: "Inter-departmental care team handovers, transition latency distributions, and communication friction ratings"
+

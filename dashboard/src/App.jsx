@@ -21,7 +21,7 @@ import ClinicalSlaCenter from './components/ClinicalSlaCenter';
 import CohortBenchmark from './components/CohortBenchmark';
 import ResourceHandoverNetwork from './components/ResourceHandoverNetwork';
 import { CheckCircle, Award } from 'lucide-react';
-import { SUMMARY_STATS, SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
+import { SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('map');
@@ -100,7 +100,7 @@ export default function App() {
         </div>
 
         {/* Filter Bar - show on clinical/analysis pages */}
-        {['map', 'hospital', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
+        {['map', 'hospital', 'sla', 'cohort', 'handover', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
           <FilterBar
             filters={filters}
             setFilters={setFilters}
