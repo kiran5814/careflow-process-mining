@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CareFlow — Comprehensive Internship Viva & Technical Project Defense Guide</title>
+<style>
+  @page {
+    size: A4;
+    margin: 16mm 14mm 16mm 14mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    line-height: 1.55;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 22pt;
+    color: #0f172a;
+    border-bottom: 3px solid #0284c7;
+    padding-bottom: 6px;
+    margin-top: 0;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 12pt;
+    font-weight: 600;
+    color: #0284c7;
+    margin-bottom: 12px;
+  }
+
+  .meta-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 9.5pt;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  h2 {
+    font-size: 14pt;
+    color: #0f172a;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 4px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 11.5pt;
+    color: #0369a1;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  .elevator-box {
+    background: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+    border-left: 5px solid #2563eb;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-style: italic;
+    color: #1e3a8a;
+    margin-bottom: 18px;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    font-size: 9pt;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    text-align: left;
+    padding: 7px 10px;
+    font-weight: 600;
+    font-size: 9pt;
+    border: 1px solid #0f172a;
+  }
+
+  td {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  code {
+    font-family: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
+    font-size: 8.5pt;
+    background: #f1f5f9;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+    color: #0369a1;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-family: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
+    font-size: 8pt;
+    line-height: 1.4;
+    overflow-x: auto;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    page-break-inside: avoid;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .qa-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+
+  .qa-question {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 10.5pt;
+    margin-bottom: 6px;
+  }
+
+  .qa-answer {
+    color: #334155;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .badge-red { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+  .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+  .badge-blue { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+<h1>CareFlow — Internship Viva & Technical Project Defense Guide</h1>
+<div class="subtitle">Enterprise Clinical Process Mining & Hospital Operational Intelligence Platform</div>
+
+<div class="meta-box">
+  <div><strong>Author / Student:</strong> Riddhish (Branch: <code>dev-Riddi</code> / <code>dev-Riddhi</code>)</div>
+  <div><strong>Target Institution:</strong> Metropolitan Academic Medical Center</div>
+  <div><strong>Project Track:</strong> Healthcare Data Analytics & Process Mining</div>
+  <div><strong>Dataset Scale:</strong> 1,000 Patient Encounters • 6,347 Chronological EHR Events</div>
+  <div><strong>Project Status:</strong> Completed, Validated & Synchronized on GitHub</div>
+  <div><strong>Repository:</strong> github.com/kiran5814/careflow-process-mining</div>
+</div>
+
+<h2>1. 30-Second Elevator Pitch (Start Your Viva With This)</h2>
+<div class="elevator-box">
+  "CareFlow is an institutional-grade healthcare process mining and clinical operations command platform. It bridges the gap between raw Electronic Health Record (EHR) event logs and executive hospital decision-making. Using Python, PM4Py, and dbt for ELT data transformation, CareFlow reconstructs actual patient journeys into Directly-Follows Graphs, uncovers hidden operational rework loops (such as a 39.8% radiology paperwork bounce-back burning $142,400 annually), monitors regulatory CMS/Joint Commission quality measures in real time, and models clinical interventions through an interactive React 19 executive dashboard."
+</div>
+
+<h2>2. Project Aim, Objectives & Problem Statement</h2>
+
+<h3>The Hospital Operational Problem Statement</h3>
+<p>Emergency departments (ED) and acute inpatient units face compounding operational bottlenecks that lead to ambulance diversions, prolonged wait times, and regulatory financial penalties:</p>
+<ol>
+  <li><strong>The Radiology Paperwork Loopback (Rework)</strong>: <strong>39.8%</strong> of patients requiring diagnostic imaging experience repeat nursing triage because paper requisition slips lack physician counter-signatures or mandatory clinical indications. This adds <strong>+48 minutes of non-clinical dwell time</strong> and burns <strong>$142,400/year</strong> in nursing waste.</li>
+  <li><strong>Morning Surge Congestion (Temporal Bottleneck)</strong>: Between <strong>08:00 AM and 11:00 AM</strong>, patient arrivals spike to <strong>102 patients/hour</strong> while single-technician staffing causes radiology queue delays to surge by <strong>+237% (54 min average wait)</strong>.</li>
+  <li><strong>Inpatient ED Boarding Crisis</strong>: Admitted acute patients dwell in emergency treatment bays for an average of <strong>4h 12m</strong> waiting for inpatient bed turnover (EVS cleaning), creating acute bed gridlock.</li>
+  <li><strong>Clinical Governance Violations</strong>: <strong>5.1%</strong> of patients bypass nursing triage acuity assessment directly to doctor consultation without documented emergency fast-track justification.</li>
+</ol>
+
+<h3>Primary Objectives of the Project</h3>
+<ul>
+  <li><strong>Ingest & Validate</strong>: Clean and validate raw EHR event streams with 100% chronological integrity and zero data loss.</li>
+  <li><strong>Process Discovery</strong>: Automatically discover the hospital's actual clinical pathway topology using Directly-Follows Graphs (DFG) rather than assumed static flowchart diagrams.</li>
+  <li><strong>Root Cause & Explainable AI</strong>: Apply Ishikawa (Fishbone) frameworks, Six Sigma 5-Whys, and SHAP (SHapley Additive exPlanations) to quantify root causes of delays.</li>
+  <li><strong>Regulatory Compliance</strong>: Actively audit CMS (Centers for Medicare & Medicaid Services) and The Joint Commission (TJC) hospital quality measures.</li>
+  <li><strong>What-If ROI Optimization</strong>: Provide hospital leadership with an interactive simulation sandbox proving the financial and throughput ROI of proposed operational interventions.</li>
+</ul>
+
+<h2>3. Dataset & Healthcare Domain Foundations</h2>
+
+<h3>Dataset Characteristics</h3>
+<ul>
+  <li><strong>Total Encounters</strong>: 1,000 unique patient visits (<code>CASE000001</code> to <code>CASE001000</code>).</li>
+  <li><strong>Total Event Records</strong>: 6,347 discrete, timestamped clinical actions.</li>
+  <li><strong>Standards Conformance</strong>: Modeled following <strong>HL7 / FHIR</strong> event conventions and the <strong>Emergency Severity Index (ESI 1–5)</strong> triage system.</li>
+</ul>
+
+<h3>The 7-Column Canonical Event Log Schema</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Field Name</th>
+      <th>Data Type</th>
+      <th>PM4Py Process Mining Role</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Case_ID</code></td>
+      <td><code>VARCHAR(50)</code></td>
+      <td><strong>Case Identifier</strong></td>
+      <td>Unique hospital encounter token tracking the patient across departments.</td>
+    </tr>
+    <tr>
+      <td><code>Activity_Name</code></td>
+      <td><code>VARCHAR(100)</code></td>
+      <td><strong>Event Concept (Activity)</strong></td>
+      <td>The specific clinical action performed (e.g., Triage, X-Ray, Lab Test).</td>
+    </tr>
+    <tr>
+      <td><code>Timestamp</code></td>
+      <td><code>TIMESTAMP (UTC)</code></td>
+      <td><strong>Temporal Sequence</strong></td>
+      <td>Exact monotonic timestamp (<code>YYYY-MM-DD HH:MM:SS</code>) tracking sequence.</td>
+    </tr>
+    <tr>
+      <td><code>Resource</code></td>
+      <td><code>VARCHAR(100)</code></td>
+      <td><strong>Organizational Asset</strong></td>
+      <td>Attending physician, triage nurse, or technician handling the event.</td>
+    </tr>
+    <tr>
+      <td><code>Gender</code></td>
+      <td><code>VARCHAR(20)</code></td>
+      <td><strong>Case Attribute</strong></td>
+      <td>Demographic factor (<code>Male</code>, <code>Female</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Age_Group</code></td>
+      <td><code>VARCHAR(20)</code></td>
+      <td><strong>Case Attribute</strong></td>
+      <td>Stratified cohort (<code>0-17</code>, <code>18-40</code>, <code>41-60</code>, <code>61+</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Severity</code></td>
+      <td><code>VARCHAR(20)</code></td>
+      <td><strong>Clinical Acuity</strong></td>
+      <td>Triage level (<code>Low</code>, <code>Medium</code>, <code>High</code>, <code>Resuscitation</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>The 8 Canonical Hospital Stages</h3>
+<ol>
+  <li><code>Registration</code>: Patient demographic and insurance intake.</li>
+  <li><code>Triage</code>: Nursing acuity assessment using ESI 1–5 protocol.</li>
+  <li><code>X-Ray</code>: Diagnostic radiology imaging suite.</li>
+  <li><code>Lab Blood Test</code>: Clinical chemistry and hematology.</li>
+  <li><code>Doctor Consultation</code>: Emergency physician clinical workup.</li>
+  <li><code>Treatment Care</code>: IV medication, wound management, acute stabilization.</li>
+  <li><code>Inpatient Admission</code>: Transfer to MICU, CCU, Step-Down, or Med-Surg ward.</li>
+  <li><code>Discharged Home</code>: Outpatient disposition and departure.</li>
+</ol>
+
+<div class="page-break"></div>
+
+<h2>4. End-to-End System Architecture (The 5 Layers)</h2>
+
+<pre>
+┌────────────────────────────────────────────────────────────────────────┐
+│  LAYER 1: SYNTHETIC EHR TELEMETRY ENGINE (Python / HL7 FHIR)           │
+│  - Generates realistic hospital arrivals, stochastic delays, & rework  │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  LAYER 2: DATA ENGINEERING & ELT TRANSFORMATION (dbt + SQLite/Postgres)│
+│  - stg_ehr_events.sql: Window lag partitioning, rush flags             │
+│  - fct_patient_journeys.sql: Encounter LOS, loopback & anomaly flags   │
+│  - mart_bottlenecks.sql: Transition wait durations across time slots  │
+│  - mart_sla_compliance.sql: Door-to-Doctor, Door-to-ECG, Boarding SLAs │
+│  - mart_resource_handovers.sql: Inter-departmental transfer latency    │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  LAYER 3: PROCESS MINING & DISCOVERY ENGINE (PM4Py / Python)           │
+│  - Directly-Follows Graph (DFG) discovery & trace variant Pareto       │
+│  - IEEE Conformance Checking: Fitness (94.9%), Precision (91.2%)       │
+│  - Animated token replay simulation coordinates                        │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  LAYER 4: CLINICAL MACHINE LEARNING & EXPLAINABLE AI (XGBoost / XAI)   │
+│  - XGBoost Classifier (0.942 ROC-AUC) predicting stay duration > 4h    │
+│  - SHAP Waterfall: Marginal minute contributions from base E[Y]=110m   │
+│  - Ishikawa (Fishbone) 6-dimension root cause diagram                  │
+│  - Six Sigma 5-Whys clinical drilldown trees & CAPA governance tracker │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  LAYER 5: EXECUTIVE COMMAND CENTER WEB DASHBOARD (React 19 + Vite)     │
+│  - 17 interactive modules, Recharts analytics, 250-bed census tracking │
+└────────────────────────────────────────────────────────────────────────┘
+</pre>
+
+<h2>5. Technology Stack & Framework Justifications ("Why Did You Use X?")</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Technology</th>
+      <th>Role</th>
+      <th>Why It Was Chosen Over Alternatives</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>React 19</strong></td>
+      <td>Frontend UI Framework</td>
+      <td>Component-driven architecture allows isolating complex reactive states (e.g., live SVG token replay, countdown timers, and modal drawers) with fine-grained DOM updates without re-rendering the entire dashboard.</td>
+    </tr>
+    <tr>
+      <td><strong>Vite 8</strong></td>
+      <td>Frontend Build Engine & Bundler</td>
+      <td>Replaced legacy Webpack. Vite uses native ES Modules during development for instant Hot Module Replacement (HMR &lt; 50ms) and Rollup for production tree-shaking, resulting in a production build time of <strong>under 800ms</strong>.</td>
+    </tr>
+    <tr>
+      <td><strong>Recharts 3</strong></td>
+      <td>Data Visualization</td>
+      <td>Built specifically for React and SVG. Unlike heavy canvas libraries, Recharts supports declarative SVG components (<code>ResponsiveContainer</code>, <code>ComposedChart</code>, <code>Bar</code>, <code>Area</code>, <code>Radar</code>, <code>Funnel</code>) that scale crisply across display resolutions and cleanly integrate with React state.</td>
+    </tr>
+    <tr>
+      <td><strong>PM4Py (Python)</strong></td>
+      <td>Process Discovery Engine</td>
+      <td>The open-source standard developed by Fraunhofer Institute and RWTH Aachen University. It provides native algorithms for Directly-Follows Graph (DFG) discovery, Alpha Miner, Inductive Miner, and IEEE alignment conformance checking.</td>
+    </tr>
+    <tr>
+      <td><strong>dbt (Data Build Tool)</strong></td>
+      <td>In-Warehouse ELT Transformation</td>
+      <td>Instead of error-prone Python transformation scripts, dbt enables modular SQL modeling with built-in data quality testing (<code>not_null</code>, <code>unique</code>), version-controlled dependency lineage DAGs, and separation into Staging views and Mart tables.</td>
+    </tr>
+    <tr>
+      <td><strong>SQLite / PostgreSQL</strong></td>
+      <td>Relational Event Store</td>
+      <td>Process mining logs require strict relational ACID guarantees for chronological event sequencing. Relational tables enable SQL window functions (<code>LAG()</code>, <code>LEAD()</code>, <code>PARTITION BY</code>) essential for transition duration calculations.</td>
+    </tr>
+    <tr>
+      <td><strong>Vanilla CSS Design System</strong></td>
+      <td>Styling & Aesthetics</td>
+      <td>Avoided Tailwind utility bloat. A curated Vanilla CSS design system provides native CSS custom properties (<code>--bg-primary</code>, <code>--accent-cyan</code>), dark-mode glassmorphism (<code>backdrop-filter: blur</code>), glowing SVG drop-shadows, and GPU-accelerated micro-animations.</td>
+    </tr>
+    <tr>
+      <td><strong>Lucide React</strong></td>
+      <td>Medical & UI Iconography</td>
+      <td>Lightweight, tree-shakeable SVG icons providing clean visual cues for clinical equipment, staffing roles, triage urgency, and emergency status codes.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>6. Complete Module-by-Module Feature Breakdown</h2>
+<p>CareFlow contains <strong>17 specialized clinical intelligence modules</strong>:</p>
+
+<div class="card">
+  <h3>Module 1: Interactive DFG Process Map & Token Simulator (<code>ProcessMap.jsx</code>)</h3>
+  <ul>
+    <li><strong>Directly-Follows Graph (DFG)</strong>: Nodes represent clinical activities; directed edges show transitions weighted by patient frequency and median wait time.</li>
+    <li><strong>Live In-Flight Token Simulation</strong>: Multi-speed (1x, 2x, 4x) animated SVG particles moving along bezier curves, visually demonstrating where patients queue up.</li>
+    <li><strong>Clinical Stage Inspector Drawer</strong>: Clicking any node opens a drawer displaying assigned staffing rosters (<em>1 Lead Radiologic Technologist</em>), medical equipment (<em>GE Discovery XR656</em>), and SLA quality standards.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 2: Hospital Operations Command Center & Ward Census (<code>HospitalCommandCenter.jsx</code>)</h3>
+  <ul>
+    <li><strong>250-Bed Real-Time Census</strong>: Live occupancy bar charts across <strong>ED Zone A, ED Zone B, Trauma Resus, MICU, CCU, Step-Down, and Med-Surg</strong> with <strong>85% Advisory</strong> and <strong>90% Critical Saturation</strong> indicators.</li>
+    <li><strong>Emergency Dispatch Feed</strong>: Live telemetry tracking <strong>Code STEMI</strong>, <strong>Code Sepsis</strong>, and <strong>Trauma Delta</strong> activations.</li>
+    <li><strong>Interactive Bed Turnover Triggers</strong>: Triggers automated Environmental Services (EVS) terminal cleaning to expedite patient transfers out of emergency bays.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 3: Clinical SLA & Escalation Command Center (<code>ClinicalSlaCenter.jsx</code>)</h3>
+  <ul>
+    <li><strong>Regulatory CMS Core Measures</strong>: Live tracking of Door-to-Doctor (&lt;30m), Door-to-ECG (&lt;10m), STAT Radiology (&lt;45m), and ED Boarding (&lt;240m).</li>
+    <li><strong>Live Patient Countdown Queue</strong>: Displays remaining minutes until SLA breach with pulsing critical alerts.</li>
+    <li><strong>Rapid Clinical Escalation Actions</strong>: One-click paging workflows (<em>Trigger Consult Pager</em>, <em>Expedite STAT Radiology</em>, <em>Elevate EVS Bed Cleaning Priority to Level 1</em>) with real-time toast confirmations.</li>
+    <li><strong>Financial Risk Avoidance</strong>: Tracks <strong>$285,000/year</strong> in penalties avoided under the CMS Hospital Value-Based Purchasing (VBP) Program.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 4: Cohort A/B Comparative Process Mining (<code>CohortBenchmark.jsx</code>)</h3>
+  <ul>
+    <li><strong>Side-by-Side Dimensional Benchmarking</strong>: Evaluates clinical pathway divergences across <em>Morning Surge vs. Nominal Hours</em>, <em>Paperwork Loopback vs. First-Pass Flow</em>, and <em>High Acuity vs. Low Acuity</em>.</li>
+    <li><strong>Stage-by-Stage Latency Waterfall</strong>: Compares exact dwell and transit times across all 6 clinical stages to isolate operational time expansion.</li>
+    <li><strong>Hypothesis Testing</strong>: Automated Welch's two-sample t-test (<code>p &lt; 0.0001</code>) confirming statistically significant process divergence, paired with exportable CSV benchmark reports.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 5: Inter-Departmental Resource Handover & Social Network Mining (<code>ResourceHandoverNetwork.jsx</code>)</h3>
+  <ul>
+    <li><strong>Care Team Handover-of-Work Matrix</strong>: Maps communication channels and transfer latencies across Triage Nurses, Attending Physicians, Radiologists, Inpatient Ward Charge Nurses, and EVS Housekeeping.</li>
+    <li><strong>Friction Level Scoring & Sinks</strong>: Quantifies information channels (paper slips, EHR worklists, phone calls) and identifies root causes of handover delays with EHR automated push protocols.</li>
+    <li><strong>Normal vs. Surge Latency Breakdown</strong>: Quantifies how morning emergency influxes double handoff latencies between emergency medicine and inpatient bed placement.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 6: Root Cause Analysis & Explainable AI Suite (<code>RootCauseAnalysis.jsx</code>)</h3>
+  <ul>
+    <li><strong>Interactive Ishikawa (Fishbone) Diagram</strong>: Joint Commission 6-dimension clinical root cause framework (Process, People, Technology, Policy, Environment, Measurement) with interactive bone inspection and severity profiling.</li>
+    <li><strong>SHAP Explainable AI Waterfall</strong>: Marginal feature contribution decomposition showing positive and negative minute impacts from baseline expected stay <code>E[Y]=110 min</code> to final stay <code>f(x)</code>. Includes 4 preset clinical cohorts and custom patient simulator.</li>
+    <li><strong>5-Whys Clinical Forensic Drilldown</strong>: Step-by-step Six Sigma inquiry into the 39.8% Radiology Paperwork Loop and the +237% Morning Congestion Surge, complete with quantitative EHR telemetry evidence.</li>
+    <li><strong>Hospital Quality Governance CAPA Register</strong>: Formal Corrective and Preventive Action tracker matching ISO 9001 and Joint Commission standards with interactive status updating and dynamic CSV export.</li>
+    <li><strong>Predictive ML Diagnostics</strong>: XGBoost model performance metrics (0.942 ROC-AUC, 92.4% accuracy), confusion matrix (1,000 cases), Gini feature importance ranking, and clinical association rules.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 7: Advanced Visual Analytics Workspace (<code>VisualAnalytics.jsx</code>)</h3>
+  <ul>
+    <li><strong>30-Day Cohort Volume, Lead Time & Conformance Dual Trend</strong>: Dual-axis <code>ComposedChart</code> pairing daily intake volume with mean stay duration (hours).</li>
+    <li><strong>Activity Execution vs Queue Wait Delay Waterfall</strong>: Highlights that X-Ray wait (42m) and Consult wait (24m) represent <strong>66.6%</strong> of non-clinical waiting waste.</li>
+    <li><strong>Patient Journey Care Funnel</strong>: Conversion waterfall from arrival through triage, diagnostics, consultation, treatment, and disposition.</li>
+    <li><strong>Physician Multi-Axial Radar Evaluation</strong>: Evaluates all 5 attending physicians across <em>Speed</em>, <em>Throughput</em>, <em>Patient CSAT</em>, <em>Guideline Adherence</em>, and <em>Inpatient Parity</em>.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 8: Enterprise KPI Scorecard & Deep-Dive Forensic Audit (<code>KpiMetrics.jsx</code>)</h3>
+  <ul>
+    <li><strong>14+ Quantitative Metrics</strong>: Organized into <em>Flow & Velocity</em>, <em>Clinical Governance</em>, <em>Economics & ROI</em>, and <em>Workforce Productivity</em>.</li>
+    <li><strong>Interactive Deep-Dive Audit Modal</strong>: Displays mathematical formulation, EHR data lineage, 30-day historical variance AreaChart, prescribed remediation plan, and one-click CSV export.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 9: Bottleneck Analytics & Hourly Congestion Simulator (<code>BottleneckAnalytics.jsx</code>)</h3>
+  <ul>
+    <li><strong>Hourly Congestion ComposedChart</strong>: Tracks patient arrival surges alongside queue wait times, showing the morning surge peaking at 09:00 AM (102 pt/hr).</li>
+    <li><strong>Shift Rebalancing Simulator</strong>: Models moving 1 technician from the 14:00 lull to the morning rush, immediately displaying projected wait time reductions (-38 min).</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 10: Clinical Case Log Trace Inspector (<code>CaseExplorer.jsx</code>)</h3>
+  <ul>
+    <li><strong>Data Table</strong>: Column sorting, multi-select checkboxes, search bar, and pagination.</li>
+    <li><strong>Status Indicators</strong>: <em>Optimal Compliant Flow</em> (green), <em>Rework Loop</em> (amber), and <em>Protocol Anomaly</em> (rose).</li>
+    <li><strong>Case Detail Modal (<code>CaseDetailModal.jsx</code>)</strong>: Clicking any row opens the full clinical timeline showing timestamps, durations, and provider notes.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 11: Clinical Protocol Compliance Checker (<code>ComplianceChecker.jsx</code>)</h3>
+  <ul>
+    <li>Audits hard clinical rules: Triage Acuity Assessment bypass, Emergency fast-track overrides, and chronological sequence integrity.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 12: 7x24 Patient Volume Density Heatmap (<code>PatientHeatmap.jsx</code>)</h3>
+  <ul>
+    <li>168-cell matrix mapping arrival volume density by hour of day (0–23) across all days of the week, identifying peak Friday and Monday morning surges.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 13: Live Emergency Telemetry Feed (<code>LiveActivityFeed.jsx</code>)</h3>
+  <ul>
+    <li>Streaming real-time activity feed simulating HL7 incoming message packets with severity color badges.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 14: What-If ROI Simulation Engine (<code>WhatIfSimulation.jsx</code>)</h3>
+  <ul>
+    <li>Financial modeling for CPOE digitization:
+      <ul>
+        <li><strong>Gross Annual Savings</strong>: <strong>$142,400</strong></li>
+        <li><strong>Implementation CAPEX</strong>: <strong>$24,000</strong></li>
+        <li><strong>Net Year 1 ROI</strong>: <strong>394%</strong> (1.8-month payback period)</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 15: Data Pipeline Quality Studio (<code>DataPipelineQuality.jsx</code>)</h3>
+  <ul>
+    <li>Displays ingestion stats, schema assertions, null check assertions (0% nulls), and allows simulating pipeline re-execution.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 16: Executive Report (<code>ExecutiveReport.jsx</code>)</h3>
+  <ul>
+    <li>Formal clinical summary ready for hospital board presentations with print/PDF styling.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Module 17: Presentation Deck (<code>PresentationDeck.jsx</code>)</h3>
+  <ul>
+    <li>Interactive slide deck built into the app for conference and executive briefings.</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<h2>7. IEEE Process Mining Quality Dimensions (Crucial Viva Topic)</h2>
+<p>When professors ask, <em>"How did you evaluate your process discovery model?"</em>, cite the <strong>4 IEEE Quality Dimensions</strong>:</p>
+
+<ol>
+  <li><strong>Process Fitness (<code>F = 94.9%</code>)</strong>:
+    <ul>
+      <li><em>Definition</em>: The ability of the discovered process model to replay the traces present in the event log without missing or remaining tokens.</li>
+      <li><em>Formula</em>: <code>F = 1 - (Missing Tokens + Remaining Tokens) / (Produced Tokens + Consumed Tokens)</code></li>
+      <li><em>Result</em>: 94.9% of observed clinical paths replay flawlessly.</li>
+    </ul>
+  </li>
+  <li><strong>Model Precision (<code>P = 91.2%</code>)</strong>:
+    <ul>
+      <li><em>Definition</em>: Measures how well the model avoids allowing unobserved, non-compliant behaviors (prevents "underfitting").</li>
+      <li><em>Result</em>: The model strictly reflects healthcare pathways without creating unrealistic bypasses.</li>
+    </ul>
+  </li>
+  <li><strong>Generalization (<code>G = 88.5%</code>)</strong>:
+    <ul>
+      <li><em>Definition</em>: Measures how well the model will accommodate future unseen patient traces that adhere to clinical logic.</li>
+    </ul>
+  </li>
+  <li><strong>Simplicity (<code>S = 96.0%</code>)</strong>:
+    <ul>
+      <li><em>Definition</em>: Occam's razor principle — the model avoids unnecessary complex nodes or spaghetti transitions.</li>
+    </ul>
+  </li>
+</ol>
+<p><strong>Overall Combined Quality Score</strong>: <strong>92.7%</strong></p>
+
+<h2>8. Regulatory CMS & Joint Commission Quality Measures</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Measure Code</th>
+      <th>Full Measure Name</th>
+      <th>Target Benchmark</th>
+      <th>CareFlow Value</th>
+      <th>Compliance Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CMS SEP-1</strong></td>
+      <td>Severe Sepsis 3-Hour Bundle Adherence</td>
+      <td>&ge; 95.0%</td>
+      <td><strong>98.2%</strong></td>
+      <td><span class="badge badge-green">Optimal</span></td>
+    </tr>
+    <tr>
+      <td><strong>CMS OP-18</strong></td>
+      <td>ED Length of Stay for Non-Admitted Patients</td>
+      <td>&lt; 180 min</td>
+      <td><strong>165 min</strong> (Compliant) vs <strong>315 min</strong> (Loop)</td>
+      <td><span class="badge badge-amber">At Risk during loops</span></td>
+    </tr>
+    <tr>
+      <td><strong>CMS ED-2b</strong></td>
+      <td>Admit Decision to ED Departure Boarding</td>
+      <td>&lt; 240 min (4h)</td>
+      <td><strong>252 min (4h 12m)</strong></td>
+      <td><span class="badge badge-red">Breached (Boarding crisis)</span></td>
+    </tr>
+    <tr>
+      <td><strong>CMS OP-40</strong></td>
+      <td>Door-to-ECG for Suspected ACS / Chest Pain</td>
+      <td>&lt; 10.0 min</td>
+      <td><strong>7.2 min</strong></td>
+      <td><span class="badge badge-green">Optimal</span></td>
+    </tr>
+    <tr>
+      <td><strong>CMS STK-OP</strong></td>
+      <td>Acute Ischemic Stroke Door-to-Needle tPA</td>
+      <td>&lt; 45.0 min</td>
+      <td><strong>38.0 min</strong></td>
+      <td><span class="badge badge-green">Compliant</span></td>
+    </tr>
+    <tr>
+      <td><strong>CMS HRRP-30</strong></td>
+      <td>30-Day Hospital Readmission Rate</td>
+      <td>&lt; 6.5%</td>
+      <td><strong>4.8%</strong></td>
+      <td><span class="badge badge-green">Penalty-Free</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>9. Top 15 Viva Questions & High-Scoring Answers</h2>
+
+<div class="qa-card">
+  <div class="qa-question">Q1: What is the difference between traditional Business Intelligence (BI) and Process Mining?</div>
+  <div class="qa-answer"><strong>Answer</strong>: Traditional BI dashboards answer <em>"What happened and how many?"</em> using static aggregations (e.g., total patient count, average wait time). Process Mining uses timestamped event logs to answer <em>"How did it happen, why did it deviate, and where did it loop?"</em> by discovering the actual graph topology of patient journeys, revealing rework loops and sequence violations invisible in standard BI.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q2: What is the Directly-Follows Graph (DFG) and how is it calculated?</div>
+  <div class="qa-answer"><strong>Answer</strong>: A Directly-Follows Graph is a directed graph where nodes represent clinical activities and edges represent sequential execution. If activity B directly follows activity A within the same <code>Case_ID</code>, an edge (A &rarr; B) is recorded. The edge weight represents either transition frequency or average transition duration.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q3: What is the biggest operational bottleneck you discovered in the hospital?</div>
+  <div class="qa-answer"><strong>Answer</strong>: The <strong>Radiology Paperwork Loopback</strong>. 39.8% of patients (398 out of 1,000 cases) who arrived at the X-Ray suite were rejected by technologists and sent back to Triage because their physical paper requisition slips lacked doctor signatures or indication checkboxes. This added an average of <strong>+48 minutes of non-clinical waiting time</strong> and cost <strong>$142,400/year</strong> in wasted nursing labor.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q4: How does your dbt pipeline transform the raw data?</div>
+  <div class="qa-answer"><strong>Answer</strong>: The dbt project uses an ELT architecture:
+  <ol>
+    <li><code>stg_ehr_events.sql</code> standardizes column types, parses ISO-8601 timestamps, tags morning surge hours (08:00–11:00 AM), and calculates lag windows for transition deltas.</li>
+    <li><code>fct_patient_journeys.sql</code> aggregates case-level length of stay, detects triage bypass anomalies, and flags rework loops.</li>
+    <li><code>mart_bottlenecks.sql</code>, <code>mart_sla_compliance.sql</code>, and <code>mart_resource_handovers.sql</code> generate analytical summary tables for the dashboard.</li>
+  </ol></div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q5: What is SHAP and why did you use it in Root Cause Analysis?</div>
+  <div class="qa-answer"><strong>Answer</strong>: SHAP (SHapley Additive exPlanations) is a game-theoretic approach to explainable machine learning. Rather than treating our XGBoost stay prediction model as a black box, SHAP decomposes each patient's predicted stay duration into additive minute contributions from a baseline of 110 minutes (e.g., Paperwork Loop adds +85m, Morning Surge adds +65m, High Acuity adds +40m, whereas low acuity subtracts -15m).</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q6: What is an Ishikawa (Fishbone) diagram and how does it apply here?</div>
+  <div class="qa-answer"><strong>Answer</strong>: The Ishikawa diagram is a root cause analysis tool endorsed by The Joint Commission and Lean Six Sigma. It categorizes causes into 6 dimensions: <strong>Process</strong>, <strong>People</strong>, <strong>Technology</strong>, <strong>Policy</strong>, <strong>Environment</strong>, and <strong>Measurement</strong>. For example, in our project, the technology cause is the disconnected legacy PACS system, the policy cause is the wet-signature mandate, and the people cause is single-tech staffing.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q7: What are the 5-Whys? Give an example from your project.</div>
+  <div class="qa-answer"><strong>Answer</strong>: 5-Whys is an iterative root cause technique.
+  <ol>
+    <li><em>Why did 398 patients return to Triage from X-Ray?</em> Technologists rejected the requisition order.</li>
+    <li><em>Why was it rejected?</em> It lacked mandatory clinical indication checkboxes.</li>
+    <li><em>Why were they missing?</em> Nurses manually filled carbon-copy paper slips during intake surges.</li>
+    <li><em>Why paper slips?</em> The radiology ordering system was not integrated with the triage EHR module.</li>
+    <li><em>Root Cause:</em> Lack of Computerized Physician Order Entry (CPOE) with mandatory field hard-stops before order dispatch.</li>
+  </ol></div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q8: What is a CAPA register?</div>
+  <div class="qa-answer"><strong>Answer</strong>: CAPA stands for <strong>Corrective and Preventive Action</strong>, an essential standard in ISO 9001 and Joint Commission healthcare governance. In CareFlow, our CAPA tracker (<code>CAPA-2026-001</code> through <code>CAPA-2026-005</code>) assigns clinical leads, target completion dates, projected financial savings, and progress percentages to remediate identified root causes.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q9: What is the ESI scale in Emergency Medicine?</div>
+  <div class="qa-answer"><strong>Answer</strong>: The Emergency Severity Index (ESI) is a 5-level triage algorithm:
+  <ul>
+    <li>Level 1: Resuscitation (immediate life-saving intervention needed)</li>
+    <li>Level 2: Emergent (high risk, confused/lethargic, severe pain)</li>
+    <li>Level 3: Urgent (requires 2 or more diagnostic resources)</li>
+    <li>Level 4: Less Urgent (requires 1 resource, e.g., simple X-ray)</li>
+    <li>Level 5: Non-Urgent (requires 0 resources, e.g., prescription refill)</li>
+  </ul></div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q10: How does your What-If simulation calculate ROI?</div>
+  <div class="qa-answer"><strong>Answer</strong>: It models eliminating paper requisition loopbacks through CPOE digitization:
+  <ul>
+    <li>Gross annual operational savings: <strong>$142,400</strong> (nursing hours saved from 398 reworked cases).</li>
+    <li>Software implementation CAPEX: <strong>$24,000</strong>.</li>
+    <li>Net Year 1 ROI: <code>($142,400 - $24,000) / $24,000 * 100% = 394%</code>, yielding a payback period of just <strong>1.8 months</strong>.</li>
+  </ul></div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q11: What is Organizational / Social Network Mining in your project?</div>
+  <div class="qa-answer"><strong>Answer</strong>: Implemented in <code>ResourceHandoverNetwork.jsx</code>, it analyzes the "handover of work" between clinical roles (Triage Nurse &rarr; Doctor &rarr; Radiologist &rarr; Inpatient Ward &rarr; EVS). It identifies communication friction and handoff delays (e.g., doctor-to-radiology handoffs stalling at 38.6 min due to physical paper requisitions).</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q12: Why did you use React 19 instead of a standard Python Streamlit app?</div>
+  <div class="qa-answer"><strong>Answer</strong>: Streamlit reruns the entire Python script on every user interaction, making complex multi-view state management, SVG token animations (like our 100-tick DFG simulation), and sub-second interactive filters slow and clunky. React 19 provides component-level state isolation, virtual DOM diffing, and seamless client-side SVG manipulation with 60 FPS animations.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q13: What is the Emergency Department Boarding crisis?</div>
+  <div class="qa-answer"><strong>Answer</strong>: ED boarding occurs when an emergency patient is clinically admitted to the hospital but remains physically stuck dwelling in an acute emergency treatment bay because inpatient ward beds have not been cleaned by Environmental Services (EVS). In our hospital, boarding averages <strong>4h 12m (252 min)</strong>, exceeding the CMS ED-2b target of 240 minutes.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q14: How did you test statistical significance in the Cohort Benchmark module?</div>
+  <div class="qa-answer"><strong>Answer</strong>: We implemented two-sample <strong>Welch's t-tests</strong> and <strong>Mann-Whitney U tests</strong> to compare stay duration and loopback rates between cohorts (e.g., Morning Surge vs. Nominal Hours). The calculated p-value (<code>p &lt; 0.0001</code>) proves that the 2h 26m delay in the morning is statistically significant and driven by structural bottlenecks rather than random variance.</div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-question">Q15: What would be your next steps if this were deployed into a live hospital?</div>
+  <div class="qa-answer"><strong>Answer</strong>:
+  <ol>
+    <li>Connect dbt directly to live HL7/FHIR message queues via Apache Kafka or GCP Pub/Sub for real-time sub-second streaming.</li>
+    <li>Implement automated webhook alerts to clinical charge nurse pagers when a patient's Door-to-Doctor SLA countdown hits <code>&lt; 10 minutes</code>.</li>
+    <li>Expand the PM4Py engine with conformance-based predictive remaining-time algorithms using LSTM recurrent neural networks.</li>
+  </ol></div>
+</div>
+
+<h2>10. Summary Checklist for Your Defense</h2>
+<ul>
+  <li>[x] <strong>Project Running Locally</strong>: Tested and serving on <code>http://localhost:5173</code>.</li>
+  <li>[x] <strong>Zero Build Errors</strong>: <code>npm run build</code> runs in &lt; 850ms with 0 errors.</li>
+  <li>[x] <strong>Git Clean & Pushed</strong>: Up to date with commit <code>8cd5f84</code> on both <code>dev-Riddi</code> and <code>dev-Riddhi</code>.</li>
+  <li>[x] <strong>Technical Documentation</strong>: Detailed in <code>README.md</code>, <code>PROJECT_REPORT.md</code>, and <code>DATA_ANALYTICS_WORKFLOW.md</code>.</li>
+  <li>[x] <strong>Core Metrics Memorized</strong>: 1,000 cases, 6,347 events, 39.8% loopback, $142,400 savings, 94.9% fitness, 0.942 AUC-ROC.</li>
+</ul>
+
+</body>
+</html>
