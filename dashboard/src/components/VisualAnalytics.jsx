@@ -14,6 +14,13 @@ import {
   DOCTOR_RADAR_DATA, FINANCIAL_IMPACT_BREAKDOWN
 } from '../data/processData';
 
+import SlaRadialGauges from './visual/SlaRadialGauges';
+import PathwaySankey from './visual/PathwaySankey';
+import DelayWaterfall from './visual/DelayWaterfall';
+import SurgeHeatmap24x7 from './visual/SurgeHeatmap24x7';
+import AcuityBoxPlot from './visual/AcuityBoxPlot';
+import DoctorScatter from './visual/DoctorScatter';
+
 // Custom Recharts Dark Tooltip for Volume Trends
 function CustomVolumeTooltip({ active, payload }) {
   if (active && payload && payload.length) {
@@ -168,12 +175,15 @@ export default function VisualAnalytics() {
             gap: '2px'
           }}>
             {[
-              { id: 'overview', label: 'Overview Hub' },
-              { id: 'volume',   label: '30D Volume & Cycle' },
-              { id: 'delays',   label: 'Delays & Waterfall' },
-              { id: 'funnel',   label: 'Patient Care Funnel' },
-              { id: 'doctors',  label: 'Doctor Radar' },
-              { id: 'acuity',   label: 'Acuity / Outcomes' }
+              { id: 'overview',  label: 'Executive Suite' },
+              { id: 'sankey',    label: '🌊 Pathway Sankey' },
+              { id: 'waterfall', label: '📉 Delay Waterfall' },
+              { id: 'surge',     label: '⏱️ 24/7 Surge Heatmap' },
+              { id: 'boxPlot',   label: '📦 Acuity Dispersion' },
+              { id: 'doctors',   label: '👨‍⚕️ Physician Matrix' },
+              { id: 'volume',    label: '📊 30D Trend Trajectory' },
+              { id: 'funnel',    label: '🔻 Care Funnel' },
+              { id: 'acuity',    label: '🍩 Acuity Donut' }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -251,7 +261,23 @@ export default function VisualAnalytics() {
       </div>
 
       {/* ============================================================== */}
-      {/* 2. MAIN SECTION: 30-DAY PATIENT VOLUME & CYCLE TIME DUAL TREND */}
+      {/* 2. DEDICATED VISUAL SUITES (SANKEY, WATERFALL, SURGE, BOXPLOT) */}
+      {/* ============================================================== */}
+      {activeView === 'overview' && (
+        <>
+          <SlaRadialGauges />
+          <PathwaySankey />
+        </>
+      )}
+
+      {activeView === 'sankey' && <PathwaySankey />}
+      {activeView === 'waterfall' && <DelayWaterfall />}
+      {activeView === 'surge' && <SurgeHeatmap24x7 />}
+      {activeView === 'boxPlot' && <AcuityBoxPlot />}
+      {activeView === 'doctors' && <DoctorScatter />}
+
+      {/* ============================================================== */}
+      {/* 3. MAIN SECTION: 30-DAY PATIENT VOLUME & CYCLE TIME DUAL TREND */}
       {/* ============================================================== */}
       {(activeView === 'overview' || activeView === 'volume') && (
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
@@ -368,12 +394,17 @@ export default function VisualAnalytics() {
       )}
 
       {/* ============================================================== */}
-      {/* 3. ROW 2: ACTIVITY TIME WATERFALL & PATIENT FLOW FUNNEL */}
+      {/* 4. OVERVIEW WATERFALL INTEGRATION */}
+      {/* ============================================================== */}
+      {activeView === 'overview' && <DelayWaterfall />}
+
+      {/* ============================================================== */}
+      {/* 5. ROW 2: ACTIVITY TIME WATERFALL & PATIENT FLOW FUNNEL */}
       {/* ============================================================== */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: '1.5rem' }}>
         
         {/* Chart A: Active Execution Time vs Queue Wait Delay (Recharts BarChart) */}
-        {(activeView === 'overview' || activeView === 'delays') && (
+        {(activeView === 'delays') && (
           <div className="glass-panel" style={{ padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
               <div>
