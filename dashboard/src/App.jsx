@@ -20,6 +20,10 @@ import HospitalCommandCenter from './components/HospitalCommandCenter';
 import ClinicalSlaCenter from './components/ClinicalSlaCenter';
 import CohortBenchmark from './components/CohortBenchmark';
 import ResourceHandoverNetwork from './components/ResourceHandoverNetwork';
+import PredictiveAnalytics from './components/PredictiveAnalytics';
+import OperationalIntelligence from './components/OperationalIntelligence';
+import StatisticalDashboard from './components/StatisticalDashboard';
+import KpiCommandCenter from './components/KpiCommandCenter';
 import { CheckCircle, Award } from 'lucide-react';
 import { SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
@@ -54,7 +58,7 @@ export default function App() {
   }).length;
 
   // Show KPI bar only on core analytics pages, not utility ones
-  const showKpi = ['map', 'hospital', 'bottlenecks', 'variants', 'analytics'].includes(activeTab);
+  const showKpi = ['map', 'hospital', 'bottlenecks', 'variants', 'analytics', 'predictive', 'operational', 'statistical'].includes(activeTab);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -100,7 +104,7 @@ export default function App() {
         </div>
 
         {/* Filter Bar - show on clinical/analysis pages */}
-        {['map', 'hospital', 'sla', 'cohort', 'handover', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live'].includes(activeTab) && (
+        {['map', 'hospital', 'sla', 'cohort', 'handover', 'bottlenecks', 'variants', 'cases', 'analytics', 'heatmap', 'live', 'predictive', 'operational', 'statistical', 'kpicenter'].includes(activeTab) && (
           <FilterBar
             filters={filters}
             setFilters={setFilters}
@@ -166,6 +170,14 @@ export default function App() {
         {activeTab === 'report' && <ExecutiveReport />}
 
         {activeTab === 'deck' && <PresentationDeck />}
+
+        {activeTab === 'predictive' && <PredictiveAnalytics />}
+
+        {activeTab === 'operational' && <OperationalIntelligence />}
+
+        {activeTab === 'statistical' && <StatisticalDashboard />}
+
+        {activeTab === 'kpicenter' && <KpiCommandCenter />}
       </main>
 
       {/* Footer */}

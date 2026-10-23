@@ -3,7 +3,8 @@ import {
   Activity, GitBranch, Database, RefreshCw, 
   Layers, ShieldCheck, Flame, Users, Sliders, FileText, 
   Brain, Presentation, PieChart, Radio, Grid3x3, Sun, Moon, 
-  Search, Bell, ChevronDown, Building2, Clock, Split, Share2
+  Search, Bell, ChevronDown, Building2, Clock, Split, Share2,
+  TrendingUp, DollarSign, BarChart2, Zap
 } from 'lucide-react';
 
 const TABS = [
@@ -16,6 +17,12 @@ const TABS = [
   { id: 'heatmap',    label: 'Volume Heatmap',    icon: Grid3x3,     group: 'Analysis' },
   { id: 'bottlenecks',label: 'Bottlenecks',       icon: Flame,       group: 'Analysis' },
   { id: 'variants',   label: 'Variants',          icon: Activity,    group: 'Analysis' },
+  // ── NEW: Advanced Data Analysis ──
+  { id: 'predictive', label: 'ML Predictive',     icon: Brain,       group: 'AI Analytics', badge: 'NEW' },
+  { id: 'operational',label: 'Operational Intel', icon: DollarSign,  group: 'AI Analytics', badge: 'NEW' },
+  { id: 'statistical',label: 'Statistical Board', icon: BarChart2,   group: 'AI Analytics', badge: 'NEW' },
+  { id: 'kpicenter',  label: 'KPI Command',       icon: Zap,         group: 'AI Analytics', live: true, badge: 'NEW' },
+  // ─────────────────────────────────
   { id: 'cases',      label: 'Cases',             icon: Users,       group: 'Clinical' },
   { id: 'live',       label: 'Live Feed',         icon: Radio,       group: 'Clinical', live: true },
   { id: 'compliance', label: 'Compliance',        icon: ShieldCheck, group: 'Clinical' },
@@ -226,33 +233,50 @@ export default function Navbar({ activeTab, setActiveTab, onRefresh, darkMode, s
         gap: '2px',
         overflowX: 'auto',
       }}>
-        {TABS.map((tab) => {
+        {TABS.map((tab, idx) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
+          const prevGroup = idx > 0 ? TABS[idx - 1].group : null;
+          const showDivider = prevGroup && prevGroup !== tab.group;
           return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '5px',
-                padding: '9px 12px', border: 'none', cursor: 'pointer',
-                fontSize: '0.77rem', fontWeight: isActive ? 700 : 500,
-                background: 'transparent', whiteSpace: 'nowrap',
-                color: isActive ? '#38bdf8' : 'var(--text-secondary)',
-                borderBottom: isActive ? '2px solid #06b6d4' : '2px solid transparent',
-                transition: 'all 0.15s ease',
-                position: 'relative',
-              }}
-            >
-              <Icon size={13} color={isActive ? '#38bdf8' : '#64748b'} />
-              {tab.label}
-              {tab.live && (
-                <span style={{
-                  width: 5, height: 5, borderRadius: '50%', background: '#10b981',
-                  position: 'absolute', top: 7, right: 4
-                }} />
+            <React.Fragment key={tab.id}>
+              {showDivider && (
+                <div style={{ width: 1, height: 26, background: 'rgba(100,116,139,0.25)', marginLeft: 4, marginRight: 4, flexShrink: 0 }} />
               )}
-            </button>
+              <button
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '5px',
+                  padding: '9px 12px', border: 'none', cursor: 'pointer',
+                  fontSize: '0.77rem', fontWeight: isActive ? 700 : 500,
+                  background: tab.group === 'AI Analytics' && !isActive
+                    ? 'rgba(139,92,246,0.06)' : 'transparent',
+                  whiteSpace: 'nowrap',
+                  color: isActive ? '#38bdf8' : tab.group === 'AI Analytics' ? '#c084fc' : 'var(--text-secondary)',
+                  borderBottom: isActive ? '2px solid #06b6d4' : '2px solid transparent',
+                  transition: 'all 0.15s ease',
+                  position: 'relative',
+                  borderRadius: tab.group === 'AI Analytics' ? '6px 6px 0 0' : 0,
+                }}
+              >
+                <Icon size={13} color={isActive ? '#38bdf8' : tab.group === 'AI Analytics' ? '#a78bfa' : '#64748b'} />
+                {tab.label}
+                {tab.badge && (
+                  <span style={{
+                    background: 'linear-gradient(135deg,#7c3aed,#06b6d4)',
+                    color: '#fff', borderRadius: 4, padding: '0px 4px',
+                    fontSize: '0.55rem', fontWeight: 800, letterSpacing: '0.04em', marginLeft: 2
+                  }}>{tab.badge}</span>
+                )}
+                {tab.live && (
+                  <span style={{
+                    width: 5, height: 5, borderRadius: '50%', background: '#10b981',
+                    position: 'absolute', top: 7, right: tab.badge ? 14 : 4,
+                    boxShadow: '0 0 4px #10b981'
+                  }} />
+                )}
+              </button>
+            </React.Fragment>
           );
         })}
       </div>
