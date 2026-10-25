@@ -13,6 +13,8 @@ import json
 import numpy as np
 import pandas as pd
 import streamlit as st
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 try:
     import seaborn as sns
@@ -42,25 +44,23 @@ st.set_page_config(
 # Custom Styling
 st.markdown("""
 <style>
-    .main { background-color: #0b1120; }
-    h1, h2, h3 { color: #f8fafc; font-family: 'Inter', sans-serif; }
-    .stMetric { background: rgba(255, 255, 255, 0.04); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); }
+    .stMetric { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
     .badge-cyan { background: rgba(6, 182, 212, 0.2); color: #06b6d4; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .badge-emerald { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
 </style>
 """, unsafe_allow_html=True)
 
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 # ─── Data Caching ────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    raw_path = "simulator/output/ehr_event_log.csv"
-    if not os.path.exists(raw_path):
-        raw_path = "../simulator/output/ehr_event_log.csv"
+    raw_path = os.path.join(BASE_DIR, "simulator", "output", "ehr_event_log.csv")
+    output_dir = os.path.join(BASE_DIR, "careflow_analytics", "output")
     raw_df = pd.read_csv(raw_path)
     
     # Run python DBT models
-    output_dir = "careflow_analytics/output"
     if not os.path.exists(os.path.join(output_dir, "fct_patient_journeys.parquet")):
         marts = run_full_dbt_python_pipeline(raw_path, output_dir)
     else:
@@ -318,7 +318,7 @@ elif menu == "📓 Jupyter Notebooks Hub (19 .ipynb)":
     st.title("📓 Complete Jupyter Notebooks Suite (19 .ipynb Files)")
     st.markdown("All data analysis, transformation pipelines, and predictive modeling in Python `.ipynb` format.")
 
-    nb_files = sorted(glob.glob("notebooks/*.ipynb"))
+    nb_files = sorted(glob.glob(os.path.join(BASE_DIR, "notebooks", "*.ipynb")))
     st.success(f"✅ Found **{len(nb_files)}** production Jupyter Notebooks ready to run and download.")
 
     for nb_path in nb_files:
@@ -349,11 +349,13 @@ elif menu == "⚙️ Python Pipeline & Marts":
 
     if st.button("🚀 Re-Run Python Pipeline Now"):
         with st.spinner("Executing Python DBT pipeline..."):
-            res = run_full_dbt_python_pipeline("simulator/output/ehr_event_log.csv", "careflow_analytics/output")
+            raw_p = os.path.join(BASE_DIR, "simulator", "output", "ehr_event_log.csv")
+            out_p = os.path.join(BASE_DIR, "careflow_analytics", "output")
+            res = run_full_dbt_python_pipeline(raw_p, out_p)
             st.success("✅ All 5 analytical marts materialized in Parquet and CSV format!")
 
     st.markdown("### Materialized Datasets in `careflow_analytics/output/`:")
-    marts_files = glob.glob("careflow_analytics/output/*.*")
+    marts_files = glob.glob(os.path.join(BASE_DIR, "careflow_analytics", "output", "*.*"))
     for mf in sorted(marts_files):
         size_kb = os.path.getsize(mf) / 1024.0
         st.markdown(f"- 📄 `{os.path.basename(mf)}` ({size_kb:.1f} KB)")
