@@ -4,7 +4,7 @@ import {
   Layers, ShieldCheck, Flame, Users, Sliders, FileText, 
   Brain, Presentation, PieChart, Radio, Grid3x3, Sun, Moon, 
   Search, Bell, ChevronDown, Building2, Clock, Split, Share2,
-  TrendingUp, DollarSign, BarChart2, Zap
+  TrendingUp, DollarSign, BarChart2, Zap, Heart, Network, FlaskConical
 } from 'lucide-react';
 
 const TABS = [
@@ -17,12 +17,17 @@ const TABS = [
   { id: 'heatmap',    label: 'Volume Heatmap',    icon: Grid3x3,     group: 'Analysis' },
   { id: 'bottlenecks',label: 'Bottlenecks',       icon: Flame,       group: 'Analysis' },
   { id: 'variants',   label: 'Variants',          icon: Activity,    group: 'Analysis' },
-  // ── NEW: Advanced Data Analysis ──
+  // ── AI Analytics (previous round) ──
   { id: 'predictive', label: 'ML Predictive',     icon: Brain,       group: 'AI Analytics', badge: 'NEW' },
   { id: 'operational',label: 'Operational Intel', icon: DollarSign,  group: 'AI Analytics', badge: 'NEW' },
   { id: 'statistical',label: 'Statistical Board', icon: BarChart2,   group: 'AI Analytics', badge: 'NEW' },
   { id: 'kpicenter',  label: 'KPI Command',       icon: Zap,         group: 'AI Analytics', live: true, badge: 'NEW' },
-  // ─────────────────────────────────
+  // ── NEW Data Analysis Systems ──
+  { id: 'flowfunnel', label: 'Patient Flow',      icon: GitBranch,   group: 'Deep Analysis', badge: 'NEW' },
+  { id: 'quality',    label: 'Clinical Quality',  icon: Heart,       group: 'Deep Analysis', badge: 'NEW' },
+  { id: 'spc',        label: 'SPC Charts',        icon: FlaskConical,group: 'Deep Analysis', badge: 'NEW' },
+  { id: 'markov',     label: 'Markov Chain',      icon: Network,     group: 'Deep Analysis', badge: 'NEW' },
+  // ──────────────────────────────────
   { id: 'cases',      label: 'Cases',             icon: Users,       group: 'Clinical' },
   { id: 'live',       label: 'Live Feed',         icon: Radio,       group: 'Clinical', live: true },
   { id: 'compliance', label: 'Compliance',        icon: ShieldCheck, group: 'Clinical' },

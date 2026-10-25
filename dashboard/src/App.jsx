@@ -24,6 +24,10 @@ import PredictiveAnalytics from './components/PredictiveAnalytics';
 import OperationalIntelligence from './components/OperationalIntelligence';
 import StatisticalDashboard from './components/StatisticalDashboard';
 import KpiCommandCenter from './components/KpiCommandCenter';
+import PatientFlowFunnel from './components/PatientFlowFunnel';
+import ClinicalQualityMetrics from './components/ClinicalQualityMetrics';
+import SpcControlCharts from './components/SpcControlCharts';
+import MarkovTransitionMatrix from './components/MarkovTransitionMatrix';
 import { CheckCircle, Award } from 'lucide-react';
 import { SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
@@ -178,6 +182,14 @@ export default function App() {
         {activeTab === 'statistical' && <StatisticalDashboard />}
 
         {activeTab === 'kpicenter' && <KpiCommandCenter />}
+
+        {activeTab === 'flowfunnel' && <PatientFlowFunnel />}
+
+        {activeTab === 'quality' && <ClinicalQualityMetrics />}
+
+        {activeTab === 'spc' && <SpcControlCharts />}
+
+        {activeTab === 'markov' && <MarkovTransitionMatrix />}
       </main>
 
       {/* Footer */}
