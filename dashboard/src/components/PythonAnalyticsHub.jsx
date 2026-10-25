@@ -291,6 +291,66 @@ cohens_d = (cohort_loopback.mean() - cohort_clean.mean()) / s_pooled`
     codeSnippet: `# Ward Bed Saturation Telemetry
 census_df['Occupancy %'] = (census_df['Occupied'] / census_df['Beds']) * 100
 census_df['Status'] = np.where(census_df['Occupancy %'] >= 90.0, 'Critical', 'Nominal')`
+  },
+  {
+    id: '19',
+    name: '19_GenAI_Clinical_Decision_Support_and_Summarization.ipynb',
+    category: 'Generative Engineering & GenAI',
+    title: 'GenAI Clinical Decision Support & Discharge Notes',
+    description: 'Generative AI pipeline synthesizing institutional clinical discharge summaries and structured SBAR handovers anchored to lakehouse patient event trajectories.',
+    libraries: ['pandas', 'numpy', 'careflow_analytics.genai_engine'],
+    cells: 6,
+    highlights: ['Automated Discharge Summaries', 'Structured SBAR Clinical Handovers', 'Hallucination Mitigation Pipeline'],
+    codeSnippet: `# Generative Clinical Discharge Synthesis
+from careflow_analytics.genai_engine import generate_clinical_discharge_summary
+
+discharge = generate_clinical_discharge_summary(patient_profile)
+print(discharge['summary_markdown'])`
+  },
+  {
+    id: '20',
+    name: '20_Generative_Engineering_Synthetic_EHR_Simulation.ipynb',
+    category: 'Generative Engineering & GenAI',
+    title: 'Generative Engineering: Synthetic EHR Simulation',
+    description: 'Stochastic generative simulation of realistic multi-stage patient journeys with Poisson arrivals, non-homogeneous morning surges, and Kolmogorov-Smirnov distribution testing.',
+    libraries: ['pandas', 'numpy', 'scipy.stats', 'careflow_analytics.genai_engine'],
+    cells: 5,
+    highlights: ['Poisson Trajectory Synthesis', 'Morning Surge Simulation', 'Two-Sample KS Test Validation'],
+    codeSnippet: `# Generative Synthetic Cohort Simulation
+from careflow_analytics.genai_engine import generate_synthetic_ehr_cohort
+
+synth_df = generate_synthetic_ehr_cohort(n_patients=100, arrival_rate_lambda=4.2)
+print(f"Synthesized {len(synth_df):,} events across {synth_df['Case_ID'].nunique()} cases.")`
+  },
+  {
+    id: '21',
+    name: '21_GenAI_RAG_Clinical_Protocol_Auditor.ipynb',
+    category: 'Generative Engineering & GenAI',
+    title: 'GenAI RAG Clinical Protocol Compliance Auditor',
+    description: 'Retrieval-Augmented Generation (RAG) querying Hospital Standard Operating Procedures (SOPs) with automated telemetry compliance auditing against Door-to-Doctor and Sepsis-3 mandates.',
+    libraries: ['pandas', 'numpy', 'careflow_analytics.genai_engine'],
+    cells: 5,
+    highlights: ['Hospital SOP Semantic RAG', 'Sepsis-3 & STEMI Guidelines', 'Automated Compliance Auditing'],
+    codeSnippet: `# Clinical Protocol RAG Query
+from careflow_analytics.genai_engine import audit_clinical_protocol_rag
+
+res = audit_clinical_protocol_rag("What is the door to doctor SLA for acuity 2?")
+print(res['rag_response'])`
+  },
+  {
+    id: '22',
+    name: '22_Data_Engineering_Lakehouse_and_Data_Contracts.ipynb',
+    category: 'Data Engineering & Lakehouse',
+    title: 'Data Engineering, Lakehouse Architecture & Data Contracts',
+    description: 'Medallion Architecture (Bronze ➔ Silver ➔ Gold), 10 automated schema contract assertions, Snappy Parquet storage benchmarking, and lineage DAG dependencies.',
+    libraries: ['pandas', 'numpy', 'careflow_analytics.data_engineering'],
+    cells: 5,
+    highlights: ['Medallion Profiler (Bronze/Silver/Gold)', '10 Automated Quality Assertions', '3.5x Parquet Compression Benchmark'],
+    codeSnippet: `# Automated Lakehouse Data Quality Assertions
+from careflow_analytics.data_engineering import run_data_quality_suite
+
+dq = run_data_quality_suite(stg_df, fct_df)
+print(f"Data Quality Score: {dq['overall_quality_score']}% ({dq['passed_tests']}/{dq['total_tests']} passed)")`
   }
 ];
 
@@ -392,7 +452,7 @@ export default function PythonAnalyticsHub() {
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineOutput, setPipelineOutput] = useState(null);
 
-  const categories = ['All', 'Data Engineering & ETL', 'Process Mining', 'Predictive ML & Stats', 'Operations Research'];
+  const categories = ['All', 'Generative Engineering & GenAI', 'Predictive ML & Stats', 'Process Mining', 'Data Engineering & Lakehouse', 'Operations Research'];
 
   const filteredNotebooks = selectedCategory === 'All'
     ? NOTEBOOKS
