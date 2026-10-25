@@ -136,7 +136,8 @@ npm run build
 
 All data transformations, ELT models, process mining, and clinical operations analytics have been fully ported to **Pure Python** and **Jupyter Notebooks (`.ipynb`)**.
 
-### Complete Suite of 12 Jupyter Notebooks (`.ipynb` in `/notebooks`)
+### Complete Suite of 19 Jupyter Notebooks (`.ipynb` in `/notebooks`)
+0. [`00_MASTER_CareFlow_End_to_End_Data_Analysis.ipynb`](notebooks/00_MASTER_CareFlow_End_to_End_Data_Analysis.ipynb): **All-in-One Master Data Analysis Pipeline**.
 1. [`01_EDA_Patient_Flow.ipynb`](notebooks/01_EDA_Patient_Flow.ipynb): Univariate & temporal rush EDA (1,000 cases / 6,347 events).
 2. [`02_Process_Mining_pm4py.ipynb`](notebooks/02_Process_Mining_pm4py.ipynb): PM4Py Directly-Follows Graph (DFG) discovery & conformance.
 3. [`03_ML_Predictive_Modeling.ipynb`](notebooks/03_ML_Predictive_Modeling.ipynb): Random Forest & XGBoost predictive modeling with SHAP explainability.
@@ -149,6 +150,17 @@ All data transformations, ELT models, process mining, and clinical operations an
 10. [`10_Markov_Chain_Pathway_Modeling.ipynb`](notebooks/10_Markov_Chain_Pathway_Modeling.ipynb): Discrete-Time Markov Chains (DTMC), fundamental matrix $N$, and absorption probabilities.
 11. [`11_SPC_Control_Charts_Healthcare.ipynb`](notebooks/11_SPC_Control_Charts_Healthcare.ipynb): Shewhart $X-mR$ control charts and Nelson Rules 1-4 tests for healthcare quality.
 12. [`12_Discrete_Event_Simulation_MonteCarlo.ipynb`](notebooks/12_Discrete_Event_Simulation_MonteCarlo.ipynb): Monte Carlo capacity sweeps and What-If staffing ROI simulations.
+13. [`13_Patient_Flow_Funnel_and_Dropouts.ipynb`](notebooks/13_Patient_Flow_Funnel_and_Dropouts.ipynb): 7-Stage care funnel and Left Without Being Seen (LWBS) attrition.
+14. [`14_Clinical_Quality_and_Safety_Metrics.ipynb`](notebooks/14_Clinical_Quality_and_Safety_Metrics.ipynb): HRRP readmissions, mortality rates, and multi-axial physician radar.
+15. [`15_What_If_Staffing_and_ROI_Simulation.ipynb`](notebooks/15_What_If_Staffing_and_ROI_Simulation.ipynb): CPOE pre-registration digital gateway payback model.
+16. [`16_Root_Cause_Analysis_Ishikawa_CAPA.ipynb`](notebooks/16_Root_Cause_Analysis_Ishikawa_CAPA.ipynb): Lean Six Sigma Ishikawa 6M fishbone and CAPA prioritization matrix.
+17. [`17_Cohort_Benchmark_AB_Testing.ipynb`](notebooks/17_Cohort_Benchmark_AB_Testing.ipynb): Cohort A/B comparative analysis, Welch's t-test, and Cohen's $d$.
+18. [`18_Hospital_Census_and_Operations.ipynb`](notebooks/18_Hospital_Census_and_Operations.ipynb): 250-bed ward capacity monitoring, ED boarding, and EVS bed turnover.
+
+### Run the Pure Python Web Application (Streamlit):
+```bash
+streamlit run app.py
+```
 
 ### Run the Pure Python Pipeline:
 ```bash

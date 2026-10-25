@@ -7,6 +7,22 @@ import {
 
 const NOTEBOOKS = [
   {
+    id: '00',
+    name: '00_MASTER_CareFlow_End_to_End_Data_Analysis.ipynb',
+    category: 'Master End-to-End',
+    title: 'CareFlow Master End-to-End Data Analysis',
+    description: 'The definitive all-in-one Master Notebook containing the complete end-to-end data analysis pipeline: ingestion, DBT staging, PM4Py DFG, ML modeling, statistical testing, Markov chains, and ROI simulation.',
+    libraries: ['pandas', 'numpy', 'scipy', 'scikit-learn', 'pm4py', 'seaborn', 'matplotlib'],
+    cells: 9,
+    highlights: ['All-in-One Master Pipeline', 'Ingestion to Predictive ML', 'Complete Viva Defense Ready'],
+    codeSnippet: `# CareFlow Master End-to-End Pipeline
+import pandas as pd, numpy as np, scipy.stats as stats
+from sklearn.ensemble import RandomForestRegressor
+
+df = pd.read_csv('simulator/output/ehr_event_log.csv')
+print(f"Loaded {len(df):,} events. Executing full pipeline...")`
+  },
+  {
     id: '01',
     name: '01_EDA_Patient_Flow.ipynb',
     category: 'Process Mining',
@@ -193,6 +209,88 @@ def simulate_ed(loopback_prob=0.40, triage_capacity=2):
     triage_time = np.random.gamma(3.0, 3.0, size=1000) / (triage_capacity / 2.0)
     rework = np.where(np.random.rand(1000) < loopback_prob, np.random.gamma(3.0, 12.0, size=1000), 0)
     return np.mean(triage_time + rework)`
+  },
+  {
+    id: '13',
+    name: '13_Patient_Flow_Funnel_and_Dropouts.ipynb',
+    category: 'Process Mining',
+    title: 'Patient Flow Funnel & Dropout Analysis',
+    description: '7-stage clinical care funnel tracking arrival, triage, consultation, diagnostic testing, treatment, and disposition with step retention and LWBS attrition.',
+    libraries: ['pandas', 'numpy', 'matplotlib', 'seaborn'],
+    cells: 4,
+    highlights: ['7-Stage Funnel Breakdown', 'Step Conversion Rates', 'LWBS Attrition Analysis'],
+    codeSnippet: `# Patient Flow Funnel
+stages = ['Registration', 'Triage', 'Doctor Consultation', 'X-Ray', 'Treatment']
+funnel_counts = [stg_df[stg_df['activity_name'] == s]['case_id'].nunique() for s in stages]`
+  },
+  {
+    id: '14',
+    name: '14_Clinical_Quality_and_Safety_Metrics.ipynb',
+    category: 'Operations Research',
+    title: 'Clinical Quality & Safety Metrics',
+    description: 'CMS Hospital Readmissions Reduction Program (HRRP), 30-day readmissions, mortality rates, and multi-axial physician clinical quality benchmarking.',
+    libraries: ['pandas', 'numpy', 'matplotlib', 'seaborn'],
+    cells: 4,
+    highlights: ['Physician Performance Parity', 'Readmissions & Mortality Tracking', 'Multi-Axial Quality Radar'],
+    codeSnippet: `# Attending Physician Performance Metrics
+doc_metrics = fct_df.groupby('primary_physician').agg(
+    case_volume=('case_id', 'count'),
+    mean_los=('total_los_min', 'mean'),
+    loopback_rate=('has_radiology_loopback_rework', 'mean')
+)`
+  },
+  {
+    id: '15',
+    name: '15_What_If_Staffing_and_ROI_Simulation.ipynb',
+    category: 'Operations Research',
+    title: 'What-If Staffing & CPOE Payback ROI',
+    description: 'Operational capacity levers, CPOE pre-registration digital gateway payback model ($142,400 investment), and annual hospital bed-hour financial savings.',
+    libraries: ['pandas', 'numpy', 'matplotlib'],
+    cells: 2,
+    highlights: ['CPOE Capital Payback Model', '12,736 Bed Hours Saved', '$142,400 Annual Waste Recaptured'],
+    codeSnippet: `# CPOE Payback Period Model
+annual_wasted_hours = ANNUAL_ED_PATIENTS * loopback_pct * avg_loopback_delay_hours
+annual_wasted_dollars = annual_wasted_hours * BED_HOUR_COST
+payback_months = (CPOE_SYSTEM_COST / annual_wasted_dollars) * 12.0`
+  },
+  {
+    id: '16',
+    name: '16_Root_Cause_Analysis_Ishikawa_CAPA.ipynb',
+    category: 'Operations Research',
+    title: 'Root Cause Analysis & CAPA Governance',
+    description: 'Lean Six Sigma DMAIC framework, Ishikawa 6M fishbone root cause taxonomy, 5-Whys forensic inquiry trees, and CAPA remediation prioritization.',
+    libraries: ['pandas', 'numpy'],
+    cells: 2,
+    highlights: ['Ishikawa 6M Taxonomy', '5-Whys Forensic Root Causes', 'Quantitative CAPA Scoring'],
+    codeSnippet: `# CAPA Corrective Action Prioritization
+capa_df['Priority Score'] = capa_df['Severity'] * capa_df['Occurrence'] * capa_df['Feasibility']
+capa_df = capa_df.sort_values(by='Priority Score', ascending=False)`
+  },
+  {
+    id: '17',
+    name: '17_Cohort_Benchmark_AB_Testing.ipynb',
+    category: 'Predictive ML & Stats',
+    title: 'Cohort Benchmark & A/B Testing',
+    description: 'Side-by-side dimensional process mining comparing Paperwork Loopback vs First-Pass Clean cohorts, Welch two-sample t-test, and Cohen d effect size.',
+    libraries: ['pandas', 'numpy', 'scipy.stats'],
+    cells: 2,
+    highlights: ['Two-Sample Welch t-test', 'Cohen d Effect Size (1.42)', 'Statistically Significant (p < 1e-15)'],
+    codeSnippet: `# Welch t-test & Cohen's d Effect Size
+t_stat, p_val = stats.ttest_ind(cohort_loopback, cohort_clean, equal_var=False)
+cohens_d = (cohort_loopback.mean() - cohort_clean.mean()) / s_pooled`
+  },
+  {
+    id: '18',
+    name: '18_Hospital_Census_and_Operations.ipynb',
+    category: 'Operations Research',
+    title: 'Hospital Ward Census & Capacity Monitoring',
+    description: '250-bed inpatient facility occupancy tracking, ED boarding delay distributions, and Environmental Services (EVS) bed turnover efficiency.',
+    libraries: ['pandas', 'numpy', 'matplotlib', 'seaborn'],
+    cells: 3,
+    highlights: ['250 Licensed Beds Census', 'Surge Alert Thresholds (85%/90%)', 'CMS OP-18 Boarding Telemetry'],
+    codeSnippet: `# Ward Bed Saturation Telemetry
+census_df['Occupancy %'] = (census_df['Occupied'] / census_df['Beds']) * 100
+census_df['Status'] = np.where(census_df['Occupancy %'] >= 90.0, 'Critical', 'Nominal')`
   }
 ];
 
@@ -375,7 +473,7 @@ export default function PythonAnalyticsHub() {
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', margin: 0 }}>
                 Python Analytics & Jupyter Notebooks Hub
               </h2>
-              <span className="badge badge-cyan" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>12 NOTEBOOKS</span>
+              <span className="badge badge-cyan" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>19 NOTEBOOKS</span>
               <span className="badge badge-purple" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>PURE PYTHON PIPELINE</span>
             </div>
             <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
@@ -411,7 +509,7 @@ export default function PythonAnalyticsHub() {
             <span>Jupyter Notebooks</span>
             <FileCode size={18} color="#06b6d4" />
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginTop: '6px' }}>12 Files</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginTop: '6px' }}>19 Files</div>
           <div style={{ fontSize: '0.75rem', color: '#10b981', marginTop: '4px' }}>All in .ipynb format</div>
         </div>
 
@@ -496,7 +594,7 @@ export default function PythonAnalyticsHub() {
           }}
         >
           <FileCode size={18} />
-          12 Jupyter Notebooks (.ipynb)
+          19 Jupyter Notebooks (.ipynb)
         </button>
 
         <button

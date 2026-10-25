@@ -9,7 +9,7 @@ import {
 
 const TABS = [
   { id: 'map',        label: 'Process Map',       icon: Layers,      group: 'Analysis' },
-  { id: 'pythonhub',  label: 'Python & Notebooks',icon: Code,        group: 'Deep Analysis', badge: '12 NB' },
+  { id: 'pythonhub',  label: 'Python & Notebooks',icon: Code,        group: 'Deep Analysis', badge: '19 NB' },
   { id: 'hospital',   label: 'Hospital Census & Ops', icon: Building2, group: 'Clinical' },
   { id: 'sla',        label: 'SLA Escalations',   icon: Clock,       group: 'Clinical', live: true },
   { id: 'cohort',     label: 'Cohort Benchmark',  icon: Split,       group: 'Analysis' },
