@@ -575,7 +575,7 @@ elif menu == "📊 SPC Healthcare Control Charts":
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🎲 Markov State Transition Matrix":
     st.title("🎲 Discrete-Time Markov Chain State Transition Matrix")
-    st.markdown("Stochastic patient trajectory routing probabilities $P(S_{t+1} \mid S_t)$.")
+    st.markdown(r"Stochastic patient trajectory routing probabilities $P(S_{t+1} \mid S_t)$.")
 
     markov = calculate_markov_matrix(stg_df)
     st.dataframe(markov["prob_matrix"].round(3), use_container_width=True)
