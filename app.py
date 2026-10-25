@@ -19,8 +19,14 @@ import streamlit as st
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import plotly.express as px
-import plotly.graph_objects as go
+try:
+    import plotly.express as px
+    import plotly.graph_objects as go
+    HAS_PLOTLY = True
+except ImportError:
+    px = None
+    go = None
+    HAS_PLOTLY = False
 from scipy import stats
 
 # Ensure careflow_analytics package is accessible
