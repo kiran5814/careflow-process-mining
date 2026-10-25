@@ -28,6 +28,7 @@ import PatientFlowFunnel from './components/PatientFlowFunnel';
 import ClinicalQualityMetrics from './components/ClinicalQualityMetrics';
 import SpcControlCharts from './components/SpcControlCharts';
 import MarkovTransitionMatrix from './components/MarkovTransitionMatrix';
+import PythonAnalyticsHub from './components/PythonAnalyticsHub';
 import { CheckCircle, Award } from 'lucide-react';
 import { SAMPLE_CASES, EXTENDED_CASES } from './data/processData';
 
@@ -190,6 +191,8 @@ export default function App() {
         {activeTab === 'spc' && <SpcControlCharts />}
 
         {activeTab === 'markov' && <MarkovTransitionMatrix />}
+
+        {activeTab === 'pythonhub' && <PythonAnalyticsHub />}
       </main>
 
       {/* Footer */}

@@ -1,0 +1,15 @@
+transition,volume,mean_wait_min,median_wait_min,p95_wait_min,std_wait_min,rush_mean_min,offpeak_mean_min,rush_elevation_pct,mann_whitney_p_val
+Doctor Consultation -> Treatment,1000,20.52,20.24,30.64,6.06,20.69,20.48,1.0,0.81119
+Registration -> Triage,923,18.45,18.2,30.58,6.41,23.32,16.65,40.1,0.0
+Treatment -> Discharge,824,20.22,20.33,30.66,6.27,20.13,20.24,-0.6,0.95005
+Triage -> X-Ray,802,35.74,30.79,71.76,16.29,57.23,30.84,85.6,0.0
+X-Ray -> Doctor Consultation,377,30.3,29.28,48.43,8.89,39.64,28.6,38.6,0.0
+Lab Test -> Doctor Consultation,348,30.24,28.94,48.56,9.58,41.77,27.93,49.5,0.0
+Triage -> Doctor Consultation,265,31.4,30.05,49.03,9.91,39.78,28.33,40.4,0.0
+X-Ray -> Triage,242,17.83,17.57,27.51,6.35,23.33,16.25,43.6,0.0
+X-Ray -> Lab Test,216,32.77,32.11,44.54,7.68,33.54,32.63,2.8,0.47047
+Treatment -> Admission,176,20.42,20.88,28.78,5.72,20.38,20.43,-0.3,0.86351
+Triage -> Lab Test,127,30.92,31.12,43.8,8.01,32.15,30.47,5.5,0.27735
+Registration -> X-Ray,33,38.91,31.45,70.03,18.52,57.06,28.53,100.0,4e-05
+Registration -> Doctor Consultation,10,31.55,31.51,39.6,6.39,38.7,30.76,25.8,
+Registration -> Lab Test,4,32.22,34.14,36.8,6.03,32.9,31.99,2.8,

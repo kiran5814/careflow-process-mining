@@ -132,13 +132,62 @@ npm run build
 
 ---
 
+## 🐍 100% Python Data Analytics & Jupyter Notebooks Suite
+
+All data transformations, ELT models, process mining, and clinical operations analytics have been fully ported to **Pure Python** and **Jupyter Notebooks (`.ipynb`)**.
+
+### Complete Suite of 12 Jupyter Notebooks (`.ipynb` in `/notebooks`)
+1. [`01_EDA_Patient_Flow.ipynb`](notebooks/01_EDA_Patient_Flow.ipynb): Univariate & temporal rush EDA (1,000 cases / 6,347 events).
+2. [`02_Process_Mining_pm4py.ipynb`](notebooks/02_Process_Mining_pm4py.ipynb): PM4Py Directly-Follows Graph (DFG) discovery & conformance.
+3. [`03_ML_Predictive_Modeling.ipynb`](notebooks/03_ML_Predictive_Modeling.ipynb): Random Forest & XGBoost predictive modeling with SHAP explainability.
+4. [`04_Statistical_Analysis.ipynb`](notebooks/04_Statistical_Analysis.ipynb): Welch t-test, Mann-Whitney U, One-Way ANOVA, Kruskal-Wallis & Chi-Square.
+5. [`05_Time_Series_Forecasting.ipynb`](notebooks/05_Time_Series_Forecasting.ipynb): ADF/KPSS stationarity, STL decomposition, and ARIMA census forecasting.
+6. [`06_DBT_SQL_to_Python_Data_Pipelines.ipynb`](notebooks/06_DBT_SQL_to_Python_Data_Pipelines.ipynb): 1:1 translation of all 5 dbt SQL models into Python & Pandas.
+7. [`07_SLA_Compliance_Analytics.ipynb`](notebooks/07_SLA_Compliance_Analytics.ipynb): Regulatory SLA compliance modeling, multivariable logit & Odds Ratios.
+8. [`08_Departmental_Bottlenecks_Queueing.ipynb`](notebooks/08_Departmental_Bottlenecks_Queueing.ipynb): Operations research & Little's Law ($L = \lambda W$) queue sizing.
+9. [`09_Resource_Handover_Network_Analysis.ipynb`](notebooks/09_Resource_Handover_Network_Analysis.ipynb): NetworkX social network analysis of healthcare team handovers.
+10. [`10_Markov_Chain_Pathway_Modeling.ipynb`](notebooks/10_Markov_Chain_Pathway_Modeling.ipynb): Discrete-Time Markov Chains (DTMC), fundamental matrix $N$, and absorption probabilities.
+11. [`11_SPC_Control_Charts_Healthcare.ipynb`](notebooks/11_SPC_Control_Charts_Healthcare.ipynb): Shewhart $X-mR$ control charts and Nelson Rules 1-4 tests for healthcare quality.
+12. [`12_Discrete_Event_Simulation_MonteCarlo.ipynb`](notebooks/12_Discrete_Event_Simulation_MonteCarlo.ipynb): Monte Carlo capacity sweeps and What-If staffing ROI simulations.
+
+### Run the Pure Python Pipeline:
+```bash
+python careflow_analytics/run_pipeline.py
+```
+* Generates all analytical marts in both **CSV** and high-performance **Parquet** format in `careflow_analytics/output/`.
+
+---
+
 ## 📂 Repository Directory Structure
 
 ```
 careflow-process-mining/
+├── careflow_analytics/             # Production pure Python data engineering & analytics package
+│   ├── dbt_models.py               # 1:1 Python translation of all dbt SQL staging & marts
+│   ├── analytics_engine.py         # Little's Law, Markov chains & SPC control limit engine
+│   ├── run_pipeline.py             # CLI master runner generating Parquet & CSV marts
+│   └── output/                     # Materialized analytical marts (Parquet & CSV)
+├── notebooks/                      # 12 Production Jupyter Notebooks (.ipynb)
+│   ├── 01_EDA_Patient_Flow.ipynb
+│   ├── 02_Process_Mining_pm4py.ipynb
+│   ├── 03_ML_Predictive_Modeling.ipynb
+│   ├── 04_Statistical_Analysis.ipynb
+│   ├── 05_Time_Series_Forecasting.ipynb
+│   ├── 06_DBT_SQL_to_Python_Data_Pipelines.ipynb
+│   ├── 07_SLA_Compliance_Analytics.ipynb
+│   ├── 08_Departmental_Bottlenecks_Queueing.ipynb
+│   ├── 09_Resource_Handover_Network_Analysis.ipynb
+│   ├── 10_Markov_Chain_Pathway_Modeling.ipynb
+│   ├── 11_SPC_Control_Charts_Healthcare.ipynb
+│   └── 12_Discrete_Event_Simulation_MonteCarlo.ipynb
 ├── dashboard/                      # Enterprise React + Vite Frontend
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── PythonAnalyticsHub.jsx     # Interactive 12-notebook hub & SQL-to-Python rosetta
+│   │   │   ├── PatientFlowFunnel.jsx      # 7-stage patient flow funnel & dropout analysis
+│   │   │   ├── ClinicalQualityMetrics.jsx # Readmission, mortality & clinical safety radar
+│   │   │   ├── SpcControlCharts.jsx       # Shewhart X-bar & S control charts + Nelson rules
+│   │   │   ├── MarkovTransitionMatrix.jsx # DTMC state transition probabilities & absorption
 │   │   │   ├── HospitalCommandCenter.jsx  # Ward bed census, CMS measures & ESI protocols
 │   │   │   ├── ClinicalSlaCenter.jsx      # Live SLA breach countdowns & rapid-response escalation
 │   │   │   ├── CohortBenchmark.jsx        # Side-by-side A/B comparative process mining
@@ -153,13 +202,11 @@ careflow-process-mining/
 │   │   │   ├── PatientHeatmap.jsx        # 7x24 patient volume density heatmap
 │   │   │   ├── LiveActivityFeed.jsx      # Streaming emergency event ticker
 │   │   │   ├── WhatIfSimulation.jsx      # Interactive ROI & staffing simulation engine
-│   │   │   └── Navbar.jsx                # Two-row hospital navigation & telemetry
-│   │   ├── data/
-│   │   │   └── processData.js            # Clinical traces, ward census & time series
+│   │   │   └── Navbar.jsx                # Multi-group hospital navigation & telemetry
 │   │   ├── App.jsx                       # Core application router & state manager
 │   │   └── index.css                     # Hospital design tokens & micro-animations
 │   └── package.json                      # React 19 + Recharts dependencies
-├── dbt_project/                    # dbt SQL models for clinical event log transformation
+├── dbt_project/                    # Original dbt SQL models for clinical event log transformation
 ├── pm4py_engine/                   # PM4Py Python process discovery & conformance scripts
 ├── simulator/                      # Synthetic EHR log generation engine
 └── README.md                       # Comprehensive project documentation
