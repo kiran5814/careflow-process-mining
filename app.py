@@ -1,7 +1,7 @@
 """
-CareFlow - 100% Pure Python Healthcare Intelligence & Operations Platform
-Unified Ecosystem: Machine Learning, Generative AI, Data Analysis & Data Engineering
-Built with Streamlit, PM4Py, Pandas, SciPy, Scikit-Learn & Matplotlib.
+CareFlow - Enterprise Hospital Command Center & Healthcare Intelligence Platform
+Unified Ecosystem: Live SQL Database · Machine Learning · Gen AI · Data Analysis · Data Engineering
+Built with Streamlit, SQLite3, PM4Py, Pandas, SciPy, Scikit-Learn, Plotly & Matplotlib.
 
 Usage:
     streamlit run app.py
@@ -11,6 +11,7 @@ import os
 import sys
 import glob
 import json
+import time
 import datetime
 import numpy as np
 import pandas as pd
@@ -18,18 +19,22 @@ import streamlit as st
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-try:
-    import seaborn as sns
-    HAS_SEABORN = True
-except ImportError:
-    HAS_SEABORN = False
-    sns = None
+import plotly.express as px
+import plotly.graph_objects as go
 from scipy import stats
 
 # Ensure careflow_analytics package is accessible
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, BASE_DIR)
 
+from careflow_analytics.database import (
+    init_sql_database,
+    query_sql,
+    execute_sql,
+    insert_synthetic_patient_event,
+    get_database_stats,
+    DB_PATH
+)
 from careflow_analytics.dbt_models import run_full_dbt_python_pipeline
 from careflow_analytics.analytics_engine import (
     calculate_queue_metrics,
@@ -55,212 +60,384 @@ from careflow_analytics.data_engineering import (
 
 # ─── Page Configuration ──────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="CareFlow — Healthcare AI, ML & Process Intelligence",
+    page_title="CareFlow Enterprise — Hospital Clinical Intelligence & SQL Platform",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling (Zero-popup, clean dark aesthetics)
+# Enterprise Dark-Mode Styling (Medical Command Center Aesthetics)
 st.markdown("""
 <style>
-    /* Permanently hide Deploy button and toolbar popups */
+    /* Suppress default Streamlit cloud deploy and toolbar popups */
     .stDeployButton,
     div[data-testid="stDeployButton"],
     button[data-testid="stDeployButton"],
-    div[data-testid="stToolbarActions"] {
+    div[data-testid="stToolbarActions"],
+    header[data-testid="stHeader"] {
         display: none !important;
         visibility: hidden !important;
     }
     
-    .stMetric { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
-    .badge-cyan { background: rgba(6, 182, 212, 0.2); color: #06b6d4; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
-    .badge-emerald { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
-    .badge-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
-    .badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
+    /* Institutional Hospital Card Design */
+    .stMetric {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
     
-    /* Smooth transitions and scrolling */
+    .status-pill-green {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.3);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+    }
+    .status-pill-cyan {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(6, 182, 212, 0.15);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+    }
+    .status-pill-purple {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+        border: 1px solid rgba(192, 132, 252, 0.3);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+    }
+    
+    /* Smooth Interactive Buttons */
     html {
         scroll-behavior: smooth;
     }
     .stButton > button {
-        transition: all 0.2s ease-in-out;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 8px;
+        font-weight: 600;
     }
     .stButton > button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.35);
     }
 </style>
 """, unsafe_allow_html=True)
 
 
-# ─── Data Caching & ML Model Preparation ─────────────────────────────────────
-@st.cache_data
-def load_data():
-    raw_path = os.path.join(BASE_DIR, "simulator", "output", "ehr_event_log.csv")
-    output_dir = os.path.join(BASE_DIR, "careflow_analytics", "output")
-    raw_df = pd.read_csv(raw_path)
-    
-    # Run python DBT models if parquet marts do not exist
-    if not os.path.exists(os.path.join(output_dir, "fct_patient_journeys.parquet")):
-        marts = run_full_dbt_python_pipeline(raw_path, output_dir)
-    else:
-        marts = {
-            "stg_ehr_events": pd.read_parquet(os.path.join(output_dir, "stg_ehr_events.parquet")),
-            "fct_patient_journeys": pd.read_parquet(os.path.join(output_dir, "fct_patient_journeys.parquet")),
-            "mart_bottlenecks": pd.read_parquet(os.path.join(output_dir, "mart_bottlenecks.parquet")),
-            "mart_resource_handovers": pd.read_parquet(os.path.join(output_dir, "mart_resource_handovers.parquet")),
-            "mart_sla_compliance": pd.read_parquet(os.path.join(output_dir, "mart_sla_compliance.parquet")),
-        }
-    return raw_df, marts
+# ─── Live Database Initialization & Connection ───────────────────────────────
+@st.cache_resource
+def setup_live_sql_db():
+    res = init_sql_database(force_refresh=False)
+    return res
+
+@st.cache_data(ttl=60)
+def load_live_hospital_data():
+    """
+    Pulls live data directly from the connected SQLite relational database.
+    """
+    fct_df = query_sql("SELECT * FROM fct_patient_journeys")
+    stg_df = query_sql("SELECT * FROM stg_ehr_events")
+    sla_df = query_sql("SELECT * FROM mart_sla_compliance")
+    bottlenecks_df = query_sql("SELECT * FROM mart_bottlenecks")
+    handovers_df = query_sql("SELECT * FROM mart_resource_handovers")
+    census_df = query_sql("SELECT * FROM hospital_ward_census")
+    db_stats = get_database_stats()
+    return fct_df, stg_df, sla_df, bottlenecks_df, handovers_df, census_df, db_stats
 
 @st.cache_resource
-def get_trained_ml_bundle():
-    _, marts = load_data()
-    return train_ml_models(marts["fct_patient_journeys"])
+def get_trained_ml_models():
+    fct_df = query_sql("SELECT * FROM fct_patient_journeys")
+    return train_ml_models(fct_df)
 
 
-raw_df, marts = load_data()
-stg_df = marts["stg_ehr_events"]
-fct_df = marts["fct_patient_journeys"]
-sla_df = marts["mart_sla_compliance"]
-bottlenecks_df = marts["mart_bottlenecks"]
-handovers_df = marts["mart_resource_handovers"]
-ml_bundle = get_trained_ml_bundle()
+# Initialize DB and pull records
+setup_live_sql_db()
+fct_df, stg_df, sla_df, bottlenecks_df, handovers_df, census_df, db_stats = load_live_hospital_data()
+ml_bundle = get_trained_ml_models()
+
+
+# ─── Enterprise Command Header ───────────────────────────────────────────────
+c_head1, c_head2 = st.columns([2, 1])
+with c_head1:
+    st.markdown("## 🏥 CAREFLOW ENTERPRISE COMMAND CENTER")
+    st.caption("Clinical Operations Intelligence · Pure Python · Connected SQL Database · Predictive MLOps")
+with c_head2:
+    st.markdown("""
+        <div style="text-align: right; padding-top: 8px;">
+            <span class="status-pill-green">🟢 SQL DB CONNECTED</span>
+            <span class="status-pill-cyan">⚡ ML ENGINE: ONLINE</span>
+            <span class="status-pill-purple">🤖 GENAI: READY</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.divider()
 
 
 # ─── Sidebar Navigation ───────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🏥 CareFlow Platform")
-    st.markdown("**Unified Python & AI Analytics Ecosystem**")
-    st.caption("Machine Learning · Gen AI · Data Analysis · Data Engineering")
-    st.markdown("`Branch: dev-Riddi`")
+    st.markdown("### 🏥 CareFlow v2.2")
+    st.markdown("**Enterprise Hospital Platform**")
+    st.caption(f"💾 SQL Engine: `careflow_hospital.db`")
+    st.caption("Branch: `dev-Riddi`")
     st.divider()
 
     menu = st.radio(
         "Navigation Pillars",
         [
-            "🏥 Hospital Command Center",
-            "🗺️ PM4Py Process Mining & DFG",
-            "⚡ SLA & Operations Research",
+            "🏥 Hospital Command Center & Census",
+            "💾 Live Connected SQL Database Studio",
             "🧠 Machine Learning & MLOps Suite",
             "🤖 GenAI & Generative Engineering Studio",
+            "🗺️ PM4Py Process Mining & DFG",
+            "⚡ SLA Escalations & Operations Research",
             "🏗️ Data Engineering & Lakehouse Suite",
             "📉 Patient Flow Funnel & Dropouts",
-            "🩺 Clinical Quality & Safety",
+            "🩺 Clinical Quality & Safety Benchmarks",
             "📊 SPC Healthcare Control Charts",
             "🎲 Markov State Transition Matrix",
-            "📓 Jupyter Notebooks Hub (23 .ipynb)"
+            "📓 Jupyter Notebooks Hub (24 .ipynb)"
         ]
     )
 
     st.divider()
-    st.markdown("### 🏆 4 Architectural Pillars")
-    st.markdown("- 🧠 **ML:** Random Forest, Gradient Boost, Live Inference")
+    st.markdown("#### 🏆 4 Architecture Pillars")
+    st.markdown("- 💾 **SQL DB:** Relational Tables & Transactional Ingestion")
+    st.markdown("- 🧠 **ML:** Random Forest, Gradient Boost, Real-Time Inference")
     st.markdown("- 🤖 **GenAI:** Automated Discharge Notes, SBAR, RAG SOPs")
-    st.markdown("- 📊 **DA:** PM4Py DFG, Queues, Markov Chains, SPC")
-    st.markdown("- 🏗️ **DE:** Lakehouse Medallion (Bronze/Silver/Gold)")
+    st.markdown("- 📊 **DA:** Process Mining DFG, Queue Theory, Markov Chains")
+    st.markdown("- 🏗️ **DE:** Lakehouse Medallion (Bronze/Silver/Gold) + Contracts")
     st.divider()
-    st.info("💡 **100% Pure Python**: All pipelines, inference models, and analytics run natively with 0 external black-box dependencies.")
+    st.info("💡 **100% Pure Python**: All pipelines, SQL queries, models, and dashboards run natively with zero black-box dependencies.")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 1. HOSPITAL COMMAND CENTER
+# 1. HOSPITAL COMMAND CENTER & CENSUS
 # ──────────────────────────────────────────────────────────────────────────────
-if menu == "🏥 Hospital Command Center":
-    st.title("🏥 Emergency Room Command Center & Hospital Census")
-    st.markdown("Real-time facility telemetry across 250 licensed hospital beds, clinical encounters, and throughput.")
+if menu == "🏥 Hospital Command Center & Census":
+    st.title("🏥 Emergency Room Command Center & Live Ward Census")
+    st.markdown("Real-time facility telemetry across 250 licensed hospital beds and emergency patient flow, queried directly from the live SQL database.")
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.metric("Total Cases Analyzed", f"{len(fct_df):,} pts", "+100% Conformance")
-    with c2:
-        st.metric("Mean Length of Stay", f"{fct_df['total_los_minutes'].mean():.1f} min", "-14.2 min YoY")
-    with c3:
+    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+    with kpi1:
+        st.metric("Total Cases in SQL DB", f"{len(fct_df):,} pts", "+100% Schema Validated")
+    with kpi2:
+        st.metric("Mean Emergency Stay", f"{fct_df['total_los_minutes'].mean():.1f} min", "-14.2 min YoY")
+    with kpi3:
         st.metric("Radiology Loopbacks", f"{fct_df['has_radiology_loopback_rework'].sum()} cases", f"{fct_df['has_radiology_loopback_rework'].mean()*100:.1f}%")
-    with c4:
-        st.metric("Door-to-Doctor Compliance", f"{(1 - sla_df['is_door_to_doctor_breached'].mean())*100:.1f}%", "Target ≥ 85%")
+    with kpi4:
+        d2d_comp = (1 - sla_df['is_door_to_doctor_breached'].mean()) * 100
+        st.metric("Door-to-Doctor Compliance", f"{d2d_comp:.1f}%", "Target ≥ 85%")
 
-    st.markdown("### 🛏️ Hospital Ward Bed Occupancy")
-    units = [
-        {"Unit": "ED Zone A (Acute)", "Beds": 32, "Occupied": 29},
-        {"Unit": "ED Zone B (Subacute)", "Beds": 28, "Occupied": 22},
-        {"Unit": "Trauma Resuscitation", "Beds": 8, "Occupied": 6},
-        {"Unit": "Medical ICU (MICU)", "Beds": 24, "Occupied": 23},
-        {"Unit": "Coronary Care (CCU)", "Beds": 18, "Occupied": 14},
-        {"Unit": "Step-Down Unit", "Beds": 40, "Occupied": 37},
-        {"Unit": "Med-Surg East", "Beds": 50, "Occupied": 42},
-        {"Unit": "Med-Surg West", "Beds": 50, "Occupied": 45},
+    st.markdown("### 🛏️ Live Inpatient Ward Bed Saturation Telemetry")
+    
+    # Plotly interactive hospital census bar chart
+    fig_census = go.Figure()
+    bar_colors = [
+        '#ef4444' if r >= 90.0 else ('#f59e0b' if r >= 80.0 else '#10b981')
+        for r in census_df['occupancy_rate']
     ]
-    u_df = pd.DataFrame(units)
-    u_df["Occupancy %"] = (u_df["Occupied"] / u_df["Beds"]) * 100
-    st.bar_chart(u_df.set_index("Unit")["Occupancy %"])
+    fig_census.add_trace(go.Bar(
+        y=census_df['unit_name'],
+        x=census_df['occupancy_rate'],
+        orientation='h',
+        marker=dict(color=bar_colors),
+        text=[f"{r:.1f}% ({o}/{t} beds)" for r, o, t in zip(census_df['occupancy_rate'], census_df['occupied_beds'], census_df['total_beds'])],
+        textposition='outside'
+    ))
+    fig_census.add_vline(x=85.0, line_dash="dash", line_color="#f59e0b", annotation_text="Hospital Surge (85%)", annotation_position="top right")
+    fig_census.add_vline(x=90.0, line_dash="dash", line_color="#ef4444", annotation_text="Critical Saturation (90%)", annotation_position="top right")
+    fig_census.update_layout(
+        title="Inpatient Ward Bed Occupancy Rate (%)",
+        xaxis_title="Occupancy Rate (%)",
+        yaxis=dict(autorange="reversed"),
+        template="plotly_dark",
+        height=380,
+        margin=dict(l=10, r=40, t=50, b=30)
+    )
+    st.plotly_chart(fig_census, use_container_width=True)
+
+    # Ward Census Table from SQL
+    with st.expander("📋 View Live Relational Ward Census Table (From SQL Database)", expanded=False):
+        st.dataframe(census_df, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 2. PM4PY PROCESS MINING
+# 2. LIVE CONNECTED SQL DATABASE STUDIO
 # ──────────────────────────────────────────────────────────────────────────────
-elif menu == "🗺️ PM4Py Process Mining & DFG":
-    st.title("🗺️ PM4Py Process Discovery & Directly-Follows Graph")
-    st.markdown("Automated process discovery from chronological EHR timestamp sequences and transition frequencies.")
+elif menu == "💾 Live Connected SQL Database Studio":
+    st.title("💾 Live Connected SQL Database Studio")
+    st.markdown("Interactive relational query console, live table inspection, and real-time transactional event ingestion running against `careflow_hospital.db`.")
 
-    trans = stg_df[stg_df["previous_activity"].notna()].copy()
-    dfg_counts = trans.groupby(["previous_activity", "activity_name"]).size().reset_index(name="count")
-    dfg_counts = dfg_counts.sort_values(by="count", ascending=False).reset_index(drop=True)
+    sql_tabs = st.tabs([
+        "⚡ Interactive SQL Query Console",
+        "📥 Live Transactional Ingestion & SQL INSERT",
+        "🏛️ Relational Schema Introspection",
+        "📊 Analytical SQL Aggregation Views"
+    ])
 
-    c1, c2 = st.columns([1, 1])
-    with c1:
-        st.markdown("#### Top Pathway Transitions (Directly-Follows Graph)")
-        st.dataframe(dfg_counts.head(10), use_container_width=True)
+    # Tab 1: Interactive SQL Query Console
+    with sql_tabs[0]:
+        st.markdown("### ⚡ Interactive SQL Query Console")
+        st.markdown("Execute custom SQL queries directly against the relational database and visualize outputs in real time.")
 
-    with c2:
-        st.markdown("#### Loopback Rework Anomaly Discovery")
-        st.warning(f"⚠️ **Radiology Paperwork Loopback**: {fct_df['has_radiology_loopback_rework'].sum()} patients ({fct_df['has_radiology_loopback_rework'].mean()*100:.1f}%) were sent back to Triage due to missing paperwork.")
-        st.error(f"🚨 **Triage Protocol Bypass**: {fct_df['is_triage_bypassed_anomaly'].sum()} patients ({fct_df['is_triage_bypassed_anomaly'].mean()*100:.1f}%) bypassed triage directly into doctor rooms.")
+        preset_queries = {
+            "1. Triage Severity & Length of Stay Distribution": """SELECT 
+    clinical_severity,
+    COUNT(*) AS patient_volume,
+    ROUND(AVG(total_los_minutes), 1) AS mean_los_min,
+    ROUND(MIN(total_los_minutes), 1) AS min_los_min,
+    ROUND(MAX(total_los_minutes), 1) AS max_los_min,
+    SUM(CASE WHEN has_radiology_loopback_rework = 1 THEN 1 ELSE 0 END) AS loopback_cases
+FROM fct_patient_journeys
+GROUP BY clinical_severity
+ORDER BY mean_los_min DESC;""",
+
+            "2. Regulatory Door-to-Doctor SLA Breaches by Severity": """SELECT 
+    s.clinical_severity,
+    COUNT(*) AS total_cases,
+    SUM(CASE WHEN s.is_door_to_doctor_breached = 1 THEN 1 ELSE 0 END) AS breached_cases,
+    ROUND(AVG(CASE WHEN s.is_door_to_doctor_breached = 1 THEN 1.0 ELSE 0.0 END) * 100, 1) AS breach_rate_pct,
+    ROUND(AVG(s.door_to_doctor_minutes), 1) AS avg_d2d_minutes
+FROM mart_sla_compliance s
+GROUP BY s.clinical_severity
+ORDER BY breach_rate_pct DESC;""",
+
+            "3. Morning Rush Hour Departmental Bottlenecks": """SELECT 
+    source_activity || ' ➔ ' || target_activity AS transition_route,
+    transition_volume,
+    avg_wait_minutes,
+    median_wait_minutes,
+    max_wait_minutes
+FROM mart_bottlenecks
+WHERE is_morning_rush = 1
+ORDER BY avg_wait_minutes DESC
+LIMIT 8;""",
+
+            "4. Hospital Wards Operating at Critical Capacity": """SELECT 
+    unit_name,
+    total_beds,
+    occupied_beds,
+    total_beds - occupied_beds AS available_beds,
+    occupancy_rate,
+    status
+FROM hospital_ward_census
+WHERE occupancy_rate >= 80.0
+ORDER BY occupancy_rate DESC;"""
+        }
+
+        selected_preset = st.selectbox("Select a Preset Analytical SQL Query:", list(preset_queries.keys()))
+        sql_input = st.text_area("SQL Editor:", value=preset_queries[selected_preset], height=160)
+
+        if st.button("⚡ Execute SQL Query", use_container_width=True):
+            t0 = time.time()
+            try:
+                res_df = query_sql(sql_input)
+                elapsed_ms = (time.time() - t0) * 1000.0
+                st.success(f"✅ Query executed successfully in **{elapsed_ms:.1f} ms**! Retrieved **{len(res_df):,} rows**.")
+                st.dataframe(res_df, use_container_width=True)
+
+                # Auto-plot if numerical columns present
+                num_cols = res_df.select_dtypes(include=[np.number]).columns.tolist()
+                cat_cols = res_df.select_dtypes(include=['object']).columns.tolist()
+                if len(num_cols) > 0 and len(cat_cols) > 0:
+                    fig_sql = px.bar(
+                        res_df,
+                        x=cat_cols[0],
+                        y=num_cols[0],
+                        title=f"SQL Result Visualization: {num_cols[0]} by {cat_cols[0]}",
+                        template="plotly_dark",
+                        color_discrete_sequence=['#06b6d4']
+                    )
+                    st.plotly_chart(fig_sql, use_container_width=True)
+            except Exception as e:
+                st.error(f"❌ SQL Execution Error: {str(e)}")
+
+    # Tab 2: Live Transactional Ingestion & SQL INSERT
+    with sql_tabs[1]:
+        st.markdown("### 📥 Live Transactional Ingestion & SQL INSERT")
+        st.markdown("Simulate an incoming patient admission and insert a live event record into `raw_ehr_events` via transactional SQL.")
+
+        with st.form("sql_insert_form"):
+            icol1, icol2, icol3 = st.columns(3)
+            with icol1:
+                in_case = st.text_input("Patient Case ID", value=f"CASE-SQL-{np.random.randint(10000, 99999)}")
+                in_act = st.selectbox("Clinical Activity", ["Triage", "Doctor Consult", "Lab Tests", "Radiology / CT Scan", "Discharge"])
+            with icol2:
+                in_gender = st.selectbox("Patient Gender", ["Female", "Male"])
+                in_age_group = st.selectbox("Age Group", ["0-17", "18-40", "41-60", "61+"], index=2)
+            with icol3:
+                in_sev = st.selectbox("Clinical Severity", ["Low", "Medium", "High"], index=1)
+                in_res = st.text_input("Care Resource", value="Nurse_Practitioner_Adams")
+
+            submit_insert = st.form_submit_button("📥 Execute SQL INSERT Transaction", use_container_width=True)
+
+        if submit_insert:
+            ev_dict = {
+                "case_id": in_case,
+                "activity_name": in_act,
+                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "resource_name": in_res,
+                "patient_gender": in_gender,
+                "patient_age_group": in_age_group,
+                "clinical_severity": in_sev
+            }
+            n_rows = insert_synthetic_patient_event(ev_dict)
+            st.success(f"✅ Transaction Committed: Inserted record for `{in_case}` into `raw_ehr_events`! (Affected Rows: {n_rows})")
+
+            # Verify by querying the latest 5 records
+            recent_sql = query_sql("SELECT * FROM raw_ehr_events ORDER BY event_id DESC LIMIT 5")
+            st.markdown("#### Latest Ingested Events in SQL:")
+            st.dataframe(recent_sql, use_container_width=True)
+
+    # Tab 3: Relational Schema Introspection
+    with sql_tabs[2]:
+        st.markdown("### 🏛️ Relational Database Schema Introspection")
+        st.markdown(f"**Database Location:** `{DB_PATH}` | **Format:** SQLite 3 Relational SQL")
+        st.dataframe(db_stats, use_container_width=True)
+
+    # Tab 4: Analytical SQL Aggregation Views
+    with sql_tabs[3]:
+        st.markdown("### 📊 Pre-Calculated Relational Analytical Marts")
+        st.markdown("Inspect pre-aggregated dimensional marts materialized from the DBT pipeline.")
+
+        v_sel = st.selectbox("Select SQL Mart Table to Inspect:", ["mart_sla_compliance", "mart_bottlenecks", "mart_resource_handovers", "clinical_protocols"])
+        v_df = query_sql(f"SELECT * FROM {v_sel} LIMIT 25")
+        st.dataframe(v_df, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 3. SLA & OPERATIONS RESEARCH
-# ──────────────────────────────────────────────────────────────────────────────
-elif menu == "⚡ SLA & Operations Research":
-    st.title("⚡ Clinical SLA Escalations & Operations Research")
-    st.markdown("Regulatory compliance monitoring: Door-to-Doctor (<30m), Radiology Turnaround (<45m), and Little's Law queues.")
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Door-to-Doctor Breach Rate", f"{sla_df['is_door_to_doctor_breached'].mean()*100:.1f}%")
-    c2.metric("Radiology SLA Breach Rate", f"{sla_df['is_radiology_sla_breached'].mean()*100:.1f}%")
-    c3.metric("ED Boarding Breach Rate (>4h)", f"{sla_df['is_ed_boarding_breached'].mean()*100:.1f}%")
-
-    st.markdown("### Door-to-Doctor Wait Distribution by Severity")
-    fig, ax = plt.subplots(figsize=(10, 4))
-    if HAS_SEABORN:
-        sns.boxplot(data=sla_df, x="clinical_severity", y="door_to_doctor_minutes", hue="clinical_severity", ax=ax, palette="crest", showfliers=False, legend=False)
-    else:
-        severities = ['High', 'Medium', 'Low']
-        box_data = [sla_df[sla_df['clinical_severity'] == s]['door_to_doctor_minutes'].dropna() for s in severities]
-        bp = ax.boxplot(box_data, patch_artist=True, tick_labels=severities, showfliers=False)
-        colors = ['#f43f5e', '#f59e0b', '#10b981']
-        for patch, color in zip(bp['boxes'], colors):
-            patch.set_facecolor(color)
-            patch.set_alpha(0.7)
-        for median in bp['medians']:
-            median.set(color='#ffffff', linewidth=2)
-    ax.axhline(30, color="#f43f5e", linestyle="--", label="SLA Target (30 min)")
-    ax.set_ylabel("Wait Time (Minutes)")
-    ax.legend()
-    st.pyplot(fig)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 4. MACHINE LEARNING & MLOPS SUITE
+# 3. MACHINE LEARNING & MLOPS SUITE
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🧠 Machine Learning & MLOps Suite":
     st.title("🧠 Machine Learning & Predictive MLOps Suite")
-    st.markdown("Supervised predictive intelligence: Real-time Length of Stay (LoS) regression, Prolonged Stay classifiers, and model benchmarks.")
+    st.markdown("Supervised predictive modeling: Real-time Length of Stay (LoS) regression, Prolonged Stay classifiers, and multi-model benchmark tournaments.")
 
-    ml_tabs = st.tabs(["🔮 Real-Time Patient Inference Simulator", "🏆 Multi-Model Tournament & Benchmarks", "📊 Feature Importances & Explainability"])
+    ml_tabs = st.tabs([
+        "🔮 Real-Time Patient Inference Simulator",
+        "🏆 Multi-Model Tournament & Benchmarks",
+        "📊 Feature Importances & Explainability",
+        "📈 ROC-AUC & Confusion Matrix Diagnostics"
+    ])
 
-    # Tab 1: Real-Time Patient Inference Simulator
+    # Tab 1: Inference Simulator
     with ml_tabs[0]:
         st.markdown("### 🔮 Real-Time Single-Patient Inference Simulator")
         st.markdown("Adjust patient clinical parameters to run real-time inference against the trained Random Forest and Gradient Boosting champions.")
@@ -279,7 +456,6 @@ elif menu == "🧠 Machine Learning & MLOps Suite":
 
             submit_pred = st.form_submit_button("⚡ Run Real-Time ML Inference", use_container_width=True)
 
-        # Run inference
         sample_dict = {
             "severity": p_severity,
             "age": p_age_group,
@@ -300,7 +476,7 @@ elif menu == "🧠 Machine Learning & MLOps Suite":
 
         st.info(f"**Recommended Clinical Action:** {pred_res['recommended_action']}")
 
-    # Tab 2: Multi-Model Tournament
+    # Tab 2: Tournament & Benchmarks
     with ml_tabs[1]:
         st.markdown("### 🏆 Multi-Model Tournament & Benchmark Comparison")
         st.markdown("Benchmarking 5 candidate models across cross-validated regression and classification metrics.")
@@ -309,7 +485,7 @@ elif menu == "🧠 Machine Learning & MLOps Suite":
         bcol1, bcol2 = st.columns(2)
         with bcol1:
             st.metric("Champion Regressor R²", f"{ml_bundle['metrics']['r2']:.3f}", "Random Forest")
-            st.metric("Regression Root Mean Squared Error", f"{ml_bundle['metrics']['rmse']:.1f} min", "MAE: " + f"{ml_bundle['metrics']['mae']:.1f} min")
+            st.metric("Regression Root Mean Squared Error", f"{ml_bundle['metrics']['rmse']:.1f} min", f"MAE: {ml_bundle['metrics']['mae']:.1f} min")
         with bcol2:
             st.metric("Champion Classifier ROC-AUC", f"{ml_bundle['metrics']['auc']:.3f}", "High Discriminative Power")
             st.metric("Inference Latency", "< 15 ms", "Sub-millisecond batch throughput")
@@ -317,24 +493,70 @@ elif menu == "🧠 Machine Learning & MLOps Suite":
     # Tab 3: Feature Importances
     with ml_tabs[2]:
         st.markdown("### 📊 Feature Importance Decomposition (SHAP-Inspired)")
-        st.markdown("Relative feature contributions driving the Length of Stay regression model.")
-
         imp_df = ml_bundle["importances"]
-        fig, ax = plt.subplots(figsize=(8, 3.8))
-        ax.barh(imp_df["feature"], imp_df["importance"], color="#06b6d4", edgecolor="#0891b2", alpha=0.85)
-        ax.set_xlabel("Relative Importance Weight", color="white")
-        ax.set_title("Random Forest Gini Feature Importances", fontsize=11, fontweight="bold", color="white")
-        ax.grid(True, linestyle="--", alpha=0.2)
-        plt.tight_layout()
-        st.pyplot(fig)
+        fig_imp = px.bar(
+            imp_df,
+            x="importance",
+            y="feature",
+            orientation='h',
+            title="Random Forest Gini Feature Contributions",
+            template="plotly_dark",
+            color="importance",
+            color_continuous_scale="Blues"
+        )
+        fig_imp.update_layout(yaxis=dict(autorange="reversed"), height=350)
+        st.plotly_chart(fig_imp, use_container_width=True)
+
+    # Tab 4: ROC-AUC & Confusion Matrix
+    with ml_tabs[3]:
+        st.markdown("### 📈 Classifier ROC-AUC Diagnostics & Confusion Matrix")
+        rcol1, rcol2 = st.columns(2)
+        with rcol1:
+            fig_roc = go.Figure()
+            fig_roc.add_trace(go.Scatter(
+                x=ml_bundle["metrics"]["fpr"],
+                y=ml_bundle["metrics"]["tpr"],
+                mode='lines',
+                line=dict(color='#06b6d4', width=2.5),
+                name=f"ROC Curve (AUC = {ml_bundle['metrics']['auc']:.3f})"
+            ))
+            fig_roc.add_trace(go.Scatter(
+                x=[0, 1], y=[0, 1],
+                mode='lines',
+                line=dict(color='gray', dash='dash'),
+                name="Random Guess"
+            ))
+            fig_roc.update_layout(
+                title="Receiver Operating Characteristic (ROC)",
+                xaxis_title="False Positive Rate",
+                yaxis_title="True Positive Rate",
+                template="plotly_dark",
+                height=350
+            )
+            st.plotly_chart(fig_roc, use_container_width=True)
+
+        with rcol2:
+            cm = ml_bundle["metrics"]["cm"]
+            fig_cm = px.imshow(
+                cm,
+                text_auto=True,
+                labels=dict(x="Predicted Prolonged Stay", y="Actual Prolonged Stay", color="Count"),
+                x=["Routine (<=150m)", "Prolonged (>150m)"],
+                y=["Routine (<=150m)", "Prolonged (>150m)"],
+                title="Binary Confusion Matrix",
+                color_continuous_scale="Crest",
+                template="plotly_dark"
+            )
+            fig_cm.update_layout(height=350)
+            st.plotly_chart(fig_cm, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 5. GENAI & GENERATIVE ENGINEERING STUDIO
+# 4. GENAI & GENERATIVE ENGINEERING STUDIO
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🤖 GenAI & Generative Engineering Studio":
     st.title("🤖 GenAI & Generative Engineering Studio")
-    st.markdown("Generative AI for Electronic Health Records: Automated Discharge Summaries, Clinical SBAR Handover, Protocol RAG Auditor, and Synthetic Trajectory Simulation.")
+    st.markdown("Generative AI for Electronic Health Records: Automated Clinical Summaries, SBAR Shift Handovers, Protocol RAG Auditor, and Synthetic Trajectory Simulation.")
 
     gen_tabs = st.tabs([
         "📝 Automated Discharge Summary & SBAR",
@@ -346,10 +568,10 @@ elif menu == "🤖 GenAI & Generative Engineering Studio":
     # Tab 1: Discharge Summary & SBAR
     with gen_tabs[0]:
         st.markdown("### 📝 Automated Generative Clinical Discharge Synthesis")
-        st.markdown("Synthesize hospital discharge notes and SBAR handovers anchored to lakehouse event trajectories.")
+        st.markdown("Synthesize hospital discharge notes and SBAR handovers anchored to lakehouse patient event trajectories.")
 
         c_cases = sorted(fct_df["case_id"].tolist())
-        selected_case = st.selectbox("Select Patient Case from Lakehouse:", c_cases[:50], index=0)
+        selected_case = st.selectbox("Select Patient Case from SQL Database:", c_cases[:50], index=0)
 
         case_row = fct_df[fct_df["case_id"] == selected_case].iloc[0]
         case_events = stg_df[stg_df["case_id"] == selected_case]["activity_name"].tolist()
@@ -414,6 +636,8 @@ elif menu == "🤖 GenAI & Generative Engineering Studio":
         with scol3:
             rush_mult = st.slider("Morning Surge Multiplier", min_value=1.0, max_value=3.0, value=1.8, step=0.2)
 
+        save_to_sql = st.checkbox("Automatically Insert Generated Events into Live SQL Database (`raw_ehr_events`)", value=True)
+
         if st.button("🚀 Generate Synthetic EHR Cohort Now", use_container_width=True):
             with st.spinner("Simulating generative EHR event logs..."):
                 synth_data = generate_synthetic_ehr_cohort(
@@ -421,7 +645,21 @@ elif menu == "🤖 GenAI & Generative Engineering Studio":
                     arrival_rate_lambda=arr_lambda,
                     rush_hour_boost=rush_mult
                 )
-                st.success(f"✅ Synthesized **{len(synth_data):,}** clinical events across **{n_synth}** patient trajectories!")
+                
+                # Ingest into SQL if checked
+                if save_to_sql:
+                    for _, row in synth_data.iterrows():
+                        insert_synthetic_patient_event({
+                            "case_id": row["Case_ID"],
+                            "activity_name": row["Activity_Name"],
+                            "timestamp": row["Timestamp"],
+                            "resource_name": row["Department"],
+                            "patient_gender": "Female" if int(row["Triage_Acuity"]) % 2 == 0 else "Male",
+                            "patient_age_group": "41-60",
+                            "clinical_severity": "High" if row["Triage_Acuity"] <= 2 else ("Medium" if row["Triage_Acuity"] == 3 else "Low")
+                        })
+                    st.success(f"✅ Ingested **{len(synth_data):,}** synthetic events directly into SQLite table `raw_ehr_events`!")
+
                 st.dataframe(synth_data.head(10), use_container_width=True)
 
                 csv_bytes = synth_data.to_csv(index=False).encode('utf-8')
@@ -440,7 +678,6 @@ elif menu == "🤖 GenAI & Generative Engineering Studio":
         trans_list = [f"{r['source_activity']} ➔ {r['target_activity']}" for _, r in bottlenecks_df.head(6).iterrows()]
         sel_trans = st.selectbox("Select Pathway Transition Bottleneck:", trans_list, index=0)
 
-        # Match row
         source, target = sel_trans.split(" ➔ ")
         matched_row = bottlenecks_df[
             (bottlenecks_df["source_activity"] == source) & (bottlenecks_df["target_activity"] == target)
@@ -458,7 +695,74 @@ elif menu == "🤖 GenAI & Generative Engineering Studio":
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 6. DATA ENGINEERING & LAKEHOUSE SUITE
+# 5. PM4PY PROCESS MINING & DFG
+# ──────────────────────────────────────────────────────────────────────────────
+elif menu == "🗺️ PM4Py Process Mining & DFG":
+    st.title("🗺️ PM4Py Process Discovery & Directly-Follows Graph")
+    st.markdown("Automated process discovery from chronological EHR timestamp sequences and transition frequencies.")
+
+    trans = stg_df[stg_df["previous_activity"].notna()].copy()
+    dfg_counts = trans.groupby(["previous_activity", "activity_name"]).size().reset_index(name="count")
+    dfg_counts = dfg_counts.sort_values(by="count", ascending=False).reset_index(drop=True)
+
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        st.markdown("#### Top Pathway Transitions (Directly-Follows Graph)")
+        st.dataframe(dfg_counts.head(10), use_container_width=True)
+
+    with c2:
+        st.markdown("#### Loopback Rework Anomaly Discovery")
+        st.warning(f"⚠️ **Radiology Paperwork Loopback**: {fct_df['has_radiology_loopback_rework'].sum()} patients ({fct_df['has_radiology_loopback_rework'].mean()*100:.1f}%) were sent back to Triage due to missing paperwork.")
+        st.error(f"🚨 **Triage Protocol Bypass**: {fct_df['is_triage_bypassed_anomaly'].sum()} patients ({fct_df['is_triage_bypassed_anomaly'].mean()*100:.1f}%) bypassed triage directly into doctor rooms.")
+
+    # Interactive Plotly Transition Volume Bar
+    fig_dfg = px.bar(
+        dfg_counts.head(8),
+        x="count",
+        y="previous_activity",
+        color="activity_name",
+        orientation='h',
+        title="Directly-Follows Transition Volumes Across Top Stages",
+        template="plotly_dark"
+    )
+    fig_dfg.update_layout(height=340)
+    st.plotly_chart(fig_dfg, use_container_width=True)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 6. SLA ESCALATIONS & OPERATIONS RESEARCH
+# ──────────────────────────────────────────────────────────────────────────────
+elif menu == "⚡ SLA Escalations & Operations Research":
+    st.title("⚡ Clinical SLA Escalations & Operations Research")
+    st.markdown(r"Regulatory compliance monitoring: Door-to-Doctor (<30m), Radiology Turnaround (<45m), and Little's Law queues ($L = \lambda W$).")
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Door-to-Doctor Breach Rate", f"{sla_df['is_door_to_doctor_breached'].mean()*100:.1f}%")
+    c2.metric("Radiology SLA Breach Rate", f"{sla_df['is_radiology_sla_breached'].mean()*100:.1f}%")
+    c3.metric("ED Boarding Breach Rate (>4h)", f"{sla_df['is_ed_boarding_breached'].mean()*100:.1f}%")
+
+    st.markdown("### Door-to-Doctor Wait Distribution by Severity")
+    fig_box = px.box(
+        sla_df,
+        x="clinical_severity",
+        y="door_to_doctor_minutes",
+        color="clinical_severity",
+        title="Door-to-Doctor Minutes by Severity Tier (with 30m SLA Target Line)",
+        template="plotly_dark",
+        color_discrete_sequence=['#f43f5e', '#f59e0b', '#10b981']
+    )
+    fig_box.add_hline(y=30.0, line_dash="dash", line_color="#ef4444", annotation_text="Mandated SLA (30 min)", annotation_position="top left")
+    fig_box.update_layout(height=360)
+    st.plotly_chart(fig_box, use_container_width=True)
+
+    # Queue Metrics
+    st.markdown(r"### Departmental Little's Law Metrics ($L = \lambda W$)")
+    q_metrics = calculate_queue_metrics(stg_df)
+    st.dataframe(q_metrics.head(8), use_container_width=True)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 7. DATA ENGINEERING & LAKEHOUSE SUITE
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🏗️ Data Engineering & Lakehouse Suite":
     st.title("🏗️ Data Engineering & Lakehouse Suite")
@@ -466,7 +770,6 @@ elif menu == "🏗️ Data Engineering & Lakehouse Suite":
 
     de_tabs = st.tabs(["🏛️ Medallion Lakehouse Profiler", "✅ Automated Data Quality Suite (10 Tests)", "⚡ Pipeline Execution & Lineage"])
 
-    # Tab 1: Medallion Profiler
     with de_tabs[0]:
         st.markdown("### 🏛️ Medallion Lakehouse Architecture")
         raw_csv_path = os.path.join(BASE_DIR, "simulator", "output", "ehr_event_log.csv")
@@ -474,35 +777,14 @@ elif menu == "🏗️ Data Engineering & Lakehouse Suite":
         medallion_table = get_medallion_stats(raw_csv_path, out_dir)
         st.dataframe(medallion_table, use_container_width=True)
 
-        mcol1, mcol2, mcol3 = st.columns(3)
-        with mcol1:
-            st.metric("Bronze Layer", "Raw EHR CSV", "6,347 raw events")
-        with mcol2:
-            st.metric("Silver Layer", "stg_ehr_events.parquet", "Snappy Compressed (~3.2x)")
-        with mcol3:
-            st.metric("Gold Layer", "fct_patient_journeys", "1,000 Curated Cases")
-
-    # Tab 2: Automated Quality Suite
     with de_tabs[1]:
         st.markdown("### ✅ Automated Data Quality & Schema Integrity Assertions")
-        st.markdown("Executing 10 automated data tests inspired by Great Expectations and dbt-expectations.")
+        dq_results = run_data_quality_suite(stg_df, fct_df)
+        st.info(f"Latest Automated Test Run: **{dq_results['overall_quality_score']}% Pass Rate** ({dq_results['passed_tests']}/{dq_results['total_tests']} Passed)")
+        st.dataframe(dq_results["tests_df"][["test_name", "layer", "severity", "status", "pass_rate_pct"]], use_container_width=True)
 
-        if st.button("🧪 Execute Data Quality Test Suite Now", use_container_width=True):
-            with st.spinner("Running 10 schema and integrity assertions..."):
-                dq_results = run_data_quality_suite(stg_df, fct_df)
-                st.success(f"Execution Completed: Overall Quality Score **{dq_results['overall_quality_score']}%** ({dq_results['passed_tests']}/{dq_results['total_tests']} Tests Passed)")
-                st.dataframe(dq_results["tests_df"], use_container_width=True)
-        else:
-            # Default run
-            dq_results = run_data_quality_suite(stg_df, fct_df)
-            st.info(f"Latest Automated Test Run: **{dq_results['overall_quality_score']}% Pass Rate** ({dq_results['passed_tests']}/{dq_results['total_tests']} Passed)")
-            st.dataframe(dq_results["tests_df"][["test_name", "layer", "severity", "status", "pass_rate_pct"]], use_container_width=True)
-
-    # Tab 3: Pipeline Execution & Lineage
     with de_tabs[2]:
         st.markdown("### ⚡ Live Python DBT Pipeline Orchestration")
-        st.markdown("Re-materialize all staging models and dimensional marts on demand.")
-
         if st.button("🚀 Trigger Full Pipeline Execution", use_container_width=True):
             with st.spinner("Re-running DBT Python pipeline..."):
                 raw_p = os.path.join(BASE_DIR, "simulator", "output", "ehr_event_log.csv")
@@ -510,15 +792,9 @@ elif menu == "🏗️ Data Engineering & Lakehouse Suite":
                 res = run_full_dbt_python_pipeline(raw_p, out_p)
                 st.success("✅ All 5 lakehouse marts successfully refreshed and validated!")
 
-        st.markdown("#### Materialized Lakehouse Parquet Files:")
-        marts_files = glob.glob(os.path.join(BASE_DIR, "careflow_analytics", "output", "*.parquet"))
-        for mf in sorted(marts_files):
-            size_kb = os.path.getsize(mf) / 1024.0
-            st.markdown(f"- 📦 `{os.path.basename(mf)}` ({size_kb:.1f} KB, Apache Parquet)")
-
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 7. PATIENT FLOW FUNNEL
+# 8. PATIENT FLOW FUNNEL
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "📉 Patient Flow Funnel & Dropouts":
     st.title("📉 7-Stage Patient Flow Retention Funnel")
@@ -527,14 +803,23 @@ elif menu == "📉 Patient Flow Funnel & Dropouts":
     stages = ['Registration', 'Triage', 'Doctor Consultation', 'X-Ray', 'Treatment']
     f_counts = [{'Stage': s, 'Volume': stg_df[stg_df['activity_name'] == s]['case_id'].nunique()} for s in stages]
     funnel_df = pd.DataFrame(f_counts)
-    st.dataframe(funnel_df, use_container_width=True)
-    st.bar_chart(funnel_df.set_index("Stage")["Volume"])
+
+    fig_funnel = px.funnel(
+        funnel_df,
+        x='Volume',
+        y='Stage',
+        title="Clinical Episode Throughput Funnel",
+        template="plotly_dark",
+        color_discrete_sequence=['#06b6d4']
+    )
+    fig_funnel.update_layout(height=360)
+    st.plotly_chart(fig_funnel, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 8. CLINICAL QUALITY & SAFETY
+# 9. CLINICAL QUALITY & SAFETY BENCHMARKS
 # ──────────────────────────────────────────────────────────────────────────────
-elif menu == "🩺 Clinical Quality & Safety":
+elif menu == "🩺 Clinical Quality & Safety Benchmarks":
     st.title("🩺 Clinical Quality, Readmissions & Physician Benchmarking")
     st.markdown("Attending physician metrics, guideline adherence, and length of stay parity.")
 
@@ -549,7 +834,7 @@ elif menu == "🩺 Clinical Quality & Safety":
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 9. SPC HEALTHCARE CONTROL CHARTS
+# 10. SPC HEALTHCARE CONTROL CHARTS
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "📊 SPC Healthcare Control Charts":
     st.title("📊 Statistical Process Control (SPC) & Shewhart Individual (X-mR) Charts")
@@ -558,20 +843,29 @@ elif menu == "📊 SPC Healthcare Control Charts":
     daily_los = fct_df.groupby(pd.to_datetime(fct_df["visit_start_time"]).dt.date)["total_los_minutes"].mean()
     spc = calculate_spc_limits(daily_los)
 
-    fig, ax = plt.subplots(figsize=(10, 4))
-    ax.plot(daily_los.index, daily_los.values, marker='o', color='#06b6d4', label='Daily Mean LOS')
-    ax.axhline(spc["mean"], color='#10b981', linestyle='-', label=f'Centerline ({spc["mean"]:.1f}m)')
-    ax.axhline(spc["ucl"], color='#ef4444', linestyle='--', label=f'UCL ({spc["ucl"]:.1f}m)')
-    ax.axhline(spc["lcl"], color='#ef4444', linestyle='--', label=f'LCL ({spc["lcl"]:.1f}m)')
-    ax.set_title("Shewhart X-Chart: Emergency Length of Stay", fontsize=11, fontweight="bold", color="white")
-    ax.set_ylabel("Minutes", color="white")
-    ax.grid(True, linestyle="--", alpha=0.2)
-    ax.legend()
-    st.pyplot(fig)
+    fig_spc = go.Figure()
+    fig_spc.add_trace(go.Scatter(
+        x=daily_los.index,
+        y=daily_los.values,
+        mode='lines+markers',
+        line=dict(color='#06b6d4', width=2),
+        name="Daily Mean LOS"
+    ))
+    fig_spc.add_hline(y=spc["mean"], line_color="#10b981", annotation_text=f"Centerline ({spc['mean']:.1f}m)")
+    fig_spc.add_hline(y=spc["ucl"], line_dash="dash", line_color="#ef4444", annotation_text=f"UCL (+3σ: {spc['ucl']:.1f}m)")
+    fig_spc.add_hline(y=spc["lcl"], line_dash="dash", line_color="#ef4444", annotation_text=f"LCL (-3σ: {spc['lcl']:.1f}m)")
+    fig_spc.update_layout(
+        title="Shewhart X-Chart: Daily Emergency Length of Stay",
+        xaxis_title="Date",
+        yaxis_title="Minutes",
+        template="plotly_dark",
+        height=380
+    )
+    st.plotly_chart(fig_spc, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 10. MARKOV STATE TRANSITION MATRIX
+# 11. MARKOV STATE TRANSITION MATRIX
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🎲 Markov State Transition Matrix":
     st.title("🎲 Discrete-Time Markov Chain State Transition Matrix")
@@ -580,29 +874,29 @@ elif menu == "🎲 Markov State Transition Matrix":
     markov = calculate_markov_matrix(stg_df)
     st.dataframe(markov["prob_matrix"].round(3), use_container_width=True)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    mat = markov["prob_matrix"].values
-    im = ax.imshow(mat, cmap="crest", interpolation="nearest")
-    ax.set_xticks(range(len(markov["activities"])))
-    ax.set_yticks(range(len(markov["activities"])))
-    ax.set_xticklabels(markov["activities"], rotation=45, ha="right", color="white", fontsize=8)
-    ax.set_yticklabels(markov["activities"], color="white", fontsize=8)
-    ax.set_title("Stochastic Transition Heatmap", fontsize=11, fontweight="bold", color="white")
-    plt.tight_layout()
-    st.pyplot(fig)
+    fig_markov = px.imshow(
+        markov["prob_matrix"].values,
+        labels=dict(x="Destination Activity", y="Origin Activity", color="Probability"),
+        x=markov["activities"],
+        y=markov["activities"],
+        color_continuous_scale="Crest",
+        title="Markov Transition Probability Heatmap",
+        template="plotly_dark"
+    )
+    fig_markov.update_layout(height=420)
+    st.plotly_chart(fig_markov, use_container_width=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 11. JUPYTER NOTEBOOKS HUB (23 .ipynb)
+# 12. JUPYTER NOTEBOOKS HUB (24 .ipynb)
 # ──────────────────────────────────────────────────────────────────────────────
-elif menu == "📓 Jupyter Notebooks Hub (23 .ipynb)":
-    st.title("📓 Complete Jupyter Notebooks Suite (23 .ipynb Files)")
-    st.markdown("100% Pure Python Ecosystem: All machine learning, generative engineering, process mining, and data engineering files in standard executable `.ipynb` format.")
+elif menu == "📓 Jupyter Notebooks Hub (24 .ipynb)":
+    st.title("📓 Complete Jupyter Notebooks Suite (24 .ipynb Files)")
+    st.markdown("100% Pure Python Ecosystem: All machine learning, generative engineering, SQL relational engineering, and process mining files in standard executable `.ipynb` format.")
 
     nb_files = sorted(glob.glob(os.path.join(BASE_DIR, "notebooks", "*.ipynb")))
     st.success(f"✅ Found **{len(nb_files)}** production Jupyter Notebooks organized across the 4 Core Pillars.")
 
-    # Group notebooks by pillar
     pillars_catalog = {
         "🧠 Pillar 1: Machine Learning & MLOps": [
             "03_ML_Predictive_Modeling.ipynb",
@@ -615,7 +909,12 @@ elif menu == "📓 Jupyter Notebooks Hub (23 .ipynb)":
             "20_Generative_Engineering_Synthetic_EHR_Simulation.ipynb",
             "21_GenAI_RAG_Clinical_Protocol_Auditor.ipynb"
         ],
-        "📊 Pillar 3: Data Analysis & Process Mining": [
+        "💾 Pillar 3: SQL Relational & Lakehouse Data Engineering": [
+            "06_DBT_SQL_to_Python_Data_Pipelines.ipynb",
+            "22_Data_Engineering_Lakehouse_and_Data_Contracts.ipynb",
+            "23_SQL_Database_and_Relational_Data_Engineering.ipynb"
+        ],
+        "📊 Pillar 4: Data Analysis & Process Mining": [
             "00_MASTER_CareFlow_End_to_End_Data_Analysis.ipynb",
             "01_EDA_Patient_Flow.ipynb",
             "02_Process_Mining_pm4py.ipynb",
@@ -630,10 +929,6 @@ elif menu == "📓 Jupyter Notebooks Hub (23 .ipynb)":
             "16_Root_Cause_Analysis_Ishikawa_CAPA.ipynb",
             "17_Cohort_Benchmark_AB_Testing.ipynb",
             "18_Hospital_Census_and_Operations.ipynb"
-        ],
-        "🏗️ Pillar 4: Data Engineering & Lakehouse": [
-            "06_DBT_SQL_to_Python_Data_Pipelines.ipynb",
-            "22_Data_Engineering_Lakehouse_and_Data_Contracts.ipynb"
         ]
     }
 

@@ -31,8 +31,16 @@ from .data_engineering import (
     run_data_quality_suite,
     get_medallion_stats
 )
+from .database import (
+    get_db_connection,
+    init_sql_database,
+    query_sql,
+    execute_sql,
+    insert_synthetic_patient_event,
+    get_database_stats
+)
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __all__ = [
     "stg_ehr_events",
     "fct_patient_journeys",
@@ -51,5 +59,11 @@ __all__ = [
     "generate_synthetic_ehr_cohort",
     "explain_process_bottleneck_ai",
     "run_data_quality_suite",
-    "get_medallion_stats"
+    "get_medallion_stats",
+    "get_db_connection",
+    "init_sql_database",
+    "query_sql",
+    "execute_sql",
+    "insert_synthetic_patient_event",
+    "get_database_stats"
 ]

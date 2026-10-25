@@ -351,6 +351,21 @@ from careflow_analytics.data_engineering import run_data_quality_suite
 
 dq = run_data_quality_suite(stg_df, fct_df)
 print(f"Data Quality Score: {dq['overall_quality_score']}% ({dq['passed_tests']}/{dq['total_tests']} passed)")`
+  },
+  {
+    id: '23',
+    name: '23_SQL_Database_and_Relational_Data_Engineering.ipynb',
+    category: 'Data Engineering & Lakehouse',
+    title: 'Live Connected SQL Database & Relational Engineering',
+    description: 'Relational SQLite hospital database schema, analytical SQL window functions, real-time event ingestion, and live DB introspection.',
+    libraries: ['sqlite3', 'pandas', 'numpy', 'careflow_analytics.database'],
+    cells: 7,
+    highlights: ['Live SQLite Connection (careflow_hospital.db)', 'Analytical CTE & Window Queries', 'Transactional Ingestion via SQL INSERT'],
+    codeSnippet: `# Analytical SQL Query via Python
+from careflow_analytics.database import query_sql
+
+df = query_sql("SELECT clinical_severity, AVG(total_los_minutes) FROM fct_patient_journeys GROUP BY 1")
+print(df)`
   }
 ];
 
