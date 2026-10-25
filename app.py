@@ -44,9 +44,30 @@ st.set_page_config(
 # Custom Styling
 st.markdown("""
 <style>
+    /* Permanently hide Deploy button and toolbar popups */
+    .stDeployButton,
+    div[data-testid="stDeployButton"],
+    button[data-testid="stDeployButton"],
+    div[data-testid="stToolbarActions"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
     .stMetric { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
     .badge-cyan { background: rgba(6, 182, 212, 0.2); color: #06b6d4; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .badge-emerald { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+    
+    /* Smooth transitions and scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+    .stButton > button {
+        transition: all 0.2s ease-in-out;
+    }
+    .stButton > button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+    }
 </style>
 """, unsafe_allow_html=True)
 
