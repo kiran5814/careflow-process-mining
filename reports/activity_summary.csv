@@ -1,0 +1,6 @@
+activity,events_after_previous,average_gap_minutes,median_gap_minutes,maximum_gap_minutes
+Lab Test,23,87.52173913043478,89.0,127.0
+Doctor Consultation,33,69.06060606060606,68.0,122.0
+Treatment Decision,30,21.1,22.0,34.0
+Discharge,30,20.933333333333334,23.0,35.0
+Initial Assessment,30,19.466666666666665,20.0,35.0

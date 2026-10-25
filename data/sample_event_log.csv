@@ -1,0 +1,177 @@
+case_id,activity,timestamp,resource,event_order
+CF0001,Patient Registration,2026-01-01T10:43:00,Registration Desk,1
+CF0001,Initial Assessment,2026-01-01T10:48:00,Doctor,2
+CF0001,Doctor Consultation,2026-01-01T11:38:00,Nurse,3
+CF0001,Lab Test,2026-01-01T12:39:00,Registration Desk,4
+CF0001,Treatment Decision,2026-01-01T13:02:00,Lab Team,5
+CF0001,Discharge,2026-01-01T13:08:00,Registration Desk,6
+CF0002,Patient Registration,2026-01-01T08:23:00,Nurse,1
+CF0002,Initial Assessment,2026-01-01T08:35:00,Registration Desk,2
+CF0002,Doctor Consultation,2026-01-01T09:32:00,Lab Team,3
+CF0002,Lab Test,2026-01-01T11:01:00,Doctor,4
+CF0002,Treatment Decision,2026-01-01T11:31:00,Registration Desk,5
+CF0002,Discharge,2026-01-01T12:00:00,Nurse,6
+CF0003,Patient Registration,2026-01-01T10:58:00,Lab Team,1
+CF0003,Initial Assessment,2026-01-01T11:13:00,Doctor,2
+CF0003,Doctor Consultation,2026-01-01T11:59:00,Doctor,3
+CF0003,Lab Test,2026-01-01T12:38:00,Lab Team,4
+CF0003,Treatment Decision,2026-01-01T12:46:00,Doctor,5
+CF0003,Discharge,2026-01-01T13:18:00,Doctor,6
+CF0004,Patient Registration,2026-01-01T10:34:00,Doctor,1
+CF0004,Initial Assessment,2026-01-01T11:04:00,Registration Desk,2
+CF0004,Doctor Consultation,2026-01-01T12:40:00,Registration Desk,3
+CF0004,Treatment Decision,2026-01-01T13:14:00,Lab Team,4
+CF0004,Discharge,2026-01-01T13:21:00,Doctor,5
+CF0005,Patient Registration,2026-01-01T11:32:00,Doctor,1
+CF0005,Initial Assessment,2026-01-01T11:55:00,Nurse,2
+CF0005,Doctor Consultation,2026-01-01T12:40:00,Registration Desk,3
+CF0005,Lab Test,2026-01-01T13:55:00,Doctor,4
+CF0005,Treatment Decision,2026-01-01T14:02:00,Nurse,5
+CF0005,Discharge,2026-01-01T14:34:00,Registration Desk,6
+CF0006,Patient Registration,2026-01-01T09:37:00,Doctor,1
+CF0006,Initial Assessment,2026-01-01T09:56:00,Doctor,2
+CF0006,Doctor Consultation,2026-01-01T11:03:00,Doctor,3
+CF0006,Lab Test,2026-01-01T12:59:00,Doctor,4
+CF0006,Treatment Decision,2026-01-01T13:26:00,Registration Desk,5
+CF0006,Discharge,2026-01-01T13:50:00,Nurse,6
+CF0007,Patient Registration,2026-01-01T10:16:00,Nurse,1
+CF0007,Initial Assessment,2026-01-01T10:26:00,Lab Team,2
+CF0007,Doctor Consultation,2026-01-01T11:27:00,Nurse,3
+CF0007,Lab Test,2026-01-01T12:54:00,Registration Desk,4
+CF0007,Doctor Consultation,2026-01-01T13:20:00,Doctor,5
+CF0007,Treatment Decision,2026-01-01T13:37:00,Doctor,6
+CF0007,Discharge,2026-01-01T13:44:00,Nurse,7
+CF0008,Patient Registration,2026-01-01T11:53:00,Doctor,1
+CF0008,Initial Assessment,2026-01-01T12:04:00,Lab Team,2
+CF0008,Doctor Consultation,2026-01-01T13:29:00,Nurse,3
+CF0008,Treatment Decision,2026-01-01T13:42:00,Nurse,4
+CF0008,Discharge,2026-01-01T13:54:00,Doctor,5
+CF0009,Patient Registration,2026-01-01T11:11:00,Lab Team,1
+CF0009,Initial Assessment,2026-01-01T11:44:00,Lab Team,2
+CF0009,Doctor Consultation,2026-01-01T12:38:00,Nurse,3
+CF0009,Lab Test,2026-01-01T14:22:00,Registration Desk,4
+CF0009,Treatment Decision,2026-01-01T14:51:00,Registration Desk,5
+CF0009,Discharge,2026-01-01T15:23:00,Registration Desk,6
+CF0010,Patient Registration,2026-01-01T08:39:00,Nurse,1
+CF0010,Initial Assessment,2026-01-01T09:09:00,Lab Team,2
+CF0010,Doctor Consultation,2026-01-01T09:51:00,Lab Team,3
+CF0010,Lab Test,2026-01-01T11:44:00,Lab Team,4
+CF0010,Treatment Decision,2026-01-01T12:05:00,Doctor,5
+CF0010,Discharge,2026-01-01T12:27:00,Registration Desk,6
+CF0011,Patient Registration,2026-01-02T10:54:00,Registration Desk,1
+CF0011,Initial Assessment,2026-01-02T11:20:00,Doctor,2
+CF0011,Doctor Consultation,2026-01-02T12:42:00,Registration Desk,3
+CF0011,Lab Test,2026-01-02T14:11:00,Nurse,4
+CF0011,Treatment Decision,2026-01-02T14:30:00,Registration Desk,5
+CF0011,Discharge,2026-01-02T15:05:00,Doctor,6
+CF0012,Patient Registration,2026-01-02T10:08:00,Nurse,1
+CF0012,Initial Assessment,2026-01-02T10:29:00,Registration Desk,2
+CF0012,Doctor Consultation,2026-01-02T12:31:00,Doctor,3
+CF0012,Treatment Decision,2026-01-02T13:02:00,Nurse,4
+CF0012,Discharge,2026-01-02T13:11:00,Doctor,5
+CF0013,Patient Registration,2026-01-02T11:15:00,Nurse,1
+CF0013,Initial Assessment,2026-01-02T11:37:00,Registration Desk,2
+CF0013,Doctor Consultation,2026-01-02T12:52:00,Lab Team,3
+CF0013,Lab Test,2026-01-02T13:31:00,Doctor,4
+CF0013,Treatment Decision,2026-01-02T14:04:00,Doctor,5
+CF0013,Discharge,2026-01-02T14:16:00,Registration Desk,6
+CF0014,Patient Registration,2026-01-02T09:01:00,Registration Desk,1
+CF0014,Initial Assessment,2026-01-02T09:08:00,Lab Team,2
+CF0014,Doctor Consultation,2026-01-02T09:57:00,Nurse,3
+CF0014,Lab Test,2026-01-02T11:50:00,Lab Team,4
+CF0014,Doctor Consultation,2026-01-02T13:45:00,Nurse,5
+CF0014,Treatment Decision,2026-01-02T13:58:00,Lab Team,6
+CF0014,Discharge,2026-01-02T14:33:00,Nurse,7
+CF0015,Patient Registration,2026-01-02T11:57:00,Nurse,1
+CF0015,Initial Assessment,2026-01-02T12:24:00,Doctor,2
+CF0015,Doctor Consultation,2026-01-02T13:38:00,Lab Team,3
+CF0015,Lab Test,2026-01-02T15:37:00,Lab Team,4
+CF0015,Treatment Decision,2026-01-02T15:45:00,Nurse,5
+CF0015,Discharge,2026-01-02T15:57:00,Registration Desk,6
+CF0016,Patient Registration,2026-01-02T09:26:00,Registration Desk,1
+CF0016,Initial Assessment,2026-01-02T09:49:00,Nurse,2
+CF0016,Doctor Consultation,2026-01-02T10:50:00,Registration Desk,3
+CF0016,Treatment Decision,2026-01-02T10:57:00,Registration Desk,4
+CF0016,Discharge,2026-01-02T11:09:00,Registration Desk,5
+CF0017,Patient Registration,2026-01-02T11:51:00,Registration Desk,1
+CF0017,Initial Assessment,2026-01-02T12:23:00,Doctor,2
+CF0017,Doctor Consultation,2026-01-02T13:45:00,Nurse,3
+CF0017,Lab Test,2026-01-02T15:43:00,Lab Team,4
+CF0017,Treatment Decision,2026-01-02T15:54:00,Nurse,5
+CF0017,Discharge,2026-01-02T16:22:00,Lab Team,6
+CF0018,Patient Registration,2026-01-02T09:02:00,Lab Team,1
+CF0018,Initial Assessment,2026-01-02T09:32:00,Lab Team,2
+CF0018,Doctor Consultation,2026-01-02T10:05:00,Registration Desk,3
+CF0018,Lab Test,2026-01-02T11:46:00,Doctor,4
+CF0018,Treatment Decision,2026-01-02T12:04:00,Lab Team,5
+CF0018,Discharge,2026-01-02T12:23:00,Registration Desk,6
+CF0019,Patient Registration,2026-01-02T10:52:00,Registration Desk,1
+CF0019,Initial Assessment,2026-01-02T10:58:00,Lab Team,2
+CF0019,Doctor Consultation,2026-01-02T12:19:00,Registration Desk,3
+CF0019,Lab Test,2026-01-02T13:15:00,Nurse,4
+CF0019,Treatment Decision,2026-01-02T13:37:00,Lab Team,5
+CF0019,Discharge,2026-01-02T13:46:00,Lab Team,6
+CF0020,Patient Registration,2026-01-02T08:46:00,Doctor,1
+CF0020,Initial Assessment,2026-01-02T09:05:00,Nurse,2
+CF0020,Doctor Consultation,2026-01-02T09:56:00,Lab Team,3
+CF0020,Treatment Decision,2026-01-02T10:26:00,Registration Desk,4
+CF0020,Discharge,2026-01-02T10:32:00,Registration Desk,5
+CF0021,Patient Registration,2026-01-03T08:23:00,Nurse,1
+CF0021,Initial Assessment,2026-01-03T08:33:00,Lab Team,2
+CF0021,Doctor Consultation,2026-01-03T10:04:00,Nurse,3
+CF0021,Lab Test,2026-01-03T11:47:00,Registration Desk,4
+CF0021,Doctor Consultation,2026-01-03T12:55:00,Registration Desk,5
+CF0021,Treatment Decision,2026-01-03T13:12:00,Doctor,6
+CF0021,Discharge,2026-01-03T13:46:00,Lab Team,7
+CF0022,Patient Registration,2026-01-03T09:13:00,Lab Team,1
+CF0022,Initial Assessment,2026-01-03T09:40:00,Lab Team,2
+CF0022,Doctor Consultation,2026-01-03T10:23:00,Doctor,3
+CF0022,Lab Test,2026-01-03T11:01:00,Registration Desk,4
+CF0022,Treatment Decision,2026-01-03T11:29:00,Doctor,5
+CF0022,Discharge,2026-01-03T11:35:00,Registration Desk,6
+CF0023,Patient Registration,2026-01-03T10:29:00,Lab Team,1
+CF0023,Initial Assessment,2026-01-03T10:50:00,Nurse,2
+CF0023,Doctor Consultation,2026-01-03T12:11:00,Registration Desk,3
+CF0023,Lab Test,2026-01-03T13:26:00,Registration Desk,4
+CF0023,Treatment Decision,2026-01-03T13:50:00,Registration Desk,5
+CF0023,Discharge,2026-01-03T14:16:00,Nurse,6
+CF0024,Patient Registration,2026-01-03T09:43:00,Registration Desk,1
+CF0024,Initial Assessment,2026-01-03T10:18:00,Nurse,2
+CF0024,Doctor Consultation,2026-01-03T12:07:00,Registration Desk,3
+CF0024,Treatment Decision,2026-01-03T12:31:00,Registration Desk,4
+CF0024,Discharge,2026-01-03T12:49:00,Doctor,5
+CF0025,Patient Registration,2026-01-03T11:59:00,Doctor,1
+CF0025,Initial Assessment,2026-01-03T12:10:00,Doctor,2
+CF0025,Doctor Consultation,2026-01-03T13:05:00,Lab Team,3
+CF0025,Lab Test,2026-01-03T14:59:00,Doctor,4
+CF0025,Treatment Decision,2026-01-03T15:18:00,Doctor,5
+CF0025,Discharge,2026-01-03T15:52:00,Registration Desk,6
+CF0026,Patient Registration,2026-01-03T08:02:00,Lab Team,1
+CF0026,Initial Assessment,2026-01-03T08:26:00,Registration Desk,2
+CF0026,Doctor Consultation,2026-01-03T09:51:00,Nurse,3
+CF0026,Lab Test,2026-01-03T11:05:00,Nurse,4
+CF0026,Treatment Decision,2026-01-03T11:39:00,Doctor,5
+CF0026,Discharge,2026-01-03T12:12:00,Registration Desk,6
+CF0027,Patient Registration,2026-01-03T11:45:00,Nurse,1
+CF0027,Initial Assessment,2026-01-03T12:01:00,Doctor,2
+CF0027,Doctor Consultation,2026-01-03T13:17:00,Doctor,3
+CF0027,Lab Test,2026-01-03T15:24:00,Registration Desk,4
+CF0027,Treatment Decision,2026-01-03T15:50:00,Doctor,5
+CF0027,Discharge,2026-01-03T16:24:00,Registration Desk,6
+CF0028,Patient Registration,2026-01-03T12:00:00,Nurse,1
+CF0028,Initial Assessment,2026-01-03T12:13:00,Registration Desk,2
+CF0028,Doctor Consultation,2026-01-03T13:09:00,Nurse,3
+CF0028,Treatment Decision,2026-01-03T13:22:00,Doctor,4
+CF0028,Discharge,2026-01-03T13:46:00,Nurse,5
+CF0029,Patient Registration,2026-01-03T11:03:00,Doctor,1
+CF0029,Initial Assessment,2026-01-03T11:14:00,Doctor,2
+CF0029,Doctor Consultation,2026-01-03T12:47:00,Doctor,3
+CF0029,Lab Test,2026-01-03T13:46:00,Registration Desk,4
+CF0029,Treatment Decision,2026-01-03T14:11:00,Lab Team,5
+CF0029,Discharge,2026-01-03T14:42:00,Doctor,6
+CF0030,Patient Registration,2026-01-03T08:11:00,Registration Desk,1
+CF0030,Initial Assessment,2026-01-03T08:26:00,Nurse,2
+CF0030,Doctor Consultation,2026-01-03T09:34:00,Nurse,3
+CF0030,Lab Test,2026-01-03T11:18:00,Lab Team,4
+CF0030,Treatment Decision,2026-01-03T11:40:00,Registration Desk,5
+CF0030,Discharge,2026-01-03T11:48:00,Registration Desk,6
