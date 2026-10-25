@@ -14,7 +14,12 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-import seaborn as sns
+try:
+    import seaborn as sns
+    HAS_SEABORN = True
+except ImportError:
+    HAS_SEABORN = False
+    sns = None
 from scipy import stats
 
 # Ensure careflow_analytics package is accessible
@@ -173,7 +178,18 @@ elif menu == "⏱️ SLA Escalation Analytics":
 
     st.markdown("### Door-to-Doctor Wait Distribution by Severity")
     fig, ax = plt.subplots(figsize=(10, 4))
-    sns.boxplot(data=sla_df, x="clinical_severity", y="door_to_doctor_minutes", ax=ax, palette="crest", showfliers=False)
+    if HAS_SEABORN:
+        sns.boxplot(data=sla_df, x="clinical_severity", y="door_to_doctor_minutes", ax=ax, palette="crest", showfliers=False)
+    else:
+        severities = ['High', 'Medium', 'Low']
+        box_data = [sla_df[sla_df['clinical_severity'] == s]['door_to_doctor_minutes'].dropna() for s in severities]
+        bp = ax.boxplot(box_data, patch_artist=True, tick_labels=severities, showfliers=False)
+        colors = ['#f43f5e', '#f59e0b', '#10b981']
+        for patch, color in zip(bp['boxes'], colors):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.7)
+        for median in bp['medians']:
+            median.set(color='#ffffff', linewidth=2)
     ax.axhline(30, color="#f43f5e", linestyle="--", label="SLA Target (30 min)")
     ax.set_ylabel("Wait Time (Minutes)")
     ax.legend()
@@ -248,7 +264,21 @@ elif menu == "🔀 Markov State Transition Matrix":
     st.dataframe(markov["prob_matrix"].round(3), use_container_width=True)
 
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(markov["prob_matrix"], annot=True, fmt='.2f', cmap='Blues', ax=ax)
+    if HAS_SEABORN:
+        sns.heatmap(markov["prob_matrix"], annot=True, fmt='.2f', cmap='Blues', ax=ax)
+    else:
+        mat = markov["prob_matrix"].values
+        cax = ax.imshow(mat, cmap='Blues', aspect='auto')
+        fig.colorbar(cax, ax=ax)
+        ax.set_xticks(range(len(markov["prob_matrix"].columns)))
+        ax.set_yticks(range(len(markov["prob_matrix"].index)))
+        ax.set_xticklabels(markov["prob_matrix"].columns, rotation=35, ha='right', fontsize=8)
+        ax.set_yticklabels(markov["prob_matrix"].index, fontsize=8)
+        for i in range(len(markov["prob_matrix"].index)):
+            for j in range(len(markov["prob_matrix"].columns)):
+                val = mat[i, j]
+                color = '#ffffff' if val < 0.5 else '#000000'
+                ax.text(j, i, f'{val:.2f}', ha='center', va='center', color=color, fontsize=8, fontweight='bold')
     st.pyplot(fig)
 
 
@@ -256,7 +286,7 @@ elif menu == "🔀 Markov State Transition Matrix":
 # 8. HYPOTHESIS TESTING & QUEUE THEORY
 # ──────────────────────────────────────────────────────────────────────────────
 elif menu == "🧪 Hypothesis Testing & Queue Theory":
-    st.title("🧪 Statistical Hypothesis Testing & Little's Law ($L = \lambda W$)")
+    st.title(r"🧪 Statistical Hypothesis Testing & Little's Law ($L = \lambda W$)")
     st.markdown("Operations Research queue inventory sizing and non-parametric Mann-Whitney U tests.")
 
     q_metrics = calculate_queue_metrics(stg_df)
