@@ -285,3 +285,117 @@ def predict_single_patient(model_bundle, patient_dict: dict):
         "risk_tier": tier,
         "recommended_action": action
     }
+
+
+def train_custom_user_model(
+    fct_df: pd.DataFrame,
+    algorithm: str = "Random Forest Regressor",
+    n_estimators: int = 100,
+    max_depth: int = 6,
+    test_size: float = 0.25,
+    target_mode: str = "Length of Stay (Minutes)"
+):
+    """
+    Dynamically trains an ML model on user-selected hyperparameters and returns
+    trained model, evaluation metrics, actual vs predicted vectors, and feature importances.
+    """
+    import time
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, explained_variance_score
+
+    t0 = time.time()
+    X, y_reg, y_clf, feature_cols = prepare_ml_features(fct_df)
+
+    is_classification = "Prolonged" in target_mode or "Classifier" in algorithm
+    y = y_clf if is_classification else y_reg
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=42
+    )
+
+    if algorithm == "Random Forest Regressor":
+        model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
+    elif algorithm == "Gradient Boosting Regressor":
+        model = GradientBoostingRegressor(n_estimators=n_estimators, max_depth=min(max_depth, 8), random_state=42)
+    elif algorithm == "Ridge Linear Regressor":
+        model = Ridge(alpha=1.0)
+    elif algorithm == "Random Forest Classifier":
+        model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
+    elif algorithm == "Logistic Regression":
+        model = LogisticRegression(max_iter=500)
+    else:
+        model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
+
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    train_time_ms = round((time.time() - t0) * 1000.0, 1)
+
+    feature_labels = {
+        "severity_num": "Clinical Severity (Low/Med/High)",
+        "approx_age": "Patient Age Tier",
+        "gender_code": "Patient Gender",
+        "events_count": "Care Milestones in Pathway",
+        "loopback_code": "Radiology Reassessment Loopback",
+        "bypass_code": "Triage Fast-Track Bypass"
+    }
+
+    importances = None
+    if hasattr(model, "feature_importances_"):
+        importances = pd.DataFrame({
+            "feature": [feature_labels.get(c, c) for c in feature_cols],
+            "importance": model.feature_importances_
+        }).sort_values(by="importance", ascending=False)
+
+    if is_classification:
+        prob = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else y_pred
+        acc = accuracy_score(y_test, y_pred)
+        prec = precision_score(y_test, y_pred, zero_division=0)
+        rec = recall_score(y_test, y_pred, zero_division=0)
+        f1 = f1_score(y_test, y_pred, zero_division=0)
+        auc = roc_auc_score(y_test, prob) if len(np.unique(y_test)) > 1 else 0.5
+        fpr, tpr, _ = roc_curve(y_test, prob) if len(np.unique(y_test)) > 1 else ([0, 1], [0, 1], [])
+        cm = confusion_matrix(y_test, y_pred)
+        metrics = {
+            "Accuracy": f"{acc * 100:.1f}%",
+            "Precision": f"{prec * 100:.1f}%",
+            "Recall": f"{rec * 100:.1f}%",
+            "F1-Score": f"{f1:.3f}",
+            "ROC-AUC": f"{auc:.3f}",
+            "Training Time": f"{train_time_ms} ms"
+        }
+        res_data = {
+            "y_test": y_test,
+            "y_pred": y_pred,
+            "prob": prob,
+            "fpr": fpr,
+            "tpr": tpr,
+            "cm": cm
+        }
+    else:
+        r2 = r2_score(y_test, y_pred)
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        mae = mean_absolute_error(y_test, y_pred)
+        exp_var = explained_variance_score(y_test, y_pred)
+        metrics = {
+            "R² Score": f"{r2:.3f}",
+            "RMSE": f"{rmse:.1f} min",
+            "MAE": f"{mae:.1f} min",
+            "Explained Variance": f"{exp_var:.3f}",
+            "Training Time": f"{train_time_ms} ms"
+        }
+        res_data = {
+            "y_test": y_test,
+            "y_pred": y_pred,
+            "residuals": y_test - y_pred
+        }
+
+    return {
+        "model": model,
+        "algorithm": algorithm,
+        "is_classification": is_classification,
+        "metrics": metrics,
+        "importances": importances,
+        "res_data": res_data,
+        "train_time_ms": train_time_ms,
+        "train_samples": len(X_train),
+        "test_samples": len(X_test)
+    }

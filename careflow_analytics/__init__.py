@@ -18,7 +18,8 @@ from .analytics_engine import (
 )
 from .ml_engine import (
     train_ml_models,
-    predict_single_patient
+    predict_single_patient,
+    train_custom_user_model
 )
 from .genai_engine import (
     generate_clinical_discharge_summary,
